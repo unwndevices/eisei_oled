@@ -2,7 +2,7 @@
 #define Game_hpp
 
 #include <Arduino.h>
-#include <Adafruit_SSD1351.h>
+#include <Adafruit_SSD1327.h>
 #include <Fonts/VGATypewriter.h>
 #include "drivers/pinout.h"
 
@@ -26,11 +26,11 @@ public:
     Timer timer;
 
 private:
-    Adafruit_SSD1351 display;
+    Adafruit_SSD1327 display;
     SceneStateMachine sceneStateMachine; // New
 };
 
-Game::Game() : display(128, 128, &SPI, OLED_CS, OLED_DC, OLED_RESET)
+Game::Game() : display(128, 128, &SPI, OLED_DC, OLED_RESET, OLED_CS, 25000000)
 {
     std::shared_ptr<SceneSplashScreen> splashScreen = std::make_shared<SceneSplashScreen>(sceneStateMachine);
     std::shared_ptr<SceneRatio> ratioPage = std::make_shared<SceneRatio>(sceneStateMachine);
@@ -48,12 +48,11 @@ void Game::Init()
     USBSerial.println("Game initialization");
     SPI.begin(OLED_CLK, -1, OLED_MOSI, OLED_CS);
 
-    display.begin(40000000);
+    display.begin();
 
-    display.fillScreen(0xF800);
-    delay (200);
+    delay(200);
     // rotate 180deg
-    display.setRotation(1);
+    display.setRotation(2);
     display.setFont(&VGATypewriter8pt7b);
     display.setTextColor(0xFFFF);
     timer.Restart();
@@ -78,7 +77,7 @@ void Game::LateUpdate()
 void Game::Draw()
 {
     sceneStateMachine.Draw(display);
-    //display.display();
+    display.display();
 }
 
 #endif /* Game_hpp */

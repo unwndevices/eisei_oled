@@ -29,12 +29,12 @@ void SceneRatio::LateUpdate(uint16_t deltaTime)
     objects.LateUpdate(deltaTime);
 }
 
-void SceneRatio::Draw(Adafruit_SSD1351 &display)
+void SceneRatio::Draw(Adafruit_SSD1327 &display)
 {
     objects.Draw(buffer);
     display.setCursor(50, 103);
-    //String value = String(SharedData::base_mult, 3);
-    //buffer.println(value);
+    // String value = String(SharedData::base_mult, 3);
+    // buffer.println(value);
     display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 

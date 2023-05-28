@@ -49,17 +49,13 @@ void SceneMain::LateUpdate(uint16_t deltaTime)
     objects.LateUpdate(deltaTime);
 }
 
-void SceneMain::Draw(Adafruit_SSD1351 &display)
+void SceneMain::Draw(Adafruit_SSD1327 &display)
 {
     objects.Draw(buffer);
-    for (int i = 1; i < 10; i++){
-        display.drawCircle(64, 64, i * 2 , 0xF800);
-    }
-    display.fillScreen(0x0000);
-    display.setCursor(50, 103);
-    String value = String(fps, 1); //String(SharedData::base_mult, 3);
-    display.println(value);
-    //display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
+    buffer.setCursor(50, 103);
+    String value = String(fps, 1); // String(SharedData::base_mult, 3);
+    buffer.println(value);
+    display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 
 void SceneMain::InitBackground()

@@ -26,7 +26,7 @@ public:
     void SetSwitchToScene(uint8_t id);
 
     void Update(uint16_t deltaTime) override;
-    void Draw(Adafruit_SSD1351 &display) override;
+    void Draw(Adafruit_SSD1327 &display) override;
 
 private:
     SceneStateMachine &sceneStateMachine;
