@@ -1,0 +1,3 @@
+// Signal usage
+CONNECT_SLOT(touch->onPositionChanged, Slider::ValueChanged, slider_left); //
+aButton.onStateChanged.Connect(debugState);

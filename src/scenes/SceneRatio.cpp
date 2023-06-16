@@ -1,6 +1,5 @@
 #include "SceneRatio.hpp"
-#include "synthesis/SharedData.hpp"
-
+#include "SharedData.hpp"
 void SceneRatio::SetSwitchToScene(uint8_t id)
 {
     // Stores the id of the scene that we will transition to.
@@ -9,11 +8,17 @@ void SceneRatio::SetSwitchToScene(uint8_t id)
 
 void SceneRatio::OnCreate()
 {
-    std::shared_ptr<Object> ratioIcon = std::make_shared<Object>();
-    std::shared_ptr<Object> bar1 = std::make_shared<Object>();
-    std::shared_ptr<Object> bar2 = std::make_shared<Object>();
-    std::shared_ptr<Object> bar3 = std::make_shared<Object>();
-    std::shared_ptr<Object> bar4 = std::make_shared<Object>();
+    const_list = std::make_shared<ConstantList>(getConstants());
+    const_list->SetPosition(Vector2(68, 18));
+    objects.Add(const_list);
+    const_dial = std::make_shared<RatioDial>();
+    objects.Add(const_dial);
+    // tooltip
+    const_tooltip = std::make_shared<Tooltip>(Vector2(17, 58), 2);
+    objects.Add(const_tooltip);
+    hw->getButton(Sats::c).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    hw->getButton(Sats::d).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    hw->getButton(Gravity).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
 
     InitBackground();
 }
@@ -23,6 +28,7 @@ void SceneRatio::Update(uint16_t deltaTime)
     // Process our new objects at the beginning of each frame.
     objects.ProcessNewObjects();
     objects.Update(deltaTime);
+    fps = 1.0f / (deltaTime / 1000.0f); // Divide by 1000 to convert from milliseconds to seconds
 }
 void SceneRatio::LateUpdate(uint16_t deltaTime)
 {
@@ -31,10 +37,12 @@ void SceneRatio::LateUpdate(uint16_t deltaTime)
 
 void SceneRatio::Draw(Adafruit_SSD1327 &display)
 {
+    buffer.fillScreen(0);
     objects.Draw(buffer);
-    display.setCursor(50, 103);
-    // String value = String(SharedData::base_mult, 3);
-    // buffer.println(value);
+    buffer.setTextColor(3);
+    buffer.setCursor(40, 13);
+    String value = String(fps, 1); // String(SharedData::base_mult, 3);
+    buffer.println(value);
     display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 
@@ -43,7 +51,52 @@ void SceneRatio::InitBackground()
     std::shared_ptr<Object> background = std::make_shared<Object>();
     auto sprite = background->AddComponent<C_Sprite>();
     auto position = background->AddComponent<C_Position>();
-    position->SetPosition(1, 4);
-    sprite->Load((const uint8_t *)ratio_bg, 127, 127);
+    position->SetPosition(1, 1);
+    sprite->Load((const uint8_t *)ratio_overlay, 127, 127, 0x7);
     objects.Add(background);
+}
+
+void SceneRatio::ProcessButton(int id, Button::State state)
+{
+
+    switch (id)
+    {
+    case SW_C:
+        if (state == Button::State::PRESSED)
+        {
+            const_list->MoveUp();
+            system_data.ratio = const_list->GetCurrentSelectionValue();
+            const_dial->SetValue(system_data.ratio);
+            const_tooltip->SetValue(system_data.ratio);
+        }
+        break;
+    case SW_D:
+        if (state == Button::State::PRESSED)
+        {
+            const_list->MoveDown();
+            system_data.ratio = const_list->GetCurrentSelectionValue();
+            const_dial->SetValue(system_data.ratio);
+            const_tooltip->SetValue(system_data.ratio);
+        }
+
+        break;
+    case SW_GRAVITY:
+        if (state == Button::State::PRESSED)
+            sceneStateMachine.SwitchTo(1);
+        break;
+    default:
+        break;
+    }
+}
+
+void SceneRatio::ProcessInput()
+{
+    float touchwheel_input = hw->getTouchwheel().GetSpeed();
+    if (touchwheel_input != 0.0f)
+    {
+        system_data.ratio += touchwheel_input;
+        const_dial->SetValue(system_data.ratio);
+        const_tooltip->SetValue(system_data.ratio);
+        const_list->SetSelectedIndexByValue(system_data.ratio);
+    }
 }

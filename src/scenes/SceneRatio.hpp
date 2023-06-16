@@ -3,12 +3,17 @@
 #include <Arduino.h>
 #include "utils/utils.h"
 
-#include <Scene.hpp>
-#include <SceneStateMachine.hpp>
-#include <ObjectCollection.hpp>
-#include <Components.hpp>
+#include "enjin/Scene.hpp"
+#include "enjin/SceneStateMachine.hpp"
+#include "enjin/ObjectCollection.hpp"
+#include "enjin/Components.hpp"
 
 #include "assets/ratio.h"
+#include "enjin/UI/ConstantList.hpp"
+#include "enjin/UI/RatioDial.hpp"
+#include "enjin/UI/Tooltip.hpp"
+
+#include "HardwareManager.hpp"
 
 class SceneRatio : public Scene
 {
@@ -22,7 +27,7 @@ public:
     void OnActivate() override{};
 
     void OnDeactivate() override{};
-    void ProcessInput() override{};
+    void ProcessInput() override;
     void LateUpdate(uint16_t deltaTime) override;
 
     void SetSwitchToScene(uint8_t id);
@@ -35,8 +40,12 @@ private:
     ObjectCollection objects;
     uint8_t switchToState = 0;
 
-    //
+    std::shared_ptr<ConstantList> const_list;
+    std::shared_ptr<RatioDial> const_dial;
+    std::shared_ptr<Tooltip> const_tooltip;
+
     void InitBackground();
+    void ProcessButton(int id, Button::State state);
 };
 
 #endif // !RATIO_H

@@ -1,8 +1,8 @@
-#ifndef TOUCHWHEEL_H
-#define TOUCHWHEEL_H
+#ifndef TOUCHWHEEL_HPP
+#define TOUCHWHEEL_HPP
 
 #include <Arduino.h>
-#include <Signal.hpp>
+#include "enjin/Signal.hpp"
 
 #define NUM_SENSORS 8
 
@@ -42,15 +42,7 @@ private:
 class TouchWheel
 {
 public:
-    static TouchWheel *instance;
-    static TouchWheel *GetInstance()
-    {
-        if (instance == nullptr)
-        {
-            instance = new TouchWheel();
-        }
-        return instance;
-    };
+    TouchWheel(){};
 
     // Constructor that initializes the number of sensors
     uint8_t touchGpio[8]{7, 9, 8, 3, 10, 5, 4, 6};
@@ -72,6 +64,8 @@ public:
         }
     };
 
+    bool IsTouched() { return touched; };
+
     int sensorValues[10];
     int direction;
     float speed;
@@ -79,11 +73,8 @@ public:
     Signal<float> onPositionChanged;
 
 private:
-    TouchWheel(){};
-    TouchWheel(const TouchWheel &) = delete;
-    TouchWheel &operator=(const TouchWheel &) = delete;
     ///////////////////////////////////////////////////////////
-    int touchThreshold = 9000;
+    int touchThreshold = 5000;
     bool touched = false;
     float distance = 0.0f;
     float startPosition = 0.0;
@@ -93,4 +84,4 @@ private:
     int ReadSensorValue(int sensorNum) { return t[sensorNum].GetValue(); };
 };
 
-#endif // !TOUCHWHEEL_H
+#endif // TOUCHWHEEL_HPP

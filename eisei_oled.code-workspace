@@ -2,9 +2,6 @@
     "folders": [
         {
             "path": "."
-        },
-        {
-            "path": "../../../../Desktop/eisei_old"
         }
     ],
     "settings": {
@@ -93,7 +90,8 @@
             "netfwd": "cpp",
             "numbers": "cpp",
             "cinttypes": "cpp",
-            "iostream": "cpp"
+            "iostream": "cpp",
+            "semaphore": "cpp"
         }
     }
 }

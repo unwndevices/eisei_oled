@@ -3,59 +3,66 @@
 #include <Arduino.h>
 #include "USB.h"
 
-#include "drivers/pinout.h"
-#include "drivers/led.h"
-#include "drivers/touchwheel.h"
+#include "HardwareManager.hpp"
 #include "utils/utils.h"
 
-#include "synthesis/SharedData.hpp"
+#include "SharedData.hpp"
 #include "Game.hpp"
 
-//-------------------------------
-Leds leds;
-//-------------------------------
-Game eisei;
-TouchWheel *touch = nullptr;
+Hardware hw;
+Game eisei(hw);
 
-void setup()
+void transmitI2C()
 {
-  // SERIAL
-  USBSerial.begin(115200);
-  USBSerial.setDebugOutput(true);
-
-  // LED
-  leds.init();
-  USBSerial.println("Leds initialized");
-  // TOUCH
-  touch = TouchWheel::GetInstance();
-  touch->Init();
-  USBSerial.println("Touch sensor initialized");
-
-  // SWITCHES
-  pinMode(SW_A, INPUT_PULLUP);
-  pinMode(SW_B, INPUT_PULLUP);
-
-  // Game Engine
-  eisei.Init();
-  USBSerial.println("Game initialized");
-
-  // I2C
-  Wire.begin(43, 44, 400000);
-}
-float value = 0.0f;
-void loop()
-{
-  touch->Update();
-  eisei.Update();
-  eisei.Draw();
-  eisei.LateUpdate();
-  SharedData::base_mult = SharedData::base_mult + (touch->GetSpeed());
-  value = SharedData::base_mult;
-  byte *p = (byte *)&SharedData::base_mult;
-  Wire.beginTransmission(0x11); // transmit to device #11
-  for (int i = 0; i < sizeof(float); i++)
+  byte *p = (byte *)&system_data;
+  for (int i = 0; i < sizeof(SharedData); i++)
   {
     Wire.write(*p++);
   }
-  Wire.endTransmission();
+}
+
+byte buffer[4 * sizeof(float)];
+float *floatArray = (float *)buffer;
+
+void receiveI2C(int byteCount)
+{
+  int i = 0;
+
+  while (Wire.available())
+  {
+    buffer[i++] = Wire.read();
+  }
+
+  // reinterpret byte array as float array
+  float *floatArray = (float *)buffer;
+  // Print the received float values
+}
+
+void setup()
+{
+  // I2C
+  Wire.begin(0x11, 43, 44, 400000);
+  Wire.onRequest(transmitI2C);
+  Wire.onReceive(receiveI2C);
+  // SERIAL
+  USBSerial.begin(115200);
+  USBSerial.setDebugOutput(true);
+  //  the Game Engine has to be initialized after the hardware
+  eisei.Init();
+  hw.Init();
+  log_d("Game initialized");
+
+}
+
+void loop()
+{
+  for (int i = 0; i < 4; i++)
+  {
+    phase[i] = floatArray[i];
+  }
+  hw.Update();
+  eisei.ProcessInput();
+  eisei.Update();
+  eisei.Draw();
+  eisei.LateUpdate();
 }

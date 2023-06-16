@@ -1,15 +1,16 @@
-#include "touchwheel.h"
+#include "Touchwheel.hpp"
 #include "utils/utils.h"
-
+#include "enjin/utils/Easing.hpp"
 
 void CapTouch::Init(uint8_t pin)
 {
     _pin = pin;
+    pinMode(_pin, INPUT);
     // Intialize history and smoothed value to an average of a few readings
     for (int i = 0; i < 20; i++)
     {
         raw += touchRead(_pin);
-        delay(1);
+        delay(10);
     }
     raw = raw / 20;
     p3 = raw;
@@ -55,8 +56,6 @@ int CapTouch::GetValue()
     return _lastValue;
 }
 ////////////////////////////////////////////
-
-TouchWheel *TouchWheel::instance = nullptr;
 
 void TouchWheel::Init()
 {

@@ -2,7 +2,8 @@
 #define BUTTON_HPP
 
 #include <Arduino.h>
-#include <Signal.hpp>
+#include "enjin/Signal.hpp"
+#include "USB.h"
 
 class Button
 {
@@ -12,27 +13,29 @@ public:
         IDLE,
         PRESSED,
         RELEASED,
-        CLICKED,
         LONG_PRESSED,
         LONG_RELEASED
     };
 
-    Button(int pin, int debounceTime = 10)
+    Button(int pin = 0, int debounceTime = 20)
         : pin(pin),
+          id(pin),
           debounceTime(debounceTime),
-          clickTime(100),
+          lastDebounceTime(0),
+          state(IDLE), prevState(IDLE),
+          pressStartTime(0),
           longPressTime(1000),
-          lastState(true),
-          prevState(IDLE) {}
-
-    void SetClickTime(unsigned long time)
-    {
-        clickTime = time;
-    }
+          previousReading(false),
+          longPressFlag(false) {}
 
     void SetLongPressTime(unsigned long time)
     {
         longPressTime = time;
+    }
+
+    void Init(int pin)
+    {
+        pinMode(pin, INPUT_PULLUP);
     }
 
     void Init()
@@ -42,64 +45,94 @@ public:
 
     void Update()
     {
-        bool reading = digitalRead(pin);
+        reading = (bool)(!digitalRead(pin));
 
-        if (reading != lastState)
+        if (reading != previousReading)
         {
             lastDebounceTime = millis();
+            previousReading = reading;
+            return;
         }
 
-        if (millis() - lastDebounceTime > debounceTime)
+        if ((millis() - lastDebounceTime) > debounceTime)
         {
-            if (!reading)
+            switch (state)
             {
-                state = PRESSED;
-                pressStartTime = millis();
-            }
-            else if (reading)
-            {
-                state = RELEASED;
-
-                if (millis() - pressStartTime < clickTime)
+            case IDLE:
+                if (reading)
                 {
-                    state = CLICKED;
+                    state = PRESSED;
+                    pressStartTime = millis();
                 }
-                else if (millis() - pressStartTime > longPressTime)
+                break;
+
+            case PRESSED:
+                if (!reading)
+                {
+                    state = RELEASED;
+                }
+                else if ((millis() - pressStartTime) > longPressTime)
+                {
+                    state = LONG_PRESSED;
+                }
+                break;
+
+            case RELEASED:
+                if (reading)
+                {
+                    state = PRESSED;
+                    pressStartTime = millis();
+                }
+                else
+                {
+                    state = IDLE;
+                }
+                break;
+
+            case LONG_PRESSED:
+                if (!reading)
                 {
                     state = LONG_RELEASED;
                 }
+                break;
+
+            case LONG_RELEASED:
+                if (reading)
+                {
+                    state = PRESSED;
+                    pressStartTime = millis();
+                }
+                else
+                {
+                    state = IDLE;
+                }
+                break;
             }
-            if (!reading && millis() - pressStartTime > longPressTime)
-            {
-                state = LONG_PRESSED;
-            }
-            
+
             if (prevState != state)
             {
                 prevState = state;
-                onStateChanged.Emit(state);
+                onStateChanged.Emit(id, state);
             }
         }
-        lastState = reading;
     }
 
-    State
-    GetState()
+    State GetState()
     {
         return state;
     }
 
-    Signal<Button::State> onStateChanged;
+    Signal<int, Button::State> onStateChanged;
 
 private:
-    const int pin;
-    const int debounceTime;
+    int pin, id;
+    int debounceTime;
     unsigned long lastDebounceTime;
     State state, prevState;
-    bool lastState;
+    bool previousReading, reading;
     unsigned long pressStartTime;
-    unsigned long clickTime;
     unsigned long longPressTime;
+    bool longPressFlag;
 };
 
 #endif // !BUTTON_HPP

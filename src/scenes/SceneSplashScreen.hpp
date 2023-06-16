@@ -2,10 +2,10 @@
 #define SCENESPLASHSCREEN_H
 #include <Arduino.h>
 #include "utils/utils.h"
-#include <Scene.hpp>
-#include <SceneStateMachine.hpp>
-#include <ObjectCollection.hpp>
-#include <Components.hpp>
+#include "enjin/Scene.hpp"
+#include "enjin/SceneStateMachine.hpp"
+#include "enjin/ObjectCollection.hpp"
+#include "enjin/Components.hpp"
 #include "assets/splashscreen.h"
 
 class SceneSplashScreen : public Scene

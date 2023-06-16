@@ -1,5 +1,5 @@
-#ifndef LED_H
-#define LED_H
+#ifndef LED_HPP
+#define LED_HPP
 #include <Arduino.h>
 
 #define BIT_PWM 10
@@ -61,22 +61,4 @@ inline void Led::pulse(uint16_t speed, uint16_t reps, bool fade)
     isPulsing = true;
 };
 
-class Leds
-{
-public:
-    static Led sats[4];
-    void update();
-
-    void init();
-    void setLeds(float value);
-    void setLeds(uint16_t value);
-    void setLeds(uint16_t value, uint16_t time);
-
-    static void task(void *handle);
-    static uint16_t maxBrightness;
-
-private:
-    TaskHandle_t taskLed;
-};
-
-#endif
+#endif // LED_HPP

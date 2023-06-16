@@ -1,0 +1,31 @@
+UI Objects:
+  ✔ Tooltip UI element
+  ☐ Circular slider
+Framework:
+  ✔ Hardware manager class
+  ☐ move display driver outside of Enjin
+  ✔ New, working, Button class
+  ✔ SetPhase for Satellite Obj
+  ✔ base list component
+  ✔ ConstList object
+Code organization:
+  ☐ Main, Application class
+  ☐ Shared Context
+  ✔ HardwareManager
+  ☐ UIManager
+Software:
+  ☐ Use SharedData for satellite parameters
+  ✔ Gravity page basic
+  ✔ pass data to daisy
+  ✔ Star-system class for daisy
+  ✔ i2c setup
+Ratio page:
+  ✔ Ratios data structure
+  ✔ assets
+  ✔ display names as list
+  ✔ scroll ui
+  ✔ display current ratio
+  ✔ link constant and ratio
+Hardware:
+  ✔ fix touchwheel
+  ☐ research uneven brightness
