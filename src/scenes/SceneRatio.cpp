@@ -16,11 +16,13 @@ void SceneRatio::OnCreate()
     // tooltip
     const_tooltip = std::make_shared<Tooltip>(Vector2(17, 58), 2);
     objects.Add(const_tooltip);
-    hw->getButton(Sats::c).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    hw->getButton(Sats::d).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
     hw->getButton(Gravity).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-
+    hw->getTouchwheel().onIncrementChanged.Connect(std::bind(&SceneRatio::ProcessIncrement, this, std::placeholders::_1));
     InitBackground();
+}
+
+void SceneRatio::OnActivate()
+{
 }
 
 void SceneRatio::Update(uint16_t deltaTime)
@@ -35,7 +37,7 @@ void SceneRatio::LateUpdate(uint16_t deltaTime)
     objects.LateUpdate(deltaTime);
 }
 
-void SceneRatio::Draw(Adafruit_SSD1327 &display)
+void SceneRatio::Draw(Display &display)
 {
     buffer.fillScreen(0);
     objects.Draw(buffer);
@@ -43,7 +45,7 @@ void SceneRatio::Draw(Adafruit_SSD1327 &display)
     buffer.setCursor(40, 13);
     String value = String(fps, 1); // String(SharedData::base_mult, 3);
     buffer.println(value);
-    display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
+    display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 
 void SceneRatio::InitBackground()
@@ -64,19 +66,11 @@ void SceneRatio::ProcessButton(int id, Button::State state)
     case SW_C:
         if (state == Button::State::PRESSED)
         {
-            const_list->MoveUp();
-            system_data.ratio = const_list->GetCurrentSelectionValue();
-            const_dial->SetValue(system_data.ratio);
-            const_tooltip->SetValue(system_data.ratio);
         }
         break;
     case SW_D:
         if (state == Button::State::PRESSED)
         {
-            const_list->MoveDown();
-            system_data.ratio = const_list->GetCurrentSelectionValue();
-            const_dial->SetValue(system_data.ratio);
-            const_tooltip->SetValue(system_data.ratio);
         }
 
         break;
@@ -89,14 +83,41 @@ void SceneRatio::ProcessButton(int id, Button::State state)
     }
 }
 
+void SceneRatio::ProcessIncrement(TouchWheel::Direction direction)
+{
+    if (hw->getTouchwheel().GetStartingSide() == TouchWheel::Halves::RIGHT)
+    {
+        if (direction == TouchWheel::Direction::DECREASE)
+        {
+            const_list->MoveUp();
+            system_data.ratio = const_list->GetCurrentSelectionValue();
+            const_dial->SetValue(system_data.ratio);
+            const_tooltip->SetValue(system_data.ratio);
+        }
+        if (direction == TouchWheel::Direction::INCREASE)
+        {
+            const_list->MoveDown();
+            system_data.ratio = const_list->GetCurrentSelectionValue();
+            const_dial->SetValue(system_data.ratio);
+            const_tooltip->SetValue(system_data.ratio);
+        }
+    }
+}
+
 void SceneRatio::ProcessInput()
 {
-    float touchwheel_input = hw->getTouchwheel().GetSpeed();
-    if (touchwheel_input != 0.0f)
+    if (hw->getTouchwheel().IsTouched())
     {
-        system_data.ratio += touchwheel_input;
-        const_dial->SetValue(system_data.ratio);
-        const_tooltip->SetValue(system_data.ratio);
-        const_list->SetSelectedIndexByValue(system_data.ratio);
+        if (hw->getTouchwheel().GetStartingSide() == TouchWheel::Halves::LEFT)
+        {
+            float touchwheel_input = hw->getTouchwheel().GetSpeed();
+            if (touchwheel_input != 0.0f)
+            {
+                system_data.ratio += touchwheel_input;
+                const_dial->SetValue(system_data.ratio);
+                const_tooltip->SetValue(system_data.ratio);
+                const_list->SetSelectedIndexByValue(system_data.ratio);
+            }
+        }
     }
 }

@@ -72,7 +72,7 @@ void SceneMain::LateUpdate(uint16_t deltaTime)
     }
 }
 
-void SceneMain::Draw(Adafruit_SSD1327 &display)
+void SceneMain::Draw(Display &display)
 {
     objects.Draw(buffer);
     buffer.setTextColor(3);
@@ -80,7 +80,7 @@ void SceneMain::Draw(Adafruit_SSD1327 &display)
     String value = String(fps, 1); // String(SharedData::base_mult, 3);
     buffer.println(value);
 
-    display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
+    display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 
 void SceneMain::InitBackground()

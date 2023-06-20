@@ -61,6 +61,33 @@ public:
     Button buttons[NUM_BUTTONS];
 };
 
+class Display
+{
+public:
+    Display() : driver(128, 128, &SPI, OLED_DC, OLED_RESET, OLED_CS, 37000000){};
+    void Init(uint8_t contrast = 128)
+    {
+        SPI.begin(OLED_CLK, -1, OLED_MOSI, OLED_CS);
+        driver.begin();
+        driver.clearDisplay();
+        driver.display();
+        driver.setContrast(contrast);
+        driver.setRotation(2); // rotate 180deg
+    };
+
+    void Draw(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h)
+    {
+        driver.drawGrayscaleBitmap(x, y, bitmap, w, h);
+    }
+    void Show()
+    {
+        driver.display();
+    }
+
+private:
+    Adafruit_SSD1327 driver;
+};
+
 class Hardware
 {
 public:
@@ -71,6 +98,7 @@ public:
         leds.Init();
         buttonManager.Init();
         touchwheel.Init();
+        display.Init(60);
     };
 
     void Update()
@@ -82,9 +110,11 @@ public:
     Led &getLed(int index) { return leds.sats[index]; }
     Button &getButton(int index) { return buttonManager.buttons[index]; }
     TouchWheel &getTouchwheel() { return touchwheel; }
+    Display &getDisplay() { return display; }
 
     Leds leds;
     ButtonManager buttonManager;
     TouchWheel touchwheel;
+    Display display;
 };
 #endif // HARDWAREMANAGER_HPP

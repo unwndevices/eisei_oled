@@ -47,11 +47,10 @@ void setup()
   // SERIAL
   USBSerial.begin(115200);
   USBSerial.setDebugOutput(true);
+  hw.Init();
   //  the Game Engine has to be initialized after the hardware
   eisei.Init();
-  hw.Init();
   log_d("Game initialized");
-
 }
 
 void loop()

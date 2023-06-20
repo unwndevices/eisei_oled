@@ -24,7 +24,7 @@ public:
 
     void OnDestroy() override{};
 
-    void OnActivate() override{};
+    void OnActivate() override;
 
     void OnDeactivate() override{};
     void ProcessInput() override;
@@ -33,7 +33,7 @@ public:
     void SetSwitchToScene(uint8_t id);
 
     void Update(uint16_t deltaTime) override;
-    void Draw(Adafruit_SSD1327 &display) override;
+    void Draw(Display &display) override;
 
 private:
     SceneStateMachine &sceneStateMachine;
@@ -46,6 +46,7 @@ private:
 
     void InitBackground();
     void ProcessButton(int id, Button::State state);
+    void ProcessIncrement(TouchWheel::Direction direction);
 };
 
 #endif // !RATIO_H

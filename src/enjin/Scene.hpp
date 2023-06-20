@@ -1,7 +1,6 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 #include <Arduino.h>
-#include <Adafruit_SSD1327.h>
 #include "HardwareManager.hpp"
 
 class Scene
@@ -27,7 +26,7 @@ public:
     virtual void ProcessInput(){};
     virtual void Update(uint16_t deltaTime){};
     virtual void LateUpdate(uint16_t deltaTime){};
-    virtual void Draw(Adafruit_SSD1327 &display){};
+    virtual void Draw(Display &display){};
     static void setHardware(Hardware &hw) { Scene::hw = &hw; };
 
 protected:

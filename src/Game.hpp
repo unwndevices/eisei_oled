@@ -2,8 +2,6 @@
 #define GAME_HPP
 
 #include <Arduino.h>
-#include <Adafruit_SSD1327.h>
-//#include <Fonts/VGATypewriter.h>
 #include "HardwareManager.hpp"
 
 #include "enjin/utils/Timer.hpp"
@@ -21,17 +19,15 @@ public:
     void Update();
     void LateUpdate();
     void Draw();
-    void CalculateDeltaTime();
-    bool IsRunning() const;
-    Timer timer;
 
 private:
-    Adafruit_SSD1327 display;
+    Display &display;
     SceneStateMachine sceneStateMachine; // New
     Hardware hw;
+    Timer timer;
 };
 
-Game::Game(Hardware &hw) : display(128, 128, &SPI, OLED_DC, OLED_RESET, OLED_CS, 37000000), hw(hw)
+Game::Game(Hardware &hw) : hw(hw), display(hw.getDisplay())
 {
     Scene::setHardware(hw);
     std::shared_ptr<SceneSplashScreen> splashScreen = std::make_shared<SceneSplashScreen>(sceneStateMachine);
@@ -46,15 +42,7 @@ Game::Game(Hardware &hw) : display(128, 128, &SPI, OLED_DC, OLED_RESET, OLED_CS,
 void Game::Init()
 {
     USBSerial.println("Game initialization");
-    // Initialize Screen
-    SPI.begin(OLED_CLK, -1, OLED_MOSI, OLED_CS);
-    display.begin();
-    display.setContrast(127 / 2);
-    // rotate 180deg
-    display.setRotation(2);
 
-    //display.setFont(&VGATypewriter8pt7b);
-    display.setTextColor(15);
     timer.Restart();
 }
 
@@ -77,7 +65,7 @@ void Game::LateUpdate()
 void Game::Draw()
 {
     sceneStateMachine.Draw(display);
-    display.display();
+    display.Show();
 }
 
 #endif // GAME_HPP

@@ -25,7 +25,7 @@ void SceneStateMachine::LateUpdate(uint16_t delta_time)
     }
 }
 
-void SceneStateMachine::Draw(Adafruit_SSD1327 &display)
+void SceneStateMachine::Draw(Display &display)
 {
     if (curScene)
     {

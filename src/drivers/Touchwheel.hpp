@@ -42,6 +42,18 @@ private:
 class TouchWheel
 {
 public:
+    enum Halves
+    {
+        LEFT,
+        RIGHT
+    };
+    enum Direction
+    {
+        IDLE,
+        DECREASE,
+        INCREASE
+    };
+
     TouchWheel(){};
 
     // Constructor that initializes the number of sensors
@@ -55,31 +67,66 @@ public:
     {
         return distance;
     };
+    Direction GetIncrement()
+    {
+        if (incrementDistance < 0.0f)
+            return DECREASE;
+        else if (incrementDistance > 0.0f)
+            return INCREASE;
+        else
+        {
+            return IDLE;
+        }
+    };
     bool ReadValues();
     void Update()
     {
         if (ReadValues())
         {
             onPositionChanged.Emit(GetSpeed());
+            incrementDistance += GetSpeed();
+
+            if (incrementDistance >= 0.075f || incrementDistance <= -0.075f)
+            {
+                onIncrementChanged.Emit(GetIncrement());
+                incrementDistance = 0.0f;
+            }
+        }
+        else
+        {
+            incrementDistance = 0.0f;
         }
     };
 
     bool IsTouched() { return touched; };
-
+    Halves GetStartingSide()
+    {
+        if ((startPosition >= 0.0f && startPosition <= 0.25f) || (startPosition > 0.75f && startPosition <= 1.0f))
+            return LEFT;
+        else
+        {
+            return RIGHT;
+        }
+    };
     int sensorValues[10];
     int direction;
     float speed;
 
     Signal<float> onPositionChanged;
+    Signal<Direction> onIncrementChanged;
 
 private:
     ///////////////////////////////////////////////////////////
     int touchThreshold = 5000;
     bool touched = false;
     float distance = 0.0f;
-    float startPosition = 0.0;
-    float endPosition = 0.0;
-    float lastPosition = 0.0;
+    float startPosition = 0.0f;
+    float endPosition = 0.0f;
+    float lastPosition = 0.0f;
+
+    float incrementDistance = 0.0f;
+    Direction increment = IDLE;
+    float lastIncrement = 0.0f;
     ///////////////////////////////////////////////////////////
     int ReadSensorValue(int sensorNum) { return t[sensorNum].GetValue(); };
 };

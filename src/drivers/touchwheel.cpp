@@ -89,21 +89,20 @@ bool TouchWheel::ReadValues()
     {
         // Approximate position using linear interpolation
         int nextSensor = (maxSensor + 1) % NUM_SENSORS;
-        int previousSensor = (maxSensor - 1) % NUM_SENSORS;
-        if (previousSensor < 0)
-        {
-            previousSensor = NUM_SENSORS - 1;
-        };
+        int previousSensor = (maxSensor - 1 + NUM_SENSORS) % NUM_SENSORS;
 
-        float position = (float)maxSensor + (float)(sensorValues[nextSensor] - sensorValues[maxSensor]) / (float)(sensorValues[nextSensor] + sensorValues[maxSensor]);
-
+        float position = (float)maxSensor + ((float)(sensorValues[nextSensor] - sensorValues[maxSensor]) / (float)(sensorValues[nextSensor] + sensorValues[maxSensor]));
         // Scale position to the range of 0.0 to 1.0
         position /= (float)NUM_SENSORS;
-        // position = limit_and_loop_float(position, 0.0f, 1.0f);
+        if (position < 0.0f)
+        {
+            position += 1.0f;
+        }
         if (!touched)
         {
             // distance = 0.0f;
             touched = true;
+            startPosition = position;
             lastPosition = position;
         }
         // Calculate direction and speed of movement

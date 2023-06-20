@@ -1,31 +1,27 @@
 UI Objects:
   ✔ Tooltip UI element
-  ☐ Circular slider
+  ☐ Fill-up indicator (for cv)
+  ☐ Overlay UI
+  ☐ Position animator component
 Framework:
-  ✔ Hardware manager class
-  ☐ move display driver outside of Enjin
-  ✔ New, working, Button class
-  ✔ SetPhase for Satellite Obj
-  ✔ base list component
-  ✔ ConstList object
+  ✔ HardwareManager
+  ✔ Move display driver outside of Enjin + abstract
+  ☐ Shared Context
+  ☐ UIManager
+  ☐ Make i2c protocol
+  ☐ Integrate Led
 Code organization:
   ☐ Main, Application class
-  ☐ Shared Context
-  ✔ HardwareManager
-  ☐ UIManager
-Software:
-  ☐ Use SharedData for satellite parameters
-  ✔ Gravity page basic
-  ✔ pass data to daisy
-  ✔ Star-system class for daisy
-  ✔ i2c setup
+Gravity page:
+  ☐ new graphic 
+  ☐ in/out animation
+Orbit page:
+  ☐ dual param ui (left sats, right signal)
+Signal page:
+  ☐ add overlay
 Ratio page:
-  ✔ Ratios data structure
-  ✔ assets
-  ✔ display names as list
-  ✔ scroll ui
-  ✔ display current ratio
-  ✔ link constant and ratio
+  ☐ fix background
+  ☐ in/out animation
 Hardware:
-  ✔ fix touchwheel
   ☐ research uneven brightness
+  ☐ work on panel interface

@@ -5,9 +5,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "HardwareManager.hpp"
 #include "Scene.hpp"
-#include <Adafruit_SSD1327.h>
-
 class SceneStateMachine
 {
 public:
@@ -19,7 +18,7 @@ public:
     void ProcessInput();
     void Update(uint16_t delta_time);
     void LateUpdate(uint16_t delta_time);
-    void Draw(Adafruit_SSD1327 &display);
+    void Draw(Display &display);
 
     // Adds a scene to the state machine and returns the id of that scene.
     uint8_t Add(std::shared_ptr<Scene> scene);

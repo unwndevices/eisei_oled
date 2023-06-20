@@ -66,10 +66,10 @@ void SceneSplashScreen::LateUpdate(uint16_t deltaTime)
     objects.LateUpdate(deltaTime);
 }
 
-void SceneSplashScreen::Draw(Adafruit_SSD1327 &display)
+void SceneSplashScreen::Draw(Display &display)
 {
     objects.Draw(buffer);
-    display.drawGrayscaleBitmap(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
+    display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 
 void SceneSplashScreen::InitCat()

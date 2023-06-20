@@ -17,7 +17,7 @@ class C_List : public Component, public C_Drawable
 public:
     using GetStringFunc = std::function<std::string(const T &)>;
 
-    C_List(Object *owner, const std::vector<T> &items, GetStringFunc getString) : Component(owner), canvas(64, 127), items(items), getString(getString), selectedIndex(0)
+    C_List(Object *owner, const std::vector<T> &items, GetStringFunc getString) : Component(owner), canvas(64, 127), items(items), getString(getString), selectedIndex(0), previousIndex(0)
     {
         position = owner->GetComponent<C_Position>();
 
@@ -31,10 +31,63 @@ public:
         // position->SetPosition(Vector2(0, 0));
         canvas.setFont(&VGATypewriter8pt7b);
         canvas.setTextColor(0xffff);
+        canvas.setTextWrap(false);
+        marqueeOffset = 0;
+        marqueeTimer = 0;
+        marqueeStartDelay = 600;
+        marqueeSpeed = 50;      // Delay before the start of the scroll, in milliseconds
+        marqueeEndDelay = 1000; // Delay after the end of the scroll, in milliseconds
     };
-    void Update(uint8_t deltaTime) override{};
+    void Update(uint8_t deltaTime) override
+    {
+        // If the marquee has scrolled past the end of the text, start the delay
+        std::string selected_item = getString(items[selectedIndex]);
+        String text = String(selected_item.c_str());
+
+        if (this->canvas.getTextWidth(text) > 58)
+        {
+            if (marqueeOffset > (int)this->canvas.getTextWidth(text) - 58)
+            {
+                marqueeTimer += deltaTime;
+
+                // If the delay has passed, reset the marquee
+                if (marqueeTimer > marqueeEndDelay)
+                {
+                    marqueeOffset = 0;
+                    marqueeTimer = 0; // Reset the timer
+                }
+            }
+            // Otherwise, update the marquee offset after the start delay
+            else
+            {
+                marqueeTimer += deltaTime;
+                if (!marqueeOffset && marqueeTimer < marqueeStartDelay)
+                {
+                    return;
+                }
+
+                else if (marqueeTimer > marqueeSpeed)
+                {
+                    marqueeOffset++;
+                    marqueeTimer = 0; // Reset the timer
+                }
+            }
+        }
+    };
+
     void Draw(GFXcanvas8 &canvas) override
     {
+        // Check if selectedIndex has changed
+        if (selectedIndex != previousIndex)
+        {
+            // Reset marqueeOffset
+            marqueeOffset = 0;
+            marqueeTimer = 0;
+
+            // Update previousIndex
+            previousIndex = selectedIndex;
+        }
+
         // Clear the canvas
         this->canvas.fillScreen(7);
 
@@ -52,9 +105,18 @@ public:
             this->canvas.setTextColor(i == selectedIndex ? 0xffff : 0x4);
 
             // Draw the item
-            this->canvas.setCursor(0, yOffset + (i - start) * 22);
-            std::string substring = getString(items[i]).substr(0, 7);
-            this->canvas.print(substring.c_str());
+            if (i == selectedIndex)
+            {
+                this->canvas.setCursor(0 - marqueeOffset, yOffset + (i - start) * 22);
+                std::string text = getString(items[i]);
+                this->canvas.print(text.c_str());
+            }
+            else
+            {
+                this->canvas.setCursor(0, yOffset + (i - start) * 22);
+                std::string substring = getString(items[i]).substr(0, 12);
+                this->canvas.print(substring.c_str());
+            }
         }
 
         canvas.drawGrayscaleBitmap(position->GetPosition().x, position->GetPosition().y, this->canvas.getBuffer(), 0x7, 64, 127);
@@ -104,7 +166,9 @@ private:
     std::vector<T> items;
     GetStringFunc getString;
 
-    int selectedIndex;
+    int selectedIndex, previousIndex;
+
+    int marqueeOffset, marqueeTimer, marqueeSpeed, marqueeStartDelay, marqueeEndDelay = 0;
 
     std::shared_ptr<C_Position> position;
 
