@@ -1,5 +1,6 @@
-#ifndef HARDWAREMANAGER_HPP
-#define HARDWAREMANAGER_HPP
+#ifndef HARDWARE_HPP
+#define HARDWARE_HPP
+#include <unordered_map>
 
 #include "drivers/drivers.hpp"
 
@@ -56,9 +57,18 @@ public:
         for (int i = 0; i < NUM_BUTTONS; i++)
         {
             buttons[i].Update();
+            buttonStates[i] = buttons[i].GetState();
         }
     };
+
+    Button::State GetButton(int id)
+    {
+        return buttonStates[id];
+    }
+
+private:
     Button buttons[NUM_BUTTONS];
+    std::unordered_map<int, Button::State> buttonStates;
 };
 
 class Display
@@ -107,14 +117,20 @@ public:
         touchwheel.Update();
     }
 
+    Button::State GetButton(int id)
+    {
+        return buttonManager.GetButton(id);
+    }
+
     Led &getLed(int index) { return leds.sats[index]; }
-    Button &getButton(int index) { return buttonManager.buttons[index]; }
     TouchWheel &getTouchwheel() { return touchwheel; }
     Display &getDisplay() { return display; }
 
+private:
     Leds leds;
     ButtonManager buttonManager;
     TouchWheel touchwheel;
     Display display;
 };
-#endif // HARDWAREMANAGER_HPP
+
+#endif// HARDWARE_HPP

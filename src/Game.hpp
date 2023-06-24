@@ -2,7 +2,7 @@
 #define GAME_HPP
 
 #include <Arduino.h>
-#include "HardwareManager.hpp"
+#include "InterfaceManager.hpp"
 
 #include "enjin/utils/Timer.hpp"
 
@@ -13,7 +13,7 @@
 class Game
 {
 public:
-    Game(Hardware &hw);
+    Game(InterfaceManager &interface);
     void Init();
     void ProcessInput();
     void Update();
@@ -23,16 +23,16 @@ public:
 private:
     Display &display;
     SceneStateMachine sceneStateMachine; // New
-    Hardware hw;
+    InterfaceManager &interface;
+
     Timer timer;
 };
 
-Game::Game(Hardware &hw) : hw(hw), display(hw.getDisplay())
+Game::Game(InterfaceManager &interface) : interface(interface), display(interface.hw.getDisplay())
 {
-    Scene::setHardware(hw);
-    std::shared_ptr<SceneSplashScreen> splashScreen = std::make_shared<SceneSplashScreen>(sceneStateMachine);
-    std::shared_ptr<SceneMain> mainPage = std::make_shared<SceneMain>(sceneStateMachine);
-    std::shared_ptr<SceneRatio> ratioPage = std::make_shared<SceneRatio>(sceneStateMachine);
+    std::shared_ptr<SceneSplashScreen> splashScreen = std::make_shared<SceneSplashScreen>(sceneStateMachine, interface);
+    std::shared_ptr<SceneMain> mainPage = std::make_shared<SceneMain>(sceneStateMachine,interface);
+    std::shared_ptr<SceneRatio> ratioPage = std::make_shared<SceneRatio>(sceneStateMachine, interface);
     uint8_t splashScreenID = sceneStateMachine.Add(splashScreen);
     uint8_t mainPageID = sceneStateMachine.Add(mainPage);
     uint8_t ratioPageID = sceneStateMachine.Add(ratioPage);
@@ -68,4 +68,4 @@ void Game::Draw()
     display.Show();
 }
 
-#endif // GAME_HPP
+#endif// GAME_HPP

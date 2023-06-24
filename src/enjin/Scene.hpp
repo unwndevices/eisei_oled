@@ -1,8 +1,7 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 #include <Arduino.h>
-#include "HardwareManager.hpp"
-
+#include "Hardware.hpp"
 class Scene
 {
 public:
@@ -27,13 +26,11 @@ public:
     virtual void Update(uint16_t deltaTime){};
     virtual void LateUpdate(uint16_t deltaTime){};
     virtual void Draw(Display &display){};
-    static void setHardware(Hardware &hw) { Scene::hw = &hw; };
 
 protected:
     GFXcanvas8 buffer;
-    static Hardware *hw;
+
     float fps = 0.0f;
 };
-
 
 #endif // SCENE_HPP

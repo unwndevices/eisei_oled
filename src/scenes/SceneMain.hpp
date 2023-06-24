@@ -12,14 +12,14 @@
 #include "enjin/UI/GravityFields.hpp"
 #include "enjin/UI/TransmissionBeam.hpp"
 
-#include "SharedData.hpp"
+#include "I2CShare.hpp"
 
-#include "HardwareManager.hpp"
+#include "InterfaceManager.hpp"
 
 class SceneMain : public Scene
 {
 public:
-    SceneMain(SceneStateMachine &sceneStateMachine) : sceneStateMachine(sceneStateMachine), stars(128, 128){};
+    SceneMain(SceneStateMachine &sceneStateMachine, InterfaceManager &interface) : sceneStateMachine(sceneStateMachine), interface(interface), stars(128, 128){};
 
     void OnCreate() override;
 
@@ -39,6 +39,8 @@ public:
 
 private:
     SceneStateMachine &sceneStateMachine;
+    InterfaceManager &interface;
+
     ObjectCollection objects;
     uint8_t switchToState = 0;
     int current_page = 0;
@@ -48,7 +50,7 @@ private:
 
     std::shared_ptr<Satellite> main_planet;
     std::vector<std::shared_ptr<Satellite>> satellites;
-    
+
     std::shared_ptr<Tooltip> tooltip_freq;
     std::shared_ptr<Slider> slider;
     std::shared_ptr<GravityFields> gravity_fields;

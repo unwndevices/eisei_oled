@@ -1,4 +1,4 @@
-#include "HardwareManager.hpp"
+#include "Hardware.hpp"
 
 ////////////// LEDS //////////////
 

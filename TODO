@@ -8,12 +8,12 @@ Framework:
   ✔ Move display driver outside of Enjin + abstract
   ☐ Shared Context
   ☐ UIManager
-  ☐ Make i2c protocol
+  ☐ Make i2c protocol @started(23-06-22 18:36)
   ☐ Integrate Led
 Code organization:
   ☐ Main, Application class
 Gravity page:
-  ☐ new graphic 
+  ☐ New graphic 
   ☐ in/out animation
 Orbit page:
   ☐ dual param ui (left sats, right signal)

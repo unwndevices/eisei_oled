@@ -12,8 +12,8 @@ void SceneMain::OnCreate()
     buffer.setFont(&VGATypewriter8pt7b);
     buffer.setTextColor(0x15);
     transmission_beam = std::make_shared<TransmissionBeam>();
-    transmission_beam->SetPhase(system_data.transmitter_phase);
-    transmission_beam->SetWidth(system_data.transmitter_width);
+    transmission_beam->SetPhase(interface.i2c_slave.phase[4]);
+    transmission_beam->SetWidth(interface.i2c_slave.interface_data.transmitter_width);
 
     objects.Add(transmission_beam);
 
@@ -34,10 +34,6 @@ void SceneMain::OnCreate()
     //  tooltip
     tooltip_freq = std::make_shared<Tooltip>(Vector2(73, 36), 0);
     objects.Add(tooltip_freq);
-
-    hw->getButton(Gravity).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    hw->getButton(Mass).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    hw->getButton(Ratio).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
 
     // SLIDERs
     // std::shared_ptr<Slider> slider_left = std::make_shared<Slider>(Side::LEFT);
@@ -67,7 +63,7 @@ void SceneMain::LateUpdate(uint16_t deltaTime)
     int i = 0;
     for (auto &satellite : satellites)
     {
-        satellite->SetPhase(phase[i]);
+        satellite->SetPhase(interface.i2c_slave.phase[i]);
         i++;
     }
 }
@@ -134,15 +130,6 @@ void SceneMain::ProcessButton(int id, Button::State state)
 
     switch (current_page)
     {
-    case SW_GRAVITY:
-        tooltip_freq->SetActive(true);
-        break;
-    case SW_RATIO:
-        sceneStateMachine.SwitchTo(2);
-        break;
-    case SW_MASS:
-        transmission_beam->SetMode(C_TransmissionBeam::WIDTH_EDIT);
-        break;
     default:
         break;
     }
@@ -150,49 +137,40 @@ void SceneMain::ProcessButton(int id, Button::State state)
 
 void SceneMain::ProcessInput()
 {
-    if (current_page == SW_GRAVITY) // TODO use better id for pages
+    // if (touch_active)
+    // {
+    //     if (touch_timer)
+    //     {
+    float touchwheel_input = interface.hw.getTouchwheel().GetSpeed();
+    if (touchwheel_input != 0.0f)
     {
-        if (touch_active)
-        {
-            if (touch_timer)
-            {
-                float touchwheel_input = hw->getTouchwheel().GetSpeed();
-                if (touchwheel_input != 0.0f)
-                {
-                    touch_timer = 0;
-                    system_data.frequency += touchwheel_input * 40.0f;
-                    tooltip_freq->SetValue(system_data.frequency);
-                }
-            }
-        }
+        touch_timer = 0;
+        interface.i2c_slave.interface_data.gravity += touchwheel_input * 40.0f;
+        tooltip_freq->SetValue(interface.i2c_slave.interface_data.gravity);
     }
+    //     }
+    // }
+    //}
 
-    else if (current_page == SW_MASS) // TODO use better id for pages
-    {
-        if (hw->getButton(Pages::Mass).GetState() == Button::State::LONG_PRESSED)
-        {
-            float touchwheel_input = hw->getTouchwheel().GetPosition();
-            if (hw->getTouchwheel().IsTouched())
-            {
-                touch_timer = 0;
-                system_data.transmitter_phase = touchwheel_input;
-                transmission_beam->SetPhase(touchwheel_input);
-            }
-        }
-        else
-        {
-            float touchwheel_input = hw->getTouchwheel().GetSpeed();
-            if (touchwheel_input != 0.0f)
-            {
-                touch_timer = 0;
-                system_data.transmitter_width = fmin(system_data.transmitter_width + touchwheel_input * 0.1f, 1.0f);
-                transmission_beam->SetWidth(system_data.transmitter_width);
-            }
-        }
-    }
-    else
-    {
-        tooltip_freq->SetActive(false);
-        transmission_beam->SetMode(C_TransmissionBeam::IDLE);
-    }
+    // else if (current_page == SW_MASS) // TODO use better id for pages
+    // {
+    //     if (interface.GetButton(Pages::Mass) == Button::State::LONG_PRESSED)
+    //     {
+    //     }
+    //     else
+    //     {
+    //         float touchwheel_input = hw->getTouchwheel().GetSpeed();
+    //         if (touchwheel_input != 0.0f)
+    //         {
+    //             touch_timer = 0;
+    //             system_data.transmitter_width = fmin(system_data.transmitter_width + touchwheel_input * 0.1f, 1.0f);
+    //             transmission_beam->SetWidth(system_data.transmitter_width);
+    //         }
+    //     }
+    // }
+    // else
+    // {
+    //     tooltip_freq->SetActive(false);
+    //     transmission_beam->SetMode(C_TransmissionBeam::IDLE);
+    // }
 }

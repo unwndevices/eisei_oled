@@ -2,6 +2,7 @@
 #define SIGNAL_H
 #include <vector>
 #include <functional>
+#include <map>
 
 #define CONNECT_SLOT_1(signalName, memberFunc, objPtr) \
     signalName.Connect(std::bind(&std::remove_reference<decltype(*objPtr)>::type::memberFunc, objPtr, std::placeholders::_1))
@@ -13,22 +14,35 @@ class Signal
 {
 public:
     using Slot = std::function<void(Args...)>;
+    using SlotID = uint8_t; // ID type for Slots
 
-    void Connect(Slot slot)
+    SlotID Connect(Slot slot)
     {
-        m_slots.push_back(slot);
+        SlotID newId = nextSlotId++;
+        m_slots.insert({newId, slot});
+        return newId;
+    }
+
+    void Disconnect(SlotID id)
+    {
+        m_slots.erase(id);
+    }
+
+    void DisconnectAll()
+    {
+        m_slots.clear();
     }
 
     void Emit(Args... args)
     {
-        for (const auto &slot : m_slots)
+        for (const auto &idSlotPair : m_slots)
         {
-            slot(args...);
+            idSlotPair.second(args...);
         }
     }
 
 private:
-    std::vector<Slot> m_slots;
+    std::map<SlotID, Slot> m_slots;
+    uint8_t nextSlotId = 0; // This will auto-increment for each new Slot
 };
-
 #endif // SIGNAL_H

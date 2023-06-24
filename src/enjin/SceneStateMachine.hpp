@@ -5,7 +5,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "HardwareManager.hpp"
+#include "Hardware.hpp"
 #include "Scene.hpp"
 class SceneStateMachine
 {

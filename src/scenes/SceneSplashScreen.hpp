@@ -8,10 +8,12 @@
 #include "enjin/Components.hpp"
 #include "assets/splashscreen.h"
 
+#include "InterfaceManager.hpp"
+
 class SceneSplashScreen : public Scene
 {
 public:
-    SceneSplashScreen(SceneStateMachine &sceneStateMachine) : sceneStateMachine(sceneStateMachine){};
+    SceneSplashScreen(SceneStateMachine &sceneStateMachine, InterfaceManager &interface) : sceneStateMachine(sceneStateMachine), interface(interface){};
 
     void OnCreate() override;
 
@@ -30,6 +32,7 @@ public:
 
 private:
     SceneStateMachine &sceneStateMachine;
+    InterfaceManager &interface;
 
     ObjectCollection objects;
     uint8_t switchToState = 0;

@@ -13,12 +13,12 @@
 #include "enjin/UI/RatioDial.hpp"
 #include "enjin/UI/Tooltip.hpp"
 
-#include "HardwareManager.hpp"
+#include "InterfaceManager.hpp"
 
 class SceneRatio : public Scene
 {
 public:
-    SceneRatio(SceneStateMachine &sceneStateMachine) : sceneStateMachine(sceneStateMachine){};
+    SceneRatio(SceneStateMachine &sceneStateMachine, InterfaceManager &interface) : sceneStateMachine(sceneStateMachine), interface(interface){};
 
     void OnCreate() override;
 
@@ -37,6 +37,8 @@ public:
 
 private:
     SceneStateMachine &sceneStateMachine;
+    InterfaceManager &interface;
+
     ObjectCollection objects;
     uint8_t switchToState = 0;
 
