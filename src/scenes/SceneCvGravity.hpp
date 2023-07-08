@@ -28,9 +28,9 @@ public:
         objects.Add(slider);
         shaper = std::make_shared<BeamShaper>();
         objects.Add(shaper);
-        interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&SceneCvGravity::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+        //interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&SceneCvGravity::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
         // interface.hw.GetTouchwheel().onClick.Connect(std::bind(&SceneCvGravity::ProcessTouch, this, std::placeholders::_1));
-        interface.hw.GetTouchwheel().onButtonClick.Connect(std::bind(&SceneCvGravity::ProcessTouchButton, this, std::placeholders::_1));
+        //interface.hw.GetTouchwheel().onButtonClick.Connect(std::bind(&SceneCvGravity::ProcessTouchButton, this, std::placeholders::_1));
     };
     void OnDestroy() override{};
 

@@ -21,13 +21,12 @@ public:
     SceneBase(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine),
                                                                               interface(context.interface), data(context.data), bg(128, 128)
     {
-        // Initialize common elements here
     }
 
     void OnCreate() override
     {
 
-        // buffer.setFont(&VGATypewriter8pt7b);
+        buffer.setFont(&VGATypewriter8pt7b);
         buffer.setTextColor(15U);
         transmission_beam = std::make_shared<TransmissionBeam>();
         transmission_beam->SetPhase(data.phase[4]);
@@ -47,6 +46,12 @@ public:
         main_planet = std::make_shared<Satellite>(0, 12, 8u);
         objects.Add(main_planet);
     }
+
+    void OnActivate() override
+    {
+        touchTimer.Restart();
+        sceneTimer.Restart();
+    };
 
     void OnDestroy() override{};
 
@@ -74,7 +79,6 @@ public:
         display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
     }
 
-    void OnActivate() override{};
     void OnDeactivate() override{};
 
     void ProcessInput() override{};
@@ -131,4 +135,4 @@ protected:
     };
 };
 
-#endif// SCENEBASE_HPP
+#endif // SCENEBASE_HPP

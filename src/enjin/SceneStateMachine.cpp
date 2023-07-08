@@ -34,7 +34,7 @@ void SceneStateMachine::Draw(Display &display)
     }
 }
 
-uint8_t SceneStateMachine::Add(std::shared_ptr<Scene> scene)
+uint8_t SceneStateMachine::Add(Scene *scene)
 {
     auto inserted = scenes.insert(std::make_pair(insertedSceneID, scene));
 
@@ -73,11 +73,9 @@ void SceneStateMachine::SwitchTo(uint8_t id)
     {
         if (curScene)
         {
-            // If we have a current scene, we call its OnDeactivate method.
             curScene->OnDeactivate();
         }
 
-        // Setting the current scene ensures that it is updated and drawn.
         curScene = it->second;
 
         curScene->OnActivate();

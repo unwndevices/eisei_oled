@@ -21,7 +21,7 @@ public:
     void Draw(Display &display);
 
     // Adds a scene to the state machine and returns the id of that scene.
-    uint8_t Add(std::shared_ptr<Scene> scene);
+    uint8_t Add(Scene *scene);
 
     // Transitions to scene with specified id.
     void SwitchTo(uint8_t id);
@@ -31,14 +31,13 @@ public:
 
 private:
     // Stores all of the scenes associated with this state machine.
-    std::unordered_map<uint8_t, std::shared_ptr<Scene>> scenes;
+    std::unordered_map<uint8_t, Scene *> scenes;
 
     // Stores a reference to the current scene. Used when drawing/updating.
-    std::shared_ptr<Scene> curScene;
-
+    Scene *curScene;
     // Stores our current scene id. This is incremented whenever
     // a scene is added.
     unsigned int insertedSceneID;
 };
 
-#endif// SCENESTATEMACHINE_HPP
+#endif // SCENESTATEMACHINE_HPP
