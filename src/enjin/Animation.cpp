@@ -1,8 +1,9 @@
 #include "Animation.hpp"
+#include <Arduino.h>
 
-Animation::Animation(FacingDirection direction) : frames(0), currentFrameIndex(0), currentFrameTime(0), direction(direction), releaseFirstFrame(true) {}
+Animation::Animation(FacingDirection direction) : frames(0), currentFrameIndex(0), currentFrameTime(0), direction(direction), releaseFirstFrame(true), isLooped(true) {}
 
-void Animation::AddFrame(const uint8_t *texture, int textureID, int width, int height, uint16_t frameTime, bool isBool)
+void Animation::AddFrame(const uint8_t *texture, int textureID, int width, int height, uint16_t frameTime, bool looped)
 {
     FrameData data;
     data.texture = texture;
@@ -10,30 +11,8 @@ void Animation::AddFrame(const uint8_t *texture, int textureID, int width, int h
     data.width = width;
     data.height = height;
     data.displayTimeMs = frameTime;
-    data.isBool = isBool;
     frames.push_back(data);
-}
-
-void Animation::AddFrameAction(unsigned int frame,
-                               AnimationAction action)
-{
-    if (frame < frames.size())
-    {
-        auto actionKey = actions.find(frame);
-
-        if (actionKey == actions.end())
-        {
-            // We set the bit at the frame position whenever
-            // we first add an action at that position.
-            framesWithActions.SetBit(frame);
-            actions.insert(std::make_pair(frame,
-                                          std::vector<AnimationAction>{action}));
-        }
-        else
-        {
-            actionKey->second.emplace_back(action);
-        }
-    }
+    isLooped = looped;
 }
 
 const FrameData *Animation::GetCurrentFrame() const
@@ -48,22 +27,21 @@ const FrameData *Animation::GetCurrentFrame() const
 
 bool Animation::UpdateFrame(uint16_t deltaTime)
 {
+    // TODO: A bit cumbersome. Is there another way to do this?
     if (releaseFirstFrame)
     {
-        // To be called when we are releasing the
-        // first frame of an animation.
         RunActionForCurrentFrame();
         releaseFirstFrame = false;
         return true;
     }
 
-    if (frames.size() > 1)
+    if (frames.size() > 1 && (isLooped || currentFrameIndex < frames.size() - 1))
     {
         currentFrameTime += deltaTime;
 
         if (currentFrameTime >= frames[currentFrameIndex].displayTimeMs)
         {
-            currentFrameTime = 0;
+            currentFrameTime = 0.f;
             IncrementFrame();
             RunActionForCurrentFrame();
             return true;
@@ -110,10 +88,34 @@ FacingDirection Animation::GetDirection() const
     return direction;
 }
 
+void Animation::AddFrameAction(unsigned int frame, AnimationAction action)
+{
+    if (frame < frames.size())
+    {
+
+        auto actionKey = actions.find(frame);
+
+        if (actionKey == actions.end())
+        {
+            framesWithActions.SetBit(frame);
+            actions.insert(std::make_pair(frame, std::vector<AnimationAction>{action}));
+        }
+        else
+        {
+            actionKey->second.emplace_back(action);
+        }
+    }
+    else
+    {
+        log_d("Frame index %u is out of range. Frames size: %zu", frame, frames.size());
+    }
+}
+
 void Animation::RunActionForCurrentFrame()
 {
     if (actions.size() > 0)
     {
+
         if (framesWithActions.GetBit(currentFrameIndex))
         {
             auto actionsToRun = actions.at(currentFrameIndex);
@@ -124,4 +126,14 @@ void Animation::RunActionForCurrentFrame()
             }
         }
     }
+}
+
+void Animation::SetLooped(bool looped)
+{
+    isLooped = looped;
+}
+
+bool Animation::IsLooped()
+{
+    return isLooped;
 }

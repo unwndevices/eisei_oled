@@ -1,7 +1,7 @@
 #include "C_Position.hpp"
 
-C_Position::C_Position(Object *owner)
-    : Component(owner), position(0, 0) {}
+C_Position::C_Position(Object *owner, int16_t x, int16_t y)
+    : Component(owner), position(x, y) {}
 
 void C_Position::SetPosition(int16_t x, int16_t y)
 {

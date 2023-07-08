@@ -11,16 +11,15 @@ class S_Drawable
 {
 public:
     void Add(std::vector<std::shared_ptr<Object>> &object);
+    void Add(std::shared_ptr<Object> object);
 
     void ProcessRemovals();
 
     void Draw(GFXcanvas8 &canvas);
-
-private:
-    void Add(std::shared_ptr<Object> object);
     void Sort();
 
-    std::map<DrawLayer, std::vector<std::shared_ptr<Object>>> drawables;
+private:
+    std::map<DrawLayer, std::vector<std::shared_ptr<C_Drawable>>> drawables;
 };
 
 #endif /* S_Drawable_hpp */

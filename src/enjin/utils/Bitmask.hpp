@@ -11,8 +11,8 @@ public:
     // Overwrites this bitmask.
     void SetMask(Bitmask &other);
 
-    // Returns binary representation of bitmask.
-    uint32_t GetMask() const;
+    // Returns binary representation of bitmask at given index.
+    uint32_t GetMask(int index) const;
 
     // Returns true if bit at pos = 1, else false.
     bool GetBit(int pos) const;
@@ -30,7 +30,7 @@ public:
     void Clear();
 
 private:
-    uint32_t bits; // 1.
+    uint32_t bits[4];
 };
 
 #endif /* Bitmask_hpp */

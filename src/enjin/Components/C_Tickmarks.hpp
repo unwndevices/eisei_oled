@@ -7,19 +7,11 @@
 #include <Adafruit_GFX.h>
 #include <memory>
 #include <iostream>
-class C_Tickmarks : public Component, public C_Drawable
+class C_Tickmarks : public C_Drawable
 {
 public:
-    C_Tickmarks(Object *owner, Vector2 center, int16_t startAngle, int16_t stopAngle, uint8_t spacing, uint8_t length, uint8_t radius) : Component(owner),
-                                                                                                                                         center(center),
-                                                                                                                                         startAngle(startAngle),
-                                                                                                                                         stopAngle(stopAngle),
-                                                                                                                                         spacing(spacing),
-                                                                                                                                         length(length),
-                                                                                                                                         radius(radius),
-                                                                                                                                         internalCanvas(127, 127){};
-
-    void Awake() override;
+    C_Tickmarks(Object *owner, Vector2 center, int16_t startAngle, int16_t stopAngle, uint8_t spacing, uint8_t length, uint8_t radius);
+     void Awake() override;
     void Draw(GFXcanvas8 &canvas) override;
     bool ContinueToDraw() const override;
     void SetValue(float value);
@@ -37,4 +29,4 @@ private:
 
 ///////////////////////////////////////////////////////////////////
 
-#endif // C_TICKMARKS_HPP
+#endif// C_TICKMARKS_HPP

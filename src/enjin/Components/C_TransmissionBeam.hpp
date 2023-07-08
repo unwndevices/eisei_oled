@@ -12,7 +12,7 @@
 
 #include "enjin/Object.hpp"
 
-class C_TransmissionBeam : public Component, public C_Drawable
+class C_TransmissionBeam : public C_Drawable
 {
 public:
     enum
@@ -22,17 +22,17 @@ public:
         WIDTH_EDIT
     };
 
-    C_TransmissionBeam(Object *owner) : Component(owner),
-                                        internalCanvas(127, 127),
-                                        aim_point{(64, 127), (64, 127), (64, 127)},
-                                        width(0.0f),
-                                        phase(0.5f),
-                                        color(12),
-                                        phase_angle(0),
-                                        half_width(0),
-                                        start_angle(0),
-                                        end_angle(0),
-                                        mode(IDLE)
+    C_TransmissionBeam(Object *owner, uint8_t width, uint8_t height) : C_Drawable(width, height), Component(owner),
+                                                                       internalCanvas(width, height),
+                                                                       aim_point{(64, 127), (64, 127), (64, 127)},
+                                                                       width(0.0f),
+                                                                       phase(0.5f),
+                                                                       color(12),
+                                                                       phase_angle(0),
+                                                                       half_width(0),
+                                                                       start_angle(0),
+                                                                       end_angle(0),
+                                                                       mode(IDLE)
     {
         position = owner->GetComponent<C_Position>();
 
@@ -121,7 +121,6 @@ private:
     GFXcanvas8 internalCanvas;
     Vector2 aim_point[3];
     int16_t start_angle, end_angle;
-    std::shared_ptr<C_Position> position;
 
     int mode;
     uint8_t timer = 0;

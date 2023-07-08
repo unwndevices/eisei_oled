@@ -1,7 +1,7 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 #include <stdint.h>
-
+#include <math.h>
 typedef struct Vector2
 {
     int16_t x;
@@ -11,16 +11,30 @@ typedef struct Vector2
 
     static inline Vector2 Lerp(const Vector2 &v1, const Vector2 &v2, float t)
     {
-        return Vector2((int16_t)((float)v1.x + (float)(v2.x - v1.x) * t), (int16_t)((float)v1.y + (float)(v2.y - v1.y) * t));
+        return Vector2((int16_t)(v1.x + (int16_t)(ceil((v2.x - v1.x) * t))), (int16_t)(v1.y + (int16_t)(ceil((v2.y - v1.y) * t))));
     }
 
+    static inline Vector2 Lerp(const Vector2 &v1, const Vector2 &v2, uint16_t t)
+    {
+        // Linear interpolation in integer space.
+        return Vector2((v1.x * (254 - t) + v2.x * t) / 254,
+                       (v1.y * (254 - t) + v2.y * t) / 254);
+    }
     Vector2 operator+(const Vector2 &other) const
     {
         return Vector2(x + other.x, y + other.y);
     }
-    Vector2 operator+=(const Vector2 &other) const
+    Vector2 &operator+=(const Vector2 &other)
     {
-        return Vector2(x + other.x, y + other.y);
+        x += other.x;
+        y += other.y;
+        return *this;
+    }
+    Vector2 &operator-=(const Vector2 &other)
+    {
+        x -= other.x;
+        y -= other.y;
+        return *this;
     }
 
     Vector2 operator-(const Vector2 &other) const

@@ -11,7 +11,7 @@
 
 using namespace Polar;
 
-class C_Satellite : public Component, public C_Drawable
+class C_Satellite : public C_Drawable
 {
 public:
     C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color);
@@ -29,6 +29,16 @@ public:
         abs_center = position;
     }
 
+    void SetDistance(uint8_t distance)
+    {
+        from_center = distance;
+    }
+    void SetRadius(uint8_t radius)
+    {
+        radius = radius;
+        GenerateSatellite();
+    }
+
 private:
     float phase;
     uint8_t radius, from_center, identity;
@@ -36,9 +46,10 @@ private:
     GFXcanvas8 internalCanvas;
     static uint8_t amount;
     static Vector2 abs_center;
-    std::shared_ptr<C_Position> position;
     uint8_t color;
     bool is_planet;
+
+    void GenerateSatellite();
 };
 
 #endif // !C_SATELLITE_HPP

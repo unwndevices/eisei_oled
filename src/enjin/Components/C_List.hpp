@@ -12,12 +12,12 @@
 #include <iostream>
 
 template <typename T>
-class C_List : public Component, public C_Drawable
+class C_List : public C_Drawable
 {
 public:
     using GetStringFunc = std::function<std::string(const T &)>;
 
-    C_List(Object *owner, const std::vector<T> &items, GetStringFunc getString) : Component(owner), canvas(64, 127), items(items), getString(getString), selectedIndex(0), previousIndex(0)
+    C_List(Object *owner, const std::vector<T> &items, GetStringFunc getString, uint8_t width, uint8_t height) : C_Drawable(width, height), Component(owner), canvas(width, height), items(items), getString(getString), selectedIndex(0), previousIndex(0)
     {
         position = owner->GetComponent<C_Position>();
 
@@ -89,15 +89,14 @@ public:
         }
 
         // Clear the canvas
-        this->canvas.fillScreen(7);
+        this->canvas.fillScreen(16U);
 
         // Calculate the start index and end index for the items to be displayed
         int start = std::max(0, selectedIndex - 2);
         int end = std::min((int)items.size(), selectedIndex + 3);
 
         // Calculate the y offset for drawing the items
-        int yOffset = 8 + (2 - std::min(2, selectedIndex)) * 22;
-
+        int yOffset = (canvas.height() / 2) + 4 - ((selectedIndex - start) * 22);
         // Draw the items
         for (int i = start; i < end; ++i)
         {
@@ -119,7 +118,7 @@ public:
             }
         }
 
-        canvas.drawGrayscaleBitmap(position->GetPosition().x, position->GetPosition().y, this->canvas.getBuffer(), 0x7, 64, 127);
+        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, this->canvas.getBuffer(), 16U, 64, 127);
     };
 
     bool ContinueToDraw() const override
@@ -170,9 +169,7 @@ private:
 
     int marqueeOffset, marqueeTimer, marqueeSpeed, marqueeStartDelay, marqueeEndDelay = 0;
 
-    std::shared_ptr<C_Position> position;
-
     GFXcanvas8 canvas;
 };
 
-#endif // C_LIST_HPP
+#endif// C_LIST_HPP

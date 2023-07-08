@@ -9,42 +9,27 @@ void S_Drawable::Add(std::vector<std::shared_ptr<Object>> &objects)
 
     Sort();
 }
-
 void S_Drawable::Add(std::shared_ptr<Object> object)
 {
-    std::shared_ptr<C_Drawable> draw = object->GetDrawable();
+    std::vector<std::shared_ptr<C_Drawable>> objectDrawables = object->GetDrawables();
 
-    if (draw)
+    for (auto &drawable : objectDrawables)
     {
-        DrawLayer layer = draw->GetDrawLayer();
+        DrawLayer layer = drawable->GetDrawLayer();
 
-        auto itr = drawables.find(layer);
+        auto itr = this->drawables.find(layer);
 
-        if (itr != drawables.end())
+        if (itr != this->drawables.end())
         {
-            drawables[layer].push_back(object);
+            this->drawables[layer].push_back(drawable);
         }
         else
         {
-            std::vector<std::shared_ptr<Object>> objs;
-            objs.push_back(object);
+            std::vector<std::shared_ptr<C_Drawable>> newDrawableList;
+            newDrawableList.push_back(drawable);
 
-            drawables.insert(std::make_pair(layer, objs));
+            this->drawables.insert(std::make_pair(layer, newDrawableList));
         }
-    }
-}
-
-void S_Drawable::Sort()
-{
-    for (auto &layer : drawables)
-    {
-        std::sort(layer.second.begin(), layer.second.end(),
-                  [](std::shared_ptr<Object> a,
-                     std::shared_ptr<Object> b) -> bool
-                  {
-                      return a->GetDrawable()->GetSortOrder() <
-                             b->GetDrawable()->GetSortOrder();
-                  });
     }
 }
 
@@ -54,26 +39,43 @@ void S_Drawable::Draw(GFXcanvas8 &canvas)
     {
         for (auto &drawable : layer.second)
         {
-            drawable->Draw(canvas);
+            if (drawable->GetVisibility())
+            {
+                drawable->Draw(canvas);
+            }
         }
     }
 }
+
+void S_Drawable::Sort()
+{
+    for (auto &layer : drawables)
+    {
+        std::sort(layer.second.begin(), layer.second.end(),
+                  [](std::shared_ptr<C_Drawable> a,
+                     std::shared_ptr<C_Drawable> b) -> bool
+                  {
+                      return a->GetSortOrder() < b->GetSortOrder();
+                  });
+    }
+}
+
 void S_Drawable::ProcessRemovals()
 {
     for (auto &layer : drawables)
     {
-        auto objIterator = layer.second.begin();
-        while (objIterator != layer.second.end())
+        auto drawIterator = layer.second.begin();
+        while (drawIterator != layer.second.end())
         {
-            auto obj = *objIterator;
+            auto drawable = *drawIterator;
 
-            if (obj->IsQueuedForRemoval())
+            if (drawable->GetOwner()->IsQueuedForRemoval())
             {
-                objIterator = layer.second.erase(objIterator);
+                drawIterator = layer.second.erase(drawIterator);
             }
             else
             {
-                ++objIterator;
+                ++drawIterator;
             }
         }
     }

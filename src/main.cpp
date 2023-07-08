@@ -5,13 +5,12 @@
 
 #include "utils/utils.h"
 
-#include "I2CShare.hpp"
+#include "SharedContext.hpp"
 #include "Game.hpp"
 
-Hardware hw;
-InterfaceManager interface;
+SharedContext context;
 
-Game eisei(interface);
+Game eisei(context);
 
 void setup()
 {
@@ -19,7 +18,7 @@ void setup()
   USBSerial.begin(115200);
   USBSerial.setDebugOutput(true);
   // I2C
-  interface.Init();
+  context.interface.Init();
   //  the Game Engine has to be initialized after the hardware
   eisei.Init();
   log_d("Game initialized");
@@ -27,7 +26,9 @@ void setup()
 
 void loop()
 {
-  interface.Update();
+
+  context.interface.Update();
+  
   eisei.ProcessInput();
   eisei.Update();
   eisei.Draw();

@@ -55,5 +55,46 @@ public:
         else
             return 1 + 16 * (t - 1) * t * t * t * t;
     }
+
+    // Easing function that starts fast and ends slow.
+    static float EaseInCubic(float t)
+    {
+        return t * t * t;
+    }
+
+    // Easing function that starts slow and ends fast.
+    static float EaseOutCubic(float t)
+    {
+        float t1 = t - 1;
+        return t1 * t1 * t1 + 1;
+    }
+
+    // Easing function that starts and ends slow, with a peak and dip in the middle.
+    static float EaseInOutCirc(float t)
+    {
+        if (t < 0.5)
+            return (1 - sqrt(1 - 4 * t * t)) * 0.5;
+        else
+            return (sqrt(-(2 * t - 3) * (2 * t - 1)) + 1) * 0.5;
+    }
+
+    // Easing function that starts slow, accelerates, and ends slow.
+    static float EaseInQuart(float t)
+    {
+        return t * t * t * t;
+    }
+
+    // Easing function that starts fast, decelerates, and ends fast.
+    static float EaseOutQuart(float t)
+    {
+        float t1 = t - 1;
+        return 1 - t1 * t1 * t1 * t1;
+    }
+
+    // Easing function that starts and ends slow, with a peak and dip in the middle.
+    static float EaseInOutSine(float t)
+    {
+        return -0.5 * (cos(PI * t) - 1);
+    }
 };
 #endif /* EASING_HPP */

@@ -6,14 +6,14 @@
 #include "enjin/SceneStateMachine.hpp"
 #include "enjin/ObjectCollection.hpp"
 #include "enjin/Components.hpp"
-#include "assets/splashscreen.h"
+#include "assets/intro.h"
 
-#include "InterfaceManager.hpp"
+#include "SharedContext.hpp"
 
 class SceneSplashScreen : public Scene
 {
 public:
-    SceneSplashScreen(SceneStateMachine &sceneStateMachine, InterfaceManager &interface) : sceneStateMachine(sceneStateMachine), interface(interface){};
+    SceneSplashScreen(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine), interface(context.interface), data(context.data){};
 
     void OnCreate() override;
 
@@ -25,6 +25,10 @@ public:
     void ProcessInput() override{};
     void LateUpdate(uint16_t deltaTime) override;
 
+    void NextScene()
+    {
+        sceneStateMachine.SwitchTo(1);
+    };
     void SetSwitchToScene(uint8_t id);
 
     void Update(uint16_t deltaTime) override;
@@ -32,7 +36,9 @@ public:
 
 private:
     SceneStateMachine &sceneStateMachine;
+    SharedContext &context;
     InterfaceManager &interface;
+    Data &data;
 
     ObjectCollection objects;
     uint8_t switchToState = 0;

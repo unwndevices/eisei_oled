@@ -11,23 +11,23 @@ public:
     InterfaceManager(){};
     void Init()
     {
-        hw.Init();
         i2c_slave.Init();
+        hw.Init();
     }
 
     void Update()
     {
         hw.Update();
+        i2c_slave.SetInterfaceChanged();
     };
 
-    Button::State GetButton(int id)
+    Button::State GetButtonState(int id)
     {
-        return hw.GetButton(id);
+        return hw.GetButtonState(id);
     }
 
     Hardware hw;
     I2CShareSlave i2c_slave;
-
 };
 
 #endif // HARDWAREMANAGER_HPP

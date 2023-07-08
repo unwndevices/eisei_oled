@@ -7,27 +7,24 @@
 #include "enjin/Components.hpp"
 
 #include "enjin/UI/Satellite.hpp"
-#include "enjin/UI/Slider.hpp"
 #include "enjin/UI/Tooltip.hpp"
 #include "enjin/UI/GravityFields.hpp"
 #include "enjin/UI/TransmissionBeam.hpp"
+#include "enjin/UI/FillUpGauge.hpp"
 
-#include "I2CShare.hpp"
-
-#include "InterfaceManager.hpp"
+#include "SharedContext.hpp"
 
 class SceneMain : public Scene
 {
 public:
-    SceneMain(SceneStateMachine &sceneStateMachine, InterfaceManager &interface) : sceneStateMachine(sceneStateMachine), interface(interface), stars(128, 128){};
+    SceneMain(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine), interface(context.interface), data(context.data), stars(128, 128){};
 
     void OnCreate() override;
-
     void OnDestroy() override{};
 
-    void OnActivate() override{};
+    void OnActivate() override;
+    void OnDeactivate() override;
 
-    void OnDeactivate() override{};
     void ProcessInput() override;
     void ProcessButton(int id, Button::State state);
     void LateUpdate(uint16_t deltaTime) override;
@@ -39,7 +36,9 @@ public:
 
 private:
     SceneStateMachine &sceneStateMachine;
+    SharedContext &context;
     InterfaceManager &interface;
+    Data &data;
 
     ObjectCollection objects;
     uint8_t switchToState = 0;
@@ -50,15 +49,10 @@ private:
 
     std::shared_ptr<Satellite> main_planet;
     std::vector<std::shared_ptr<Satellite>> satellites;
-
-    std::shared_ptr<Tooltip> tooltip_freq;
-    std::shared_ptr<Slider> slider;
-    std::shared_ptr<GravityFields> gravity_fields;
     std::shared_ptr<TransmissionBeam> transmission_beam;
 
-    unsigned long touch_timer = 0;
-    unsigned long touch_timeout = 5000;
-    bool touch_active = false;
+    std::shared_ptr<Tooltip> tooltip_freq;
+    std::shared_ptr<FillUpGauge> overlay;
 };
 
 #endif // !SCENEMAIN_H

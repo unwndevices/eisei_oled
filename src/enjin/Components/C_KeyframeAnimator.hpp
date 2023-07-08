@@ -1,5 +1,5 @@
-#ifndef C_KeyframeAnimator_HPP
-#define C_KeyframeAnimator_HPP
+#ifndef C_KEYFRAMEANIMATOR_HPP
+#define C_KEYFRAMEANIMATOR_HPP
 
 #include <memory>
 #include <vector>
@@ -55,4 +55,4 @@ private:
     Vector2 InterpolatePosition(Keyframe kf1, Keyframe kf2, float t);
 };
 
-#endif /* C_KeyframeAnimator_HPP */
+#endif// C_KEYFRAMEANIMATOR_HPP

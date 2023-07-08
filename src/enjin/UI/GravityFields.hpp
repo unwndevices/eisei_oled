@@ -12,7 +12,7 @@ public:
     GravityFields(const std::vector<std::shared_ptr<Satellite>> &satellites)
     {
         position = AddComponent<C_Position>();
-        gravity_fields = AddComponent<C_GravityFields>(satellites);
+        gravity_fields = AddComponent<C_GravityFields>(satellites, 127, 127);
         gravity_fields->SetDrawLayer(DrawLayer::Background);
     }
 

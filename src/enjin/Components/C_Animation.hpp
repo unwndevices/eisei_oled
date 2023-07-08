@@ -1,11 +1,13 @@
-#ifndef C_Animation_hpp
-#define C_Animation_hpp
+#ifndef C_ANIMATION_HPP
+#define C_ANIMATION_HPP
+#include <unordered_map>
 
 #include <memory>
 #include <map>
 #include "Component.hpp"
 #include "C_Sprite.hpp"
 #include "../Animation.hpp"
+#include "enjin/EnumClassHash.hpp"
 
 enum class AnimationState
 {
@@ -15,6 +17,8 @@ enum class AnimationState
     SittingTransition,
     Sitting
 };
+
+using AnimationList = std::unordered_map<FacingDirection, std::shared_ptr<Animation>, EnumClassHash>;
 
 class C_Animation : public Component
 {
@@ -27,22 +31,21 @@ public:
 
     // Add animation to object. We need its state as well
     // so that we can switch to it.
-    void AddAnimation(AnimationState state,
-                      std::shared_ptr<Animation> animation);
+    void AddAnimation(AnimationState state, AnimationList &animationList);
 
+    void SetAnimationDirection(FacingDirection dir);
     // Set current animation states.
     void SetAnimationState(AnimationState state);
+    void AddAnimationAction(AnimationState state, FacingDirection dir, int frame, AnimationAction action);
 
     // Returns current animation state.
     const AnimationState &GetAnimationState() const;
 
 private:
     std::shared_ptr<C_Sprite> sprite;
-    std::map<AnimationState, std::shared_ptr<Animation>> animations;
+    std::unordered_map<AnimationState, AnimationList, EnumClassHash> animations;
 
-    // We store a reference to the current animation so we
-    // can quickly update and draw it.
     std::pair<AnimationState, std::shared_ptr<Animation>> currentAnimation;
 };
 
-#endif /* C_Animation_hpp */
+#endif // C_ANIMATION_HPP

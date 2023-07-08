@@ -13,20 +13,22 @@ void C_Animation::Awake()
 
 void C_Animation::SetAnimationState(AnimationState state)
 {
-    // We only set an animation of it is not already
-    // our current animation.
     if (currentAnimation.first == state)
     {
         return;
     }
 
-    auto animation = animations.find(state);
-    if (animation != animations.end())
+    auto animationList = animations.find(state);
+    if (animationList != animations.end())
     {
-        currentAnimation.first = animation->first;
-        currentAnimation.second = animation->second;
+        auto animation = animationList->second.find(FacingDirection::Right);
 
-        currentAnimation.second->Reset();
+        if (animation != animationList->second.end())
+        {
+            currentAnimation.first = animationList->first;
+            currentAnimation.second = animation->second;
+            currentAnimation.second->Reset();
+        }
     }
 }
 
@@ -44,26 +46,33 @@ void C_Animation::Update(uint8_t deltaTime)
         if (newFrame)
         {
             const FrameData *data = currentAnimation.second->GetCurrentFrame();
-            if (data->isBool)
-            {
-                sprite->Load((const bool *)data->texture, data->width, data->height);
-            }
-            else
-            {
-                sprite->Load(data->texture, data->width, data->height);
-            }
+            sprite->Load(data->texture, data->width, data->height);
             sprite->LoadFrame(data->id);
         }
     }
 }
 
-void C_Animation::AddAnimation(
-    AnimationState state, std::shared_ptr<Animation> animation)
+void C_Animation::AddAnimation(AnimationState state, AnimationList &animationList)
 {
-    auto inserted = animations.insert(std::make_pair(state, animation));
+    animations.insert(std::make_pair(state, animationList));
 
     if (currentAnimation.first == AnimationState::None)
     {
         SetAnimationState(state);
+    }
+}
+
+void C_Animation::AddAnimationAction(AnimationState state, FacingDirection dir, int frame, AnimationAction action)
+{
+    auto animationList = animations.find(state);
+
+    if (animationList != animations.end())
+    {
+        auto animation = animationList->second.find(dir);
+
+        if (animation != animationList->second.end())
+        {
+            animation->second->AddFrameAction(frame, action);
+        }
     }
 }

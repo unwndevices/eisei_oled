@@ -34,7 +34,7 @@ private:
     const float baselineSmoothingFactor = 0.9995;
 
     // state
-    uint16_t _threshold = 2000;
+    uint16_t _threshold = 200;
     bool _pressed = false;
     int _lastValue = 0;
 };
@@ -45,7 +45,9 @@ public:
     enum Halves
     {
         LEFT,
-        RIGHT
+        RIGHT,
+        TOP,
+        BOTTOM
     };
     enum Direction
     {
@@ -57,7 +59,7 @@ public:
     TouchWheel(){};
 
     // Constructor that initializes the number of sensors
-    uint8_t touchGpio[8]{7, 9, 8, 3, 10, 5, 4, 6};
+    uint8_t touchGpio[8]{9, 8, 3, 10, 5, 4, 6, 7};
     CapTouch t[NUM_SENSORS];
     void Init();
     float GetPosition() { return lastPosition; };
@@ -67,39 +69,75 @@ public:
     {
         return distance;
     };
+    int GetButtonPress() const;
+
     Direction GetIncrement()
     {
-        if (incrementDistance < 0.0f)
+        if (incrementDistance <= -0.1f)
+        {
+            incrementDistance = 0.0f;
             return DECREASE;
-        else if (incrementDistance > 0.0f)
+        }
+        else if (incrementDistance >= 0.1f)
+        {
+            incrementDistance = 0.0f;
             return INCREASE;
+        }
         else
         {
             return IDLE;
         }
     };
     bool ReadValues();
+
     void Update()
     {
         if (ReadValues())
         {
             onPositionChanged.Emit(GetSpeed());
             incrementDistance += GetSpeed();
-
-            if (incrementDistance >= 0.075f || incrementDistance <= -0.075f)
+            if (!clickDetected)
             {
-                onIncrementChanged.Emit(GetIncrement());
-                incrementDistance = 0.0f;
+                clickDetected = true;
+                pressTime = millis();
             }
         }
         else
         {
+            if (clickDetected)
+            {
+                releaseTime = millis();
+                if (releaseTime - pressTime <= clickTime)
+                {
+                    float buttonPosition = GetPosition();
+                    int buttonId = -1;
+
+                    for (int id = 0; id < numButtons; id++)
+                    {
+                        float lowerBound = 0.003f + static_cast<float>(id) / numButtons;
+                        float upperBound = static_cast < float > (id + 1) / numButtons - 0.003f;
+
+                        if (buttonPosition >= lowerBound && buttonPosition < upperBound)
+                        {
+                            buttonId = id;
+                            break;
+                        }
+                    }
+
+                    if (buttonId != -1)
+                    {
+                        onButtonClick.Emit(static_cast<int>(buttonId));
+                    }
+                }
+                onClick.Emit(GetSideVertical());
+                clickDetected = false;
+            }
             incrementDistance = 0.0f;
         }
-    };
+    }
 
     bool IsTouched() { return touched; };
-    Halves GetStartingSide()
+    Halves GetSideHorizontal()
     {
         if ((startPosition >= 0.0f && startPosition <= 0.25f) || (startPosition > 0.75f && startPosition <= 1.0f))
             return LEFT;
@@ -108,16 +146,30 @@ public:
             return RIGHT;
         }
     };
+
+    Halves GetSideVertical()
+    {
+        if (startPosition >= 0.0f && startPosition <= 0.5f)
+            return TOP;
+        else
+        {
+            return BOTTOM;
+        }
+    }
     int sensorValues[10];
     int direction;
     float speed;
 
     Signal<float> onPositionChanged;
-    Signal<Direction> onIncrementChanged;
+    // Signal<Direction> onIncrementChanged;
+    Signal<Halves> onClick;
+    Signal<int> onButtonClick;
+
+    void SetNumButtons(int num) { numButtons = num; }
 
 private:
     ///////////////////////////////////////////////////////////
-    int touchThreshold = 5000;
+    int touchThreshold = 4000;
     bool touched = false;
     float distance = 0.0f;
     float startPosition = 0.0f;
@@ -127,6 +179,13 @@ private:
     float incrementDistance = 0.0f;
     Direction increment = IDLE;
     float lastIncrement = 0.0f;
+
+    bool clickDetected = false;
+    unsigned long pressTime = 0;
+    unsigned long releaseTime = 0;
+    const unsigned long clickTime = 300;
+    int numButtons = 12; // Default number of buttons
+
     ///////////////////////////////////////////////////////////
     int ReadSensorValue(int sensorNum) { return t[sensorNum].GetValue(); };
 };

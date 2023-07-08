@@ -1,23 +1,37 @@
 #include "Bitmask.hpp"
 
-Bitmask::Bitmask() : bits(0) {}
+Bitmask::Bitmask() : bits{0, 0, 0, 0} {}
 
 void Bitmask::SetMask(Bitmask &other)
 {
-    bits = other.GetMask();
+    for (int i = 0; i < 4; i++)
+    {
+        bits[i] = other.GetMask(i);
+    }
 }
 
-uint32_t Bitmask::GetMask() const
+uint32_t Bitmask::GetMask(int index) const
 {
-    return bits;
+    if (index >= 4)
+    {
+        return 0; // Or throw an error
+    }
+    return bits[index];
 }
 
 bool Bitmask::GetBit(int pos) const
 {
-    return (bits & (1 << pos)) != 0; // 1
+    int index = pos / 32;
+    int bitPos = pos % 32;
+
+    if (index >= 4)
+    {
+        return false; // Or throw an error
+    }
+
+    return (bits[index] & (1 << bitPos)) != 0;
 }
 
-// A simple helper method that calls set or clear bit
 void Bitmask::SetBit(int pos, bool on)
 {
     if (on)
@@ -32,15 +46,34 @@ void Bitmask::SetBit(int pos, bool on)
 
 void Bitmask::SetBit(int pos)
 {
-    bits = bits | 1 << pos; // 2
+    int index = pos / 32;
+    int bitPos = pos % 32;
+
+    if (index >= 4)
+    {
+        return; // Or throw an error
+    }
+
+    bits[index] = bits[index] | (1 << bitPos);
 }
 
 void Bitmask::ClearBit(int pos)
 {
-    bits = bits & ~(1 << pos); // 3
+    int index = pos / 32;
+    int bitPos = pos % 32;
+
+    if (index >= 4)
+    {
+        return; // Or throw an error
+    }
+
+    bits[index] = bits[index] & ~(1 << bitPos);
 }
 
 void Bitmask::Clear()
 {
-    bits = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        bits[i] = 0;
+    }
 }

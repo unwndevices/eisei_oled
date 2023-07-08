@@ -1,61 +1,70 @@
-#ifndef C_SLIDER_HPP
-#define C_SLIDER_HPP
-#include "enjin/Components/Component.hpp"
-#include "enjin/Components/C_Drawable.hpp"
-#include "enjin/Components/C_Position.hpp"
-#include <Adafruit_GFX.h>
-#include "enjin/Sprite.hpp"
-#include "assets/slider_sprite.h"
+#ifndef SLIDER_HPP
+#define SLIDER_HPP
+
 #include "enjin/Object.hpp"
-#include <memory>
-
-enum Side
-{
-    LEFT = 0,
-    RIGHT
-};
-
-class C_Slider : public Component, public C_Drawable
-{
-public:
-    C_Slider(Object *owner, Side side);
-    void Awake() override;
-    void Update(uint8_t deltaTime) override;
-    void Draw(GFXcanvas8 &canvas) override;
-    bool ContinueToDraw() const override;
-    void SetPosition(Vector2 pos) { position->SetPosition(pos); };
-    void SetValue(float val);
-
-private:
-    Sprite sprite;
-    Side side;
-    float value, final_angle;
-
-    uint8_t from_center, thickness;
-    Vector2 _position, idle_position;
-
-    std::shared_ptr<C_Position> position;
-
-    bool is_active;
-    uint16_t inactivity_count, inactivity_timer; // expressed in ms
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////
+#include "enjin/Components/C_Slider.hpp"
+#include "enjin/Components/C_Canvas.hpp"
+#include "enjin/Components/C_Label.hpp"
+#include "enjin/Components/C_PositionAnimator.hpp"
 
 class Slider : public Object
 {
 public:
-    Slider(uint8_t from_center, uint8_t radius = 2)
+    Slider(String par_name)
     {
-        position = AddComponent<C_Position>();
-        left_slider = AddComponent<C_Slider>(Side::LEFT);
-        left_slider->SetDrawLayer(DrawLayer::UI);
+        position->SetPosition(64, 89);
+        name = AddComponent<C_Label>(50, 20);
+        name->SetDrawLayer(DrawLayer::Overlay);
+        name->SetBlendMode(BlendMode::Normal);
+        name->SetAnchorPoint(Anchor::CENTER_BOTTOM);
+        name->AddOffset(Vector2(0, 13));
+        value = AddComponent<C_Label>(50, 20);
+        value->SetDrawLayer(DrawLayer::Overlay);
+        value->SetBlendMode(BlendMode::Normal);
+        value->SetAnchorPoint(Anchor::CENTER_TOP);
+        value->AddOffset(Vector2(0, 8));
+        slider = AddComponent<C_Slider>(83, 7);
+        slider->SetDrawLayer(DrawLayer::Overlay);
+        slider->SetBlendMode(BlendMode::Normal);
+        slider->SetAnchorPoint(Anchor::CENTER_BOTTOM);
+        slider->AddOffset(Vector2(0, -15));
+        SetName(par_name);
+        SetValue(0.0f);
+
+        transition = AddComponent<C_PositionAnimator>();
+        PositionKeyframe kf1 = {0, Vector2(64, 160), Easing::Step};
+        PositionKeyframe kf2 = {350, Vector2(64, 89), Easing::EaseInOutCubic};
+        transition->AddKeyframe(kf1);
+        transition->AddKeyframe(kf2);
     };
 
-    void ValueChanged(float value) { left_slider->SetValue(value); }
+    void SetName(String string)
+    {
+        name->SetString(string);
+    }
+    void SetValue(float val)
+    {
+        slider->SetValue(val);
+        String value_string = String(val, 2);
+        value->SetString(value_string);
+    }
+    void SetVisibility(bool visibility)
+    {
+        slider->SetVisibility(visibility);
+        name->SetVisibility(visibility);
+        value->SetVisibility(visibility);
+    }
+
+    void EnterTransition()
+    {
+        transition->StartAnimation();
+    }
 
 private:
-    std::shared_ptr<C_Slider> left_slider;
+    std::shared_ptr<C_Slider> slider;
+    std::shared_ptr<C_Label> name;
+    std::shared_ptr<C_Label> value;
+    std::shared_ptr<C_PositionAnimator> transition;
 };
 
-#endif // !C_SLIDER_HPP
+#endif// SLIDER_HPP

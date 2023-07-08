@@ -2,6 +2,7 @@
 #define SCENE_HPP
 #include <Arduino.h>
 #include "Hardware.hpp"
+#include "utils/Timer.hpp"
 class Scene
 {
 public:
@@ -26,11 +27,16 @@ public:
     virtual void Update(uint16_t deltaTime){};
     virtual void LateUpdate(uint16_t deltaTime){};
     virtual void Draw(Display &display){};
+    void AddToTimer(uint16_t deltaTime){
+        touchTimer.AddDeltaTime(deltaTime);
+        sceneTimer.AddDeltaTime(deltaTime);
+    };
 
 protected:
+    Timer touchTimer, sceneTimer;
     GFXcanvas8 buffer;
 
     float fps = 0.0f;
 };
 
-#endif // SCENE_HPP
+#endif// SCENE_HPP

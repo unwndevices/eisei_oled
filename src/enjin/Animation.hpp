@@ -1,5 +1,5 @@
-#ifndef Animation_hpp
-#define Animation_hpp
+#ifndef ANIMATION_HPP
+#define ANIMATION_HPP
 
 #include <stdint.h>
 #include <vector>
@@ -22,7 +22,6 @@ struct FrameData
     int width;
     int height;
     uint16_t displayTimeMs;
-    bool isBool;
 };
 
 using AnimationAction = std::function<void(void)>;
@@ -31,7 +30,7 @@ class Animation
 public:
     Animation(FacingDirection direction);
 
-    void AddFrame(const uint8_t *texture, int textureID, int width, int height, uint16_t frameTime, bool isBool = false);
+    void AddFrame(const uint8_t *texture, int textureID, int width, int height, uint16_t frameTime, bool looped = false);
     void AddFrameAction(unsigned int frame, AnimationAction action);
 
     const FrameData *GetCurrentFrame() const;
@@ -44,11 +43,20 @@ public:
 
     FacingDirection GetDirection() const;
 
+    std::vector<FrameData> frames;
+
+    void SetLooped(bool looped);
+    void SetFrame(int frame)
+    {
+        if (currentFrameIndex != frame)
+            currentFrameIndex = frame;
+    }
+    bool IsLooped();
+
 private:
     void IncrementFrame();
     void RunActionForCurrentFrame();
 
-    std::vector<FrameData> frames;
     int currentFrameIndex;
     uint16_t currentFrameTime;
     FacingDirection direction;
@@ -56,6 +64,8 @@ private:
     bool releaseFirstFrame;
     Bitmask framesWithActions;
     std::map<int, std::vector<AnimationAction>> actions;
+
+    bool isLooped;
 };
 
-#endif /* Animation_hpp */
+#endif // ANIMATION_HPP

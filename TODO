@@ -1,27 +1,35 @@
 UI Objects:
   ✔ Tooltip UI element
-  ☐ Fill-up indicator (for cv)
-  ☐ Overlay UI
-  ☐ Position animator component
+  ✔ Overlay UI
+  ✔ Fill-up indicator (for cv)
+  ✔ beam shaper UI
+  ✔ Position animator component
+  ☐ identity UI
+  ☐ quantizer UI
 Framework:
   ✔ HardwareManager
   ✔ Move display driver outside of Enjin + abstract
-  ☐ Shared Context
-  ☐ UIManager
-  ☐ Make i2c protocol @started(23-06-22 18:36)
-  ☐ Integrate Led
+  ✔ UIManager
+  ✔ Make i2c protocol
+  ✔ Shared Context
+  ✔ Button CLICKED state
+  ✔ Led hold animation
+  ✔ TouchWheel buttons
+  ☐ Sub-scenes
 Code organization:
   ☐ Main, Application class
 Gravity page:
-  ☐ New graphic 
-  ☐ in/out animation
+  ☐ Freq page 
+  ☐ Quantization page
 Orbit page:
-  ☐ dual param ui (left sats, right signal)
+  ☐ Rate page
+  ☐ 2nd page?
 Signal page:
-  ☐ add overlay
+  ☐ Scope Width
+  ☐ Scope Shape
 Ratio page:
-  ☐ fix background
-  ☐ in/out animation
+  ☐ Ratio page
+  ☐ ID page
 Hardware:
   ☐ research uneven brightness
   ☐ work on panel interface

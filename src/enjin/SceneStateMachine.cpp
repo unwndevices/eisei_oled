@@ -2,7 +2,7 @@
 
 void SceneStateMachine::ProcessInput()
 {
-    
+
     if (curScene)
     {
         curScene->ProcessInput();
@@ -13,6 +13,7 @@ void SceneStateMachine::Update(uint16_t delta_time)
 {
     if (curScene)
     {
+        curScene->AddToTimer(delta_time);
         curScene->Update(delta_time);
     }
 }
@@ -31,7 +32,6 @@ void SceneStateMachine::Draw(Display &display)
     {
         curScene->Draw(display);
     }
-
 }
 
 uint8_t SceneStateMachine::Add(std::shared_ptr<Scene> scene)

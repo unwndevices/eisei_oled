@@ -10,9 +10,10 @@ public:
     static Led sats[4];
 
     void Init();
-    void setLeds(float value);
-    void setLeds(uint16_t value);
-    void setLeds(uint16_t value, uint16_t time);
+    void SetLeds(float value);
+    void SetLeds(uint16_t value);
+    void SetLeds(uint16_t value, uint16_t time);
+    void SetSequential(float value);
 
     static void Task(void *handle);
     static uint16_t maxBrightness;
@@ -66,8 +67,9 @@ public:
         return buttonStates[id];
     }
 
-private:
     Button buttons[NUM_BUTTONS];
+
+private:
     std::unordered_map<int, Button::State> buttonStates;
 };
 
@@ -108,7 +110,7 @@ public:
         leds.Init();
         buttonManager.Init();
         touchwheel.Init();
-        display.Init(60);
+        display.Init(127);
     };
 
     void Update()
@@ -117,14 +119,16 @@ public:
         touchwheel.Update();
     }
 
-    Button::State GetButton(int id)
+    Button::State GetButtonState(int id)
     {
         return buttonManager.GetButton(id);
     }
 
-    Led &getLed(int index) { return leds.sats[index]; }
-    TouchWheel &getTouchwheel() { return touchwheel; }
-    Display &getDisplay() { return display; }
+    Leds &GetLeds() { return leds; }
+    Led &GetLed(int index) { return leds.sats[index]; }
+    Button &GetButton(int index) { return buttonManager.buttons[index]; }
+    TouchWheel &GetTouchwheel() { return touchwheel; }
+    Display &GetDisplay() { return display; }
 
 private:
     Leds leds;
@@ -133,4 +137,4 @@ private:
     Display display;
 };
 
-#endif// HARDWARE_HPP
+#endif // HARDWARE_HPP

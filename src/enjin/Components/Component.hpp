@@ -12,6 +12,7 @@ class Component
 public:
     Component(Object *owner) : owner(owner) {}
 
+    Object *GetOwner() const { return owner; }
     virtual void Awake(){};
     virtual void Start(){};
 

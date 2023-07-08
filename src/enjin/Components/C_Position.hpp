@@ -6,7 +6,7 @@
 class C_Position : public Component
 {
 public:
-    C_Position(Object *owner);
+    C_Position(Object *owner, int16_t x = 0, int16_t y = 0);
 
     void SetPosition(int16_t x, int16_t y);
     void SetPosition(Vector2 pos);

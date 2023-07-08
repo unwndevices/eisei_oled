@@ -9,79 +9,55 @@ public:
     Sprite()
     {
         _texture = nullptr;
-        _texture1bit = nullptr;
         _width = 0;
         _height = 0;
-        _matte = 0;
+        _matte = 16U;
         _position.x = 0;
         _position.y = 0;
         _frame = 0;
+        _mode = BlendMode::Normal;
     };
-    Sprite(const uint8_t texture[], uint8_t width, uint8_t height, uint8_t matte = 0x8)
+
+    Sprite(const uint8_t texture[], uint8_t width, uint8_t height, BlendMode mode = BlendMode::Normal)
     {
         _texture = texture;
-        _texture1bit = nullptr;
         _width = width;
         _height = height;
-        _matte = matte;
+        _matte = 16U;
         _position.x = 0;
         _position.y = 0;
         _frame = 0;
-    };
-    Sprite(const bool texture[], uint8_t width, uint8_t height, uint8_t matte = 0x8)
-    {
-        _texture = nullptr;
-        _texture1bit = texture;
-        _height = height;
-        _width = width;
-        _matte = matte;
-        _position.x = 0;
-        _position.y = 0;
-        _frame = 0;
+        _mode = mode;
     };
 
     void draw(GFXcanvas8 &canvas)
     {
-        if (_texture)
-        {
-            const uint8_t *texture = (const uint8_t *)(_texture + (_frame * _width * _height));
-            canvas.drawGrayscaleBitmap(_position.x, _position.y, texture, _matte, _width, _height);
-        }
-        else if (_texture1bit && _matte < 2)
-        {
-            const bool *texture = (const bool *)(_texture1bit + (_frame * _width * _height));
-            canvas.drawGrayscaleBitmap(_position.x, _position.y, texture, (bool)_matte, _width, _height);
-        }
-        else if (_texture1bit && _matte > 2)
-        {
-            const bool *texture = (const bool *)(_texture1bit + (_frame * _width * _height));
-            canvas.drawGrayscaleBitmap(_position.x, _position.y, texture, _width, _height);
-        }
+        const uint8_t *texture = (const uint8_t *)(_texture + (_frame * _width * _height));
+        canvas.drawGrayscaleBitmap(_position.x, _position.y, texture, _matte, _width, _height);
     };
 
-    void setTexture(const uint8_t texture[], uint8_t width, uint8_t height, uint8_t matte = 16)
+    void Add(GFXcanvas8 &canvas)
+    {
+        const uint8_t *texture = (const uint8_t *)(_texture + (_frame * _width * _height));
+        canvas.add(texture);
+    }
+
+    void Subtract(GFXcanvas8 &canvas)
+    {
+        const uint8_t *texture = (const uint8_t *)(_texture + (_frame * _width * _height));
+        canvas.subtract(texture);
+    }
+
+    void setTexture(const uint8_t texture[], uint8_t width, uint8_t height)
     {
         _texture = texture;
         _width = width;
         _height = height;
-        _matte = matte;
     };
-    void setTexture(const bool texture[], uint8_t width, uint8_t height, uint8_t matte = 16)
-    {
-        _texture1bit = texture;
-        _width = width;
-        _height = height;
-        _matte = matte;
-    };
+
     void setTexture(const uint8_t texture[], uint8_t frameId)
     {
         _texture = texture;
-        _frame = frameId;
-    };
-
-    void setTexture(const bool texture[], uint8_t frameId)
-    {
-        _texture1bit = texture;
         _frame = frameId;
     };
 
@@ -90,7 +66,7 @@ public:
         _frame = frameId;
     };
 
-    void setPosition(int8_t x, int8_t y)
+    void setPosition(int16_t x, int16_t y)
     {
         _position.x = x;
         _position.y = y;
@@ -105,13 +81,21 @@ public:
         _matte = matte;
     };
 
+    const uint8_t *GetTexture()
+    {
+        return (const uint8_t *)(_texture + (_frame * _width * _height));
+    };
+
     uint8_t _width, _height, _frame;
     Vector2 _position;
     uint8_t _matte;
+    BlendMode _mode;
+
+    uint8_t GetWidth() { return _width; };
+    uint8_t GetHeight() { return _height; };
 
 protected:
     const uint8_t *_texture;
-    const bool *_texture1bit;
 };
 
 #endif // !SPRITE_H

@@ -6,9 +6,9 @@
 uint8_t C_Satellite::amount = 0;
 Vector2 C_Satellite::abs_center(64, 64);
 
-C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color) : Component(owner),
+C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color) : C_Drawable(radius * 2 + 3, radius * 2 + 3), Component(owner),
                                                                                               phase(0.0f),
-                                                                                              internalCanvas(27, 27),
+                                                                                              internalCanvas(radius * 2 + 3, radius * 2 + 3),
                                                                                               from_center(from_center),
                                                                                               radius(radius),
                                                                                               color(color),
@@ -41,7 +41,12 @@ void C_Satellite::Awake()
         canvas_position.y = position->GetPosition().y - (internalCanvas.height() / 2 + 1);
     }
     // matte mask
-    internalCanvas.fillScreen(7);
+    GenerateSatellite();
+}
+
+void C_Satellite::GenerateSatellite()
+{
+    internalCanvas.fillScreen(16U);
     internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius + 1, 0);
     internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius, color);
 
@@ -66,7 +71,7 @@ void C_Satellite::Update(uint8_t deltaTime)
 };
 void C_Satellite::Draw(GFXcanvas8 &canvas)
 {
-    canvas.drawGrayscaleBitmap(canvas_position.x, canvas_position.y, internalCanvas.getBuffer(), (uint8_t)7, internalCanvas.width(), internalCanvas.height());
+    canvas.drawGrayscaleBitmap(canvas_position.x, canvas_position.y, internalCanvas.getBuffer(), 16U, internalCanvas.width(), internalCanvas.height());
 };
 
 bool C_Satellite::ContinueToDraw() const

@@ -7,43 +7,43 @@ Object::Object() : queuedForRemoval(false)
 
 void Object::Awake()
 {
-    for (int i = components.size() - 1; i >= 0; i--)
+    for (const auto &component : components)
     {
-        components[i]->Awake();
+        component->Awake();
     }
 }
 
 void Object::Start()
 {
-    for (int i = components.size() - 1; i >= 0; i--)
+    for (const auto &component : components)
     {
-        components[i]->Start();
+        component->Start();
     }
 }
 
 void Object::Update(uint16_t deltaTime)
 {
-    for (int i = components.size() - 1; i >= 0; i--)
+    for (const auto &component : components)
     {
-        components[i]->Update(deltaTime);
+        component->Update(deltaTime);
     }
 }
 
 void Object::LateUpdate(uint16_t deltaTime)
 {
-    for (int i = components.size() - 1; i >= 0; i--)
+    for (const auto &component : components)
     {
-        components[i]->LateUpdate(deltaTime);
+        component->LateUpdate(deltaTime);
     }
 }
 
-void Object::Draw(GFXcanvas8 &canvas)
-{
-    for (int i = components.size() - 1; i >= 0; i--)
-    {
-        drawable->Draw(canvas);
-    }
-}
+// void Object::Draw(GFXcanvas8 &canvas)
+// {
+//     for (auto &drawable : drawables)
+//     {
+//         drawable->Draw(canvas);
+//     }
+// }
 
 void Object::QueueForRemoval()
 {
@@ -55,7 +55,7 @@ bool Object::IsQueuedForRemoval()
     return queuedForRemoval;
 }
 
-std::shared_ptr<C_Drawable> Object::GetDrawable()
+std::vector<std::shared_ptr<C_Drawable>> Object::GetDrawables()
 {
-    return drawable;
+    return drawables;
 }

@@ -10,10 +10,10 @@ void SceneMain::SetSwitchToScene(uint8_t id)
 void SceneMain::OnCreate()
 {
     buffer.setFont(&VGATypewriter8pt7b);
-    buffer.setTextColor(0x15);
+    buffer.setTextColor(15U);
     transmission_beam = std::make_shared<TransmissionBeam>();
-    transmission_beam->SetPhase(interface.i2c_slave.phase[4]);
-    transmission_beam->SetWidth(interface.i2c_slave.interface_data.transmitter_width);
+    transmission_beam->SetPhase(data.phase[4]);
+    transmission_beam->SetWidth(data.interface_data.transmitter_width);
 
     objects.Add(transmission_beam);
 
@@ -28,31 +28,51 @@ void SceneMain::OnCreate()
 
     main_planet = std::make_shared<Satellite>(0, 12, 8u);
     objects.Add(main_planet);
-
     // gravity_fields = std::make_shared<GravityFields>(satellites);
     // objects.Add(gravity_fields);
     //  tooltip
-    tooltip_freq = std::make_shared<Tooltip>(Vector2(73, 36), 0);
+    tooltip_freq = std::make_shared<Tooltip>(Vector2(73, 36), 3);
     objects.Add(tooltip_freq);
+
+    overlay = std::make_shared<FillUpGauge>();
+    overlay->SetVisibility(false);
+    overlay->SetString("grav");
+    overlay->SetValue(data.cv_data.cv_gravity_a);
+    // overlay->SetStringRight("fine");
+    objects.Add(overlay);
 
     // SLIDERs
     // std::shared_ptr<Slider> slider_left = std::make_shared<Slider>(Side::LEFT);
     // objects.Add(slider_left);
+    interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Sats::a).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Pages::Phase).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Pages::Mass).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    current_page = SW_GRAVITY;
+}
+
+void SceneMain::OnActivate()
+{
+    touchTimer.Restart();
+    sceneTimer.Restart();
+    overlay->SetVisibility(true);
+}
+void SceneMain::OnDeactivate()
+{
+    touchTimer.Stop();
+    sceneTimer.Stop();
 }
 
 void SceneMain::Update(uint16_t deltaTime)
 {
-    // Check if the touchwheel has been inactive for too long.
-    if (touch_active)
+    if (touchTimer.IsElapsed(5000))
     {
-        touch_timer += deltaTime;
-    }
-    if (touch_active && touch_timer > touch_timeout)
-    {
-        touch_active = false;
         current_page = 0;
     }
-
+    if (sceneTimer.IsElapsed(3000))
+    {
+        overlay->SetVisibility(false);
+    }
     objects.ProcessNewObjects();
     objects.Update(deltaTime);
     fps = 1.0f / (deltaTime / 1000.0f); // Divide by 1000 to convert from milliseconds to seconds
@@ -63,9 +83,10 @@ void SceneMain::LateUpdate(uint16_t deltaTime)
     int i = 0;
     for (auto &satellite : satellites)
     {
-        satellite->SetPhase(interface.i2c_slave.phase[i]);
+        satellite->SetPhase(data.phase[i]);
         i++;
     }
+    transmission_beam->SetPhase(data.phase[4]);
 }
 
 void SceneMain::Draw(Display &display)
@@ -84,7 +105,7 @@ void SceneMain::InitBackground()
     std::shared_ptr<Object> background = std::make_shared<Object>();
     auto position = background->AddComponent<C_Position>();
     position->SetPosition(0, 0);
-    auto sprite = background->AddComponent<C_Sprite>();
+    auto sprite = background->AddComponent<C_Sprite>(128, 128);
     sprite->SetDrawLayer(DrawLayer::Default);
     generateStars(250);
     for (int i = 0; i < 8; i++)
@@ -99,7 +120,7 @@ void SceneMain::InitBackground()
         satellite->drawBackground(stars);
     }
 
-    sprite->Load(stars.getBuffer(), 128, 128, 16U);
+    sprite->Load(stars.getBuffer(), 128, 128);
     objects.Add(background);
 }
 
@@ -116,61 +137,70 @@ void SceneMain::generateStars(uint16_t amount)
 
 void SceneMain::ProcessButton(int id, Button::State state)
 {
-    switch (state)
+    if (state == Button::State::CLICKED)
     {
-    case Button::State::PRESSED:
         current_page = id;
-        touch_active = true;
-        touch_timer = 0;
-        break;
-
-    default:
-        break;
-    }
-
-    switch (current_page)
-    {
-    default:
-        break;
+        touchTimer.Restart();
     }
 }
 
 void SceneMain::ProcessInput()
 {
-    // if (touch_active)
-    // {
-    //     if (touch_timer)
-    //     {
-    float touchwheel_input = interface.hw.getTouchwheel().GetSpeed();
-    if (touchwheel_input != 0.0f)
+    if (!touchTimer.IsElapsed(5000))
     {
-        touch_timer = 0;
-        interface.i2c_slave.interface_data.gravity += touchwheel_input * 40.0f;
-        tooltip_freq->SetValue(interface.i2c_slave.interface_data.gravity);
-    }
-    //     }
-    // }
-    //}
+        if (current_page == SW_GRAVITY)
+        {
+            float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
+            if (touchwheel_input != 0.0f)
+            {
+                touchTimer.Restart();
+                data.interface_data.gravity += touchwheel_input * 40.0f;
+                tooltip_freq->SetValue(data.interface_data.gravity);
+            }
+        }
+        else if (current_page == SW_MASS) // TODO use better id for pages
+        {
 
-    // else if (current_page == SW_MASS) // TODO use better id for pages
-    // {
-    //     if (interface.GetButton(Pages::Mass) == Button::State::LONG_PRESSED)
-    //     {
-    //     }
-    //     else
-    //     {
-    //         float touchwheel_input = hw->getTouchwheel().GetSpeed();
-    //         if (touchwheel_input != 0.0f)
-    //         {
-    //             touch_timer = 0;
-    //             system_data.transmitter_width = fmin(system_data.transmitter_width + touchwheel_input * 0.1f, 1.0f);
-    //             transmission_beam->SetWidth(system_data.transmitter_width);
-    //         }
-    //     }
-    // }
-    // else
-    // {
-    //     tooltip_freq->SetActive(false);
-    //     transmission_beam->SetMode(C_TransmissionBeam::IDLE);
-    // }
+            float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
+            if (touchwheel_input != 0.0f)
+            {
+                touchTimer.Restart();
+                data.interface_data.transmitter_width = fmin(data.interface_data.transmitter_width + touchwheel_input * 0.1f, 1.0f);
+                transmission_beam->SetWidth(data.interface_data.transmitter_width);
+            }
+        }
+        else if (current_page == SW_PHASE)
+        {
+            float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
+            if (touchwheel_input != 0.0f)
+            {
+                touchTimer.Restart();
+                if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::LEFT)
+                {
+                    data.interface_data.lfo_rate += touchwheel_input * 0.1f;
+                    tooltip_freq->SetValue(data.interface_data.lfo_rate);
+                }
+                else if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::RIGHT)
+                {
+                    data.interface_data.transmitter_rate += touchwheel_input * 0.1f;
+                    tooltip_freq->SetValue(data.interface_data.transmitter_rate);
+                }
+            }
+        }
+    }
+
+    if (interface.GetButtonState(Pages::Gravity) == Button::State::PRESSED)
+    {
+        float progress = interface.hw.GetButton(Pages::Gravity).GetHoldTimeNormalized();
+        interface.hw.GetLeds().SetSequential(progress);
+        if (progress > 0.99f)
+        {
+            overlay->SetVisibility(true);
+        }
+    }
+    else
+    {
+        interface.hw.GetLeds().SetLeds(0.0f);
+        //overlay->SetVisibility(false);
+    }
 }

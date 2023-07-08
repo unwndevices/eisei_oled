@@ -13,7 +13,7 @@ public:
     TransmissionBeam()
     {
         position = AddComponent<C_Position>();
-        beam = AddComponent<C_TransmissionBeam>();
+        beam = AddComponent<C_TransmissionBeam>(127,127);
         beam->SetDrawLayer(DrawLayer::Background);
     }
 

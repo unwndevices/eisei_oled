@@ -1,11 +1,11 @@
-#ifndef SCENESTATEMACHINE_H
-#define SCENESTATEMACHINE_H
+#ifndef SCENESTATEMACHINE_HPP
+#define SCENESTATEMACHINE_HPP
 #include <Arduino.h>
 
 #include <memory>
 #include <unordered_map>
 
-#include "Hardware.hpp"
+#include "InterfaceManager.hpp"
 #include "Scene.hpp"
 class SceneStateMachine
 {
@@ -41,4 +41,4 @@ private:
     unsigned int insertedSceneID;
 };
 
-#endif // SCENESTATEMACHINE_H
+#endif// SCENESTATEMACHINE_HPP

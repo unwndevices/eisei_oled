@@ -12,6 +12,7 @@ public:
     {
         IDLE,
         PRESSED,
+        CLICKED,
         RELEASED,
         LONG_PRESSED,
         LONG_RELEASED
@@ -24,7 +25,9 @@ public:
           lastDebounceTime(0),
           state(IDLE), prevState(IDLE),
           pressStartTime(0),
-          longPressTime(1000),
+          elapsedTime(0),
+          longPressTime(1700),
+          clickTime(300),
           previousReading(false),
           longPressFlag(false) {}
 
@@ -63,13 +66,25 @@ public:
                 {
                     state = PRESSED;
                     pressStartTime = millis();
+                    elapsedTime = 0;
                 }
                 break;
 
             case PRESSED:
-                if (!reading)
+                if (reading)
                 {
-                    state = RELEASED;
+                    elapsedTime = millis() - pressStartTime;
+                }
+                else if (!reading)
+                {
+                    if ((millis() - pressStartTime) < clickTime)
+                    {
+                        state = CLICKED;
+                    }
+                    else
+                    {
+                        state = RELEASED;
+                    }
                 }
                 else if ((millis() - pressStartTime) > longPressTime)
                 {
@@ -107,6 +122,10 @@ public:
                     state = IDLE;
                 }
                 break;
+
+            case CLICKED:
+                state = IDLE;
+                break;
             }
 
             if (prevState != state)
@@ -122,6 +141,16 @@ public:
         return state;
     }
 
+    bool IsPressed()
+    {
+        return reading;
+    }
+
+    float GetHoldTimeNormalized()
+    {
+        return (float)elapsedTime / (float)longPressTime;
+    }
+
     Signal<int, Button::State> onStateChanged;
 
 private:
@@ -130,8 +159,8 @@ private:
     unsigned long lastDebounceTime;
     State state, prevState;
     bool previousReading, reading;
-    unsigned long pressStartTime;
-    unsigned long longPressTime;
+    unsigned long pressStartTime, elapsedTime;
+    unsigned long longPressTime, clickTime;
     bool longPressFlag;
 };
 

@@ -1,11 +1,13 @@
 #ifndef C_CANVAS_HPP
 #define C_CANVAS_HPP
+#include <memory>
 
 #include <Adafruit_GFX.h>
 #include "Component.hpp"
 #include "C_Drawable.hpp"
+#include "C_Position.hpp"
 
-class C_Canvas : public Component, public C_Drawable
+class C_Canvas : public C_Drawable
 {
 public:
     C_Canvas(Object *owner, uint8_t width, uint8_t height);
@@ -14,11 +16,7 @@ public:
     void LateUpdate(uint8_t deltaTime) override;
 
     GFXcanvas8 _canvas;
-    uint8_t _width, _height;
-    uint8_t _matte;
-    Vector2 _position;
 
-private:
-};
+    };
 
-#endif /* C_CANVAS_HPP */
+#endif// C_CANVAS_HPP

@@ -21,9 +21,17 @@ public:
         satellite->DrawBackground(canvas);
     };
 
-    
+    void SetDistance(uint8_t distance)
+    {
+        satellite->SetDistance(distance);
+    }
+    void SetRadius(uint8_t radius)
+    {
+        satellite->SetRadius(radius);
+    }
 
-    void SetPhase(float phase){satellite->SetPhase(phase);};
+    void SetPhase(float phase) { satellite->SetPhase(phase); };
+
 private:
     std::shared_ptr<C_Satellite> satellite;
 };

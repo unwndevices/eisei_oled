@@ -64,7 +64,6 @@ void TouchWheel::Init()
         t[i].Init(touchGpio[i]);
     }
 };
-
 bool TouchWheel::ReadValues()
 {
     // Read values from sensors
@@ -73,6 +72,7 @@ bool TouchWheel::ReadValues()
     {
         sensorValues[i] = ReadSensorValue(i);
     }
+
     // Find the sensor with the highest value
     int maxValue = 0;
     int maxSensor = 0;
@@ -89,42 +89,50 @@ bool TouchWheel::ReadValues()
     {
         // Approximate position using linear interpolation
         int nextSensor = (maxSensor + 1) % NUM_SENSORS;
-        int previousSensor = (maxSensor - 1 + NUM_SENSORS) % NUM_SENSORS;
+        int prevSensor = (maxSensor - 1 + NUM_SENSORS) % NUM_SENSORS;
 
-        float position = (float)maxSensor + ((float)(sensorValues[nextSensor] - sensorValues[maxSensor]) / (float)(sensorValues[nextSensor] + sensorValues[maxSensor]));
-        // Scale position to the range of 0.0 to 1.0
-        position /= (float)NUM_SENSORS;
-        if (position < 0.0f)
+        float sum = sensorValues[maxSensor] + sensorValues[prevSensor] + sensorValues[nextSensor];
+
+        // Proportions
+        float c1 = sensorValues[prevSensor] / sum;
+        float c2 = sensorValues[maxSensor] / sum;
+        float c3 = sensorValues[nextSensor] / sum;
+
+        // Offset
+        float offset = 0.0f;
+        if (c1 > c3)
         {
-            position += 1.0f;
+            offset = -c1;
         }
+        else
+        {
+            offset = c3;
+        }
+
+        float offsetPad = static_cast<float>(maxSensor) + offset; // Offset relative to pad (e.g., for an 8 pad wheel, 0-7, representing 0-360 degrees)
+        if (offsetPad < 0)
+            offsetPad += NUM_SENSORS; // Bound check in case we go negative for half of the first wheel
+
+        // Calculate the touch position
+        float position = offsetPad / NUM_SENSORS;
+
         if (!touched)
         {
-            // distance = 0.0f;
             touched = true;
             startPosition = position;
             lastPosition = position;
         }
-        // Calculate direction and speed of movement
-        float adjPosition = position;
-        if (adjPosition < (lastPosition - 0.5f))
-        {
-            adjPosition += 1.0f;
-        }
-        else if (adjPosition > (lastPosition + 0.5f))
-        {
-            adjPosition -= 1.0f;
-        }
-        if (adjPosition > lastPosition)
+
+        if (position > lastPosition)
         {
             direction = 1;
-            speed = adjPosition - lastPosition;
+            speed = position - lastPosition;
             distance += speed;
         }
-        else if (adjPosition < lastPosition)
+        else if (position < lastPosition)
         {
             direction = -1;
-            speed = lastPosition - adjPosition;
+            speed = lastPosition - position;
             distance += speed;
         }
         else
@@ -132,6 +140,7 @@ bool TouchWheel::ReadValues()
             direction = 0;
             speed = 0;
         }
+
         if (speed != 0)
         {
             lastPosition = position;
@@ -140,8 +149,8 @@ bool TouchWheel::ReadValues()
     else
     {
         touched = false;
-        // distance = 0.0f;
         speed = 0.0f;
     }
+
     return touched;
 }

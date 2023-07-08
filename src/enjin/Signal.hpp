@@ -1,5 +1,5 @@
-#ifndef SIGNAL_H
-#define SIGNAL_H
+#ifndef SIGNAL_HPP
+#define SIGNAL_HPP
 #include <vector>
 #include <functional>
 #include <map>
@@ -45,4 +45,4 @@ private:
     std::map<SlotID, Slot> m_slots;
     uint8_t nextSlotId = 0; // This will auto-increment for each new Slot
 };
-#endif // SIGNAL_H
+#endif// SIGNAL_HPP

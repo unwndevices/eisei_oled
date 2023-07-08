@@ -12,6 +12,7 @@ public:
     {
         tickmarks = AddComponent<C_Tickmarks>(Vector2(64, 64), -82, 87, 6, 9, 61);
         tickmarks->SetDrawLayer(DrawLayer::UI);
+        tickmarks->SetBlendMode(BlendMode::Normal);
     }
 
     void SetValue(float value)
@@ -27,4 +28,4 @@ private:
     std::shared_ptr<C_Tickmarks> tickmarks;
 };
 
-#endif // RATIODIAL_HPP
+#endif// RATIODIAL_HPP

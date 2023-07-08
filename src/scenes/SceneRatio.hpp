@@ -9,16 +9,17 @@
 #include "enjin/Components.hpp"
 
 #include "assets/ratio.h"
+#include "enjin/UI/OverlayBg.hpp"
 #include "enjin/UI/ConstantList.hpp"
 #include "enjin/UI/RatioDial.hpp"
 #include "enjin/UI/Tooltip.hpp"
 
-#include "InterfaceManager.hpp"
+#include "SharedContext.hpp"
 
 class SceneRatio : public Scene
 {
 public:
-    SceneRatio(SceneStateMachine &sceneStateMachine, InterfaceManager &interface) : sceneStateMachine(sceneStateMachine), interface(interface){};
+    SceneRatio(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine), interface(context.interface), data(context.data){};
 
     void OnCreate() override;
 
@@ -37,11 +38,14 @@ public:
 
 private:
     SceneStateMachine &sceneStateMachine;
+    SharedContext &context;
     InterfaceManager &interface;
+    Data &data;
 
     ObjectCollection objects;
     uint8_t switchToState = 0;
 
+    std::shared_ptr<OverlayBg> overlay;
     std::shared_ptr<ConstantList> const_list;
     std::shared_ptr<RatioDial> const_dial;
     std::shared_ptr<Tooltip> const_tooltip;

@@ -2,6 +2,7 @@
 #include "C_KeyframeAnimator.hpp"
 #include "../Object.hpp"
 
+
 C_KeyframeAnimator::C_KeyframeAnimator(Object *owner)
     : Component(owner), looping(false), loopCount(1), currentKeyframeIndex(0), elapsedTime(0)
 {
@@ -43,7 +44,6 @@ void C_KeyframeAnimator::Update(uint8_t deltaTime)
     Keyframe currentKeyframe = keyframes[currentKeyframeIndex];
     Keyframe nextKeyframe = currentKeyframe;
 
-
     elapsedTime += deltaTime;
 
     if (elapsedTime < currentKeyframe.time)
@@ -56,12 +56,16 @@ void C_KeyframeAnimator::Update(uint8_t deltaTime)
         nextKeyframe = keyframes[currentKeyframeIndex + 1];
     }
 
-    float t = (float)(elapsedTime - currentKeyframe.time) / (nextKeyframe.time - currentKeyframe.time);
-
+    float t = ((float)(elapsedTime - currentKeyframe.time) / (float)(nextKeyframe.time - currentKeyframe.time));
     if (t > 0.99f)
+        t = 1.0f;
+    else if (t < 0.01f)
+        t = 0.0f;
+
+    if (elapsedTime >= nextKeyframe.time)
     {
         t = 1.0f;
-        if (currentKeyframeIndex >= keyframes.size())
+        if (currentKeyframeIndex >= keyframes.size() - 1)
         {
             if (looping && loopCount > 0)
             {
