@@ -1,0 +1,1 @@
+pyinstaller --noconfirm --onedir --windowed --name=EiseiGrabber --add-data="icon.ico;." --add-data "c:/python310/lib/site-packages/customtkinter;customtkinter/" --icon=icon.ico main.py

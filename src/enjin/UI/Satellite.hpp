@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "enjin/Object.hpp"
-#include "C_Satellite.hpp"
+#include "enjin/Components/C_Satellite.hpp"
 
 class Satellite : public Object
 {

@@ -9,15 +9,15 @@ void SceneRatio::SetSwitchToScene(uint8_t id)
 void SceneRatio::OnCreate()
 {
     overlay = std::make_shared<OverlayBg>(2);
-    objects.Add(overlay);
+    local_objects.Add(overlay);
 
     const_list = std::make_shared<ConstantList>(getConstants());
-    objects.Add(const_list);
+    local_objects.Add(const_list);
     const_dial = std::make_shared<RatioDial>();
-    objects.Add(const_dial);
+    local_objects.Add(const_dial);
     // tooltip
     const_tooltip = std::make_shared<Tooltip>(Vector2(17, 58), 2);
-    objects.Add(const_tooltip);
+    local_objects.Add(const_tooltip);
 
     // hw->getButton(Gravity).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -29,20 +29,25 @@ void SceneRatio::OnActivate()
 
 void SceneRatio::Update(uint16_t deltaTime)
 {
+    BaseScene::Update(deltaTime); // Call the base class's Update method
+
     // Process our new objects at the beginning of each frame.
-    objects.ProcessNewObjects();
-    objects.Update(deltaTime);
+    local_objects.ProcessNewObjects();
+    local_objects.Update(deltaTime);
     fps = 1.0f / (deltaTime / 1000.0f); // Divide by 1000 to convert from milliseconds to seconds
 }
 void SceneRatio::LateUpdate(uint16_t deltaTime)
 {
-    objects.LateUpdate(deltaTime);
+    BaseScene::LateUpdate(deltaTime); // Call the base class's Draw method
+
+    local_objects.LateUpdate(deltaTime);
 }
 
 void SceneRatio::Draw(Display &display)
 {
-    buffer.fillScreen(0);
-    objects.Draw(buffer);
+    BaseScene::Draw(display); // Call the base class's Draw method
+
+    local_objects.Draw(buffer);
     buffer.setTextColor(3);
     buffer.setCursor(40, 13);
     String value = String(fps, 1); // String(SharedData::base_mult, 3);
@@ -50,9 +55,7 @@ void SceneRatio::Draw(Display &display)
     display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
 
-void SceneRatio::InitBackground()
-{
-}
+
 
 void SceneRatio::ProcessButton(int id, Button::State state)
 {

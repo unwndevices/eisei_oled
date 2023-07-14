@@ -1,5 +1,5 @@
-#ifndef ObjectCollection_hpp
-#define ObjectCollection_hpp
+#ifndef OBJECTCOLLECTION_HPP
+#define OBJECTCOLLECTION_HPP
 
 #include <memory>
 #include <vector>
@@ -25,4 +25,4 @@ private:
     S_Drawable drawables;
 };
 
-#endif /* ObjectCollection_hpp */
+#endif// OBJECTCOLLECTION_HPP

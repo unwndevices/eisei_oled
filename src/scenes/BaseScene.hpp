@@ -1,5 +1,7 @@
-#ifndef SCENEBASE_HPP
-#define SCENEBASE_HPP
+#ifndef BASESCENE_HPP
+#define BASESCENE_HPP
+
+#include <Fonts/VGATypewriter.h>
 
 #include "utils/utils.h"
 #include "enjin/Scene.hpp"
@@ -15,57 +17,63 @@
 
 #include "SharedContext.hpp"
 
-class SceneBase : public Scene
+class BaseScene : public Scene
 {
 public:
-    SceneBase(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine),
+    BaseScene(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine),
+                                                                              objects(context.objects), instances(context.instances),
                                                                               interface(context.interface), data(context.data), bg(128, 128)
     {
-        // Initialize common elements here
     }
 
     void OnCreate() override
     {
-
-        // buffer.setFont(&VGATypewriter8pt7b);
+        // Initialize common elements here
+        buffer.setFont(&VGATypewriter8pt7b);
         buffer.setTextColor(15U);
-        transmission_beam = std::make_shared<TransmissionBeam>();
-        transmission_beam->SetPhase(data.phase[4]);
-        transmission_beam->SetWidth(data.interface_data.transmitter_width);
-
-        objects.Add(transmission_beam);
+        instances.transmission_beam = std::make_shared<TransmissionBeam>();
+        instances.main_planet = std::make_shared<Satellite>(0, 12, 8u);
+        instances.transmission_beam->SetPhase(data.phase[4]);
+        instances.transmission_beam->SetWidth(data.interface_data.transmitter_width);
+        objects.Add(instances.transmission_beam);
 
         for (int i = 0; i < 4; i++)
         {
             auto satellite = std::make_shared<Satellite>(20 + i * 13, 4);
-            satellites.push_back(satellite);
+            instances.satellites.push_back(satellite);
             objects.Add(satellite);
         }
-
         InitBackground();
-
-        main_planet = std::make_shared<Satellite>(0, 12, 8u);
-        objects.Add(main_planet);
+        objects.Add(instances.main_planet);
     }
 
     void OnDestroy() override{};
+
+    void OnActivate() override
+    {
+        instances.main_planet->SetRadius(12);
+    };
+
+    void OnDeactivate() override{};
+
+    void ProcessInput() override{};
 
     void Update(uint16_t deltaTime) override
     {
         objects.ProcessNewObjects();
         objects.Update(deltaTime);
+        int i = 0;
+        for (auto &satellite : instances.satellites)
+        {
+            satellite->SetPhase(data.phase[i]);
+            i++;
+        }
+        instances.transmission_beam->SetPhase(data.phase[4]);
     }
 
     void LateUpdate(uint16_t deltaTime) override
     {
         objects.LateUpdate(deltaTime);
-        int i = 0;
-        for (auto &satellite : satellites)
-        {
-            satellite->SetPhase(data.phase[i]);
-            i++;
-        }
-        transmission_beam->SetPhase(data.phase[4]);
     };
 
     void Draw(Display &display) override
@@ -74,10 +82,6 @@ public:
         display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
     }
 
-    void OnActivate() override{};
-    void OnDeactivate() override{};
-
-    void ProcessInput() override{};
     // Other common methods...
 
 protected:
@@ -85,16 +89,14 @@ protected:
     SharedContext &context;
     InterfaceManager &interface;
     Data &data;
+    ObjectInstances &instances;
 
-    ObjectCollection objects;
+    ObjectCollection &objects;
+
     uint8_t switchToState = 0;
     int current_page = 0;
 
     GFXcanvas8 bg;
-
-    std::shared_ptr<Satellite> main_planet;
-    std::vector<std::shared_ptr<Satellite>> satellites;
-    std::shared_ptr<TransmissionBeam> transmission_beam;
 
     void generateStars(uint16_t amount)
     {
@@ -121,7 +123,7 @@ protected:
             int16_t y = temp_position.y;
             bg.drawLine(64, 64, x, y, 3);
         }
-        for (auto &satellite : satellites)
+        for (auto &satellite : instances.satellites)
         {
             satellite->drawBackground(bg);
         }
@@ -131,4 +133,4 @@ protected:
     };
 };
 
-#endif// SCENEBASE_HPP
+#endif // BaseScene_HPP

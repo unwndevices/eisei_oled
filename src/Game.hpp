@@ -7,7 +7,8 @@
 
 // #include "scenes/SceneSplashScreen.hpp"
 #include "scenes/SceneRatio.hpp"
-#include "scenes/SceneBase.hpp"
+#include "scenes/BaseScene.hpp"
+#include "scenes/SceneMass.hpp"
 #include "scenes/SceneMain.hpp"
 #include "scenes/SceneGravity.hpp"
 #include "scenes/SceneCvGravity.hpp"
@@ -22,6 +23,7 @@ public:
     void LateUpdate();
     void Draw();
     void ProcessButton(int id, Button::State state);
+    void ScreenShot();
 
 private:
     Display &display;
@@ -33,18 +35,26 @@ private:
 
 Game::Game(SharedContext &context) : context(context), interface(context.interface), display(context.interface.hw.GetDisplay())
 {
-    // std::shared_ptr<SceneSplashScreen> splashScreen = std::make_shared<SceneSplashScreen>(sceneStateMachine, context);
-    //std::shared_ptr<SceneBase> basePage = std::make_shared<SceneBase>(sceneStateMachine, context);
+
+    std::shared_ptr<BaseScene> basePage = std::make_shared<BaseScene>(sceneStateMachine, context);
+    uint8_t basePageID = sceneStateMachine.Add(basePage);
+
+    std::shared_ptr<SceneMass> massPage = std::make_shared<SceneMass>(sceneStateMachine, context);
+    uint8_t massPageID = sceneStateMachine.Add(massPage);
+
     std::shared_ptr<SceneCvGravity> cvPage = std::make_shared<SceneCvGravity>(sceneStateMachine, context);
-    std::shared_ptr<SceneMain> mainPage = std::make_shared<SceneMain>(sceneStateMachine, context);
-    std::shared_ptr<SceneGravity> gravityPage = std::make_shared<SceneGravity>(sceneStateMachine, context);
-    std::shared_ptr<SceneRatio> ratioPage = std::make_shared<SceneRatio>(sceneStateMachine, context);
-    // uint8_t splashScreenID = sceneStateMachine.Add(splashScreen);
-    //uint8_t basePageID = sceneStateMachine.Add(basePage);
     uint8_t cvPageID = sceneStateMachine.Add(cvPage);
-    uint8_t mainPageID = sceneStateMachine.Add(mainPage);
-    uint8_t gravityPageID = sceneStateMachine.Add(gravityPage);
+
+    // std::shared_ptr<SceneGravity> gravityPage = std::make_shared<SceneGravity>(sceneStateMachine, context);
+    // uint8_t gravityPageID = sceneStateMachine.Add(gravityPage);
+
+    std::shared_ptr<SceneRatio> ratioPage = std::make_shared<SceneRatio>(sceneStateMachine, context);
     uint8_t ratioPageID = sceneStateMachine.Add(ratioPage);
+    // std::shared_ptr<SceneMain> mainPage = std::make_shared<SceneMain>(sceneStateMachine, context);
+    // uint8_t mainPageID = sceneStateMachine.Add(mainPage);
+    // std::shared_ptr<SceneSplashScreen> splashScreen = std::make_shared<SceneSplashScreen>(sceneStateMachine, context);
+    // uint8_t splashScreenID = sceneStateMachine.Add(splashScreen);
+
     sceneStateMachine.SwitchTo(cvPageID);
 
     interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
@@ -58,14 +68,16 @@ void Game::ProcessButton(int id, Button::State state)
     if (state == Button::State::CLICKED)
         switch (id)
         {
-        case SW_MASS:
+        case SW_GRAVITY:
             sceneStateMachine.SwitchTo(0);
             break;
-        case SW_GRAVITY:
-            sceneStateMachine.SwitchTo(2);
+        case SW_MASS:
+            sceneStateMachine.SwitchTo(1);
             break;
         case SW_RATIO:
-            sceneStateMachine.SwitchTo(3);
+            sceneStateMachine.SwitchTo(2);
+            break;
+        case SW_PHASE:
             break;
 
         default:
@@ -100,6 +112,19 @@ void Game::Draw()
 {
     sceneStateMachine.Draw(display);
     display.Show();
+}
+
+void Game::ScreenShot()
+{
+    // Get the Adafruit GFX buffer
+    uint8_t *buffer = display.GetBuffer();
+    USBSerial.println(">img:");
+    // Send the buffer over the serial connection
+    for (int i = 0; i < 128 * 128 / 2; i++)
+    {
+        USBSerial.println(buffer[i]);
+    }
+    USBSerial.println("<");
 }
 
 #endif// GAME_HPP

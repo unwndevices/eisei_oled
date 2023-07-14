@@ -28,9 +28,19 @@ void loop()
 {
 
   context.interface.Update();
-  
+
   eisei.ProcessInput();
   eisei.Update();
   eisei.Draw();
   eisei.LateUpdate();
+
+  if (USBSerial.available())
+  {
+    String command = USBSerial.readStringUntil('\n');
+    command.trim(); // remove any trailing whitespace
+    if (command == "screenshot")
+    {
+      eisei.ScreenShot();
+    }
+  }
 }

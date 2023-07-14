@@ -4,6 +4,7 @@ UI Objects:
   ✔ Fill-up indicator (for cv)
   ✔ beam shaper UI
   ✔ Position animator component
+  ☐ satellite UI
   ☐ identity UI
   ☐ quantizer UI
 Framework:
@@ -15,7 +16,10 @@ Framework:
   ✔ Button CLICKED state
   ✔ Led hold animation
   ✔ TouchWheel buttons
-  ☐ Sub-scenes
+  ✔ Global Object instances
+  ✔ Sub-scenes
+  ✔ Parameter Animator
+  ✔ Screenshots!
 Code organization:
   ☐ Main, Application class
 Gravity page:

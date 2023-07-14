@@ -35,7 +35,7 @@ public:
     }
     void SetRadius(uint8_t radius)
     {
-        radius = radius;
+        this->radius = radius;
         GenerateSatellite();
     }
 

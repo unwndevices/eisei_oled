@@ -30,6 +30,12 @@ public:
         overlay_graphic->SetVisibility(visibility);
     }
 
+    void SetDrawLayer(DrawLayer layer)
+    {
+        overlay_fill->SetDrawLayer(layer);
+        overlay_graphic->SetDrawLayer(layer);
+    }
+
 private:
     std::shared_ptr<C_Canvas> overlay_fill;
     std::shared_ptr<C_Sprite> overlay_graphic;

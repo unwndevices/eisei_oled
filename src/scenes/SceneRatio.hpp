@@ -1,12 +1,7 @@
 #ifndef RATIO_H
 #define RATIO_H
-#include <Arduino.h>
-#include "utils/utils.h"
 
-#include "enjin/Scene.hpp"
-#include "enjin/SceneStateMachine.hpp"
-#include "enjin/ObjectCollection.hpp"
-#include "enjin/Components.hpp"
+#include "BaseScene.hpp"
 
 #include "assets/ratio.h"
 #include "enjin/UI/OverlayBg.hpp"
@@ -14,12 +9,10 @@
 #include "enjin/UI/RatioDial.hpp"
 #include "enjin/UI/Tooltip.hpp"
 
-#include "SharedContext.hpp"
-
-class SceneRatio : public Scene
+class SceneRatio : public BaseScene
 {
 public:
-    SceneRatio(SceneStateMachine &sceneStateMachine, SharedContext &context) : context(context), sceneStateMachine(sceneStateMachine), interface(context.interface), data(context.data){};
+    SceneRatio(SceneStateMachine &sceneStateMachine, SharedContext &context) : BaseScene(sceneStateMachine, context){};
 
     void OnCreate() override;
 
@@ -37,20 +30,13 @@ public:
     void Draw(Display &display) override;
 
 private:
-    SceneStateMachine &sceneStateMachine;
-    SharedContext &context;
-    InterfaceManager &interface;
-    Data &data;
-
-    ObjectCollection objects;
-    uint8_t switchToState = 0;
+    ObjectCollection local_objects;
 
     std::shared_ptr<OverlayBg> overlay;
     std::shared_ptr<ConstantList> const_list;
     std::shared_ptr<RatioDial> const_dial;
     std::shared_ptr<Tooltip> const_tooltip;
 
-    void InitBackground();
     void ProcessButton(int id, Button::State state);
     void ProcessIncrement(TouchWheel::Direction direction);
 };

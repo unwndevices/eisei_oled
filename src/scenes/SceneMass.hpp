@@ -1,15 +1,15 @@
-#ifndef SCENEGRAVITY_HPP
-#define SCENEGRAVITY_HPP
+#ifndef SCENEMASS_HPP
+#define SCENEMASS_HPP
 #include "BaseScene.hpp"
 
 #include "enjin/UI/BeamShaper.hpp"
 #include "enjin/UI/Slider.hpp"
 #include "enjin/UI/OverlayBg.hpp"
 
-class SceneGravity : public BaseScene
+class SceneMass : public BaseScene
 {
 public:
-    SceneGravity(SceneStateMachine &sceneStateMachine, SharedContext &context) : BaseScene(sceneStateMachine, context){};
+    SceneMass(SceneStateMachine &sceneStateMachine, SharedContext &context) : BaseScene(sceneStateMachine, context){};
 
     void OnCreate() override;
     void OnDestroy() override;
@@ -29,4 +29,4 @@ private:
     std::shared_ptr<OverlayBg> bg;
 };
 
-#endif // SceneGravity_HPP
+#endif // SCENEMASS_HPP

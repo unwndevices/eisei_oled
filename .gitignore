@@ -4,3 +4,6 @@
 .vscode/launch.json
 .vscode/ipch
 BMPtoArray/*/
+SerialScreenshot/build/
+SerialScreenshot/dist/
+SerialScreenshot/screenshots/

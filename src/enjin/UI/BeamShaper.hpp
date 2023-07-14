@@ -6,6 +6,7 @@
 #include "enjin/Components/C_SymmShape.hpp"
 #include "enjin/Components/C_Tickmarks.hpp"
 #include "enjin/Components/C_PositionAnimator.hpp"
+#include "enjin/Components/C_ParameterAnimator.hpp"
 #include "Constants.hpp"
 
 class BeamShaper : public Object
@@ -30,7 +31,16 @@ public:
         tickmarks->SetDrawLayer(DrawLayer::UI);
         tickmarks->SetBlendMode(BlendMode::Normal);
         tickmarks->SetAnchorPoint(Anchor::CENTER);
-        tickmarks->AddOffset(Vector2(1,1));
+        tickmarks->AddOffset(Vector2(1, 1));
+
+        par_transition = AddComponent<C_ParameterAnimator>();
+        ParameterKeyframe pkf1 = {0, 4.0f, Easing::Step};
+        ParameterKeyframe pkf2 = {700, 0.0f, Easing::EaseOutQuad};
+        ParameterKeyframe pkf3 = {1800, 0.5f, Easing::EaseInOutSine};
+        par_transition->SetParameterSetter(std::bind(&BeamShaper::SetShape, this, std::placeholders::_1));
+        par_transition->AddKeyframe(pkf1);
+        par_transition->AddKeyframe(pkf2);
+        par_transition->AddKeyframe(pkf3);
 
         transition = AddComponent<C_PositionAnimator>();
         PositionKeyframe kf1 = {0, Vector2(64, -67), Easing::Step};
@@ -39,12 +49,10 @@ public:
         transition->AddKeyframe(kf2);
     }
 
-    // void MoveUp() { list->MoveUp(); }
-    // void MoveDown() { list->MoveDown(); }
-
     void EnterTransition()
     {
         transition->StartAnimation();
+        par_transition->StartAnimation();
     }
 
     void SetShape(float value)
@@ -61,6 +69,7 @@ public:
 
     void SetVisibility(bool visibility)
     {
+        bg->SetVisibility(visibility);
         shape->SetVisibility(visibility);
         tickmarks->SetVisibility(visibility);
     }
@@ -70,6 +79,7 @@ private:
     std::shared_ptr<C_SymmShape> shape;
     std::shared_ptr<C_Tickmarks> tickmarks;
     std::shared_ptr<C_PositionAnimator> transition;
+    std::shared_ptr<C_ParameterAnimator> par_transition;
 };
 
 #endif// BEAMSHAPER_HPP

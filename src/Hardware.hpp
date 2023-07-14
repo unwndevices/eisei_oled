@@ -95,6 +95,10 @@ public:
     {
         driver.display();
     }
+    uint8_t *GetBuffer()
+    {
+        return driver.getBuffer();
+    }
 
 private:
     Adafruit_SSD1327 driver;

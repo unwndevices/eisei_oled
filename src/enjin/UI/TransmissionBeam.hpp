@@ -38,4 +38,4 @@ private:
     std::shared_ptr<C_TransmissionBeam> beam;
 };
 
-#endif // TRANSMISSIONBEAM_HPP
+#endif// TRANSMISSIONBEAM_HPP
