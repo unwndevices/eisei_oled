@@ -56,8 +56,6 @@ public:
                     if (touchwheel_input >= 0.01f || touchwheel_input <= -0.01f)
                     {
                         value += touchwheel_input;
-                        //value = constrain(value, 0.0f, 1.0f);
-                        USBSerial.println(value);
 
                         planet->SetPhase(value);
                     }

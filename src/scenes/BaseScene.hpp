@@ -13,7 +13,6 @@
 #include "enjin/UI/Tooltip.hpp"
 #include "enjin/UI/GravityFields.hpp"
 #include "enjin/UI/TransmissionBeam.hpp"
-#include "enjin/UI/FillUpGauge.hpp"
 
 #include "SharedContext.hpp"
 
@@ -31,11 +30,15 @@ public:
         // Initialize common elements here
         buffer.setFont(&VGATypewriter8pt7b);
         buffer.setTextColor(15U);
+        log_d("on create: %d", ESP.getFreeHeap());
         instances.transmission_beam = std::make_shared<TransmissionBeam>();
+        log_d("tb: %d", ESP.getFreeHeap());
         instances.main_planet = std::make_shared<Satellite>(0, 12, 8u);
+        log_d("sat0: %d", ESP.getFreeHeap());
         instances.transmission_beam->SetPhase(data.phase[4]);
-        instances.transmission_beam->SetWidth(data.interface_data.transmitter_width);
+        instances.transmission_beam->SetWidth(data.interface_data.scope_attack);
         objects.Add(instances.transmission_beam);
+        log_d("add tb: %d", ESP.getFreeHeap());
 
         for (int i = 0; i < 4; i++)
         {
@@ -43,6 +46,7 @@ public:
             instances.satellites.push_back(satellite);
             objects.Add(satellite);
         }
+        log_d("add add sats: %d", ESP.getFreeHeap());
         InitBackground();
         objects.Add(instances.main_planet);
     }

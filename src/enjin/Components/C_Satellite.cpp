@@ -6,9 +6,9 @@
 uint8_t C_Satellite::amount = 0;
 Vector2 C_Satellite::abs_center(64, 64);
 
-C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color) : C_Drawable(radius * 2 + 3, radius * 2 + 3), Component(owner),
+C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color) : C_Drawable(radius * 4 + 1, radius * 4 + 1), Component(owner),
                                                                                               phase(0.0f),
-                                                                                              internalCanvas(radius * 2 + 3, radius * 2 + 3),
+                                                                                              internalCanvas(radius * 4 + 1, radius * 4 + 1),
                                                                                               from_center(from_center),
                                                                                               radius(radius),
                                                                                               color(color),
@@ -71,6 +71,7 @@ void C_Satellite::Update(uint8_t deltaTime)
 };
 void C_Satellite::Draw(GFXcanvas8 &canvas)
 {
+    
     canvas.drawGrayscaleBitmap(canvas_position.x, canvas_position.y, internalCanvas.getBuffer(), 16U, internalCanvas.width(), internalCanvas.height());
 };
 

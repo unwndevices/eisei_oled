@@ -2,9 +2,7 @@
 #define SCENEGRAVITY_HPP
 #include "BaseScene.hpp"
 
-#include "enjin/UI/BeamShaper.hpp"
-#include "enjin/UI/Slider.hpp"
-#include "enjin/UI/OverlayBg.hpp"
+#include "enjin/UI/Tooltip.hpp"
 
 class SceneGravity : public BaseScene
 {
@@ -24,9 +22,7 @@ public:
     void Draw(Display &display) override;
 
 private:
-    std::shared_ptr<BeamShaper> shaper;
-    std::shared_ptr<Slider> slider;
-    std::shared_ptr<OverlayBg> bg;
+    std::shared_ptr<Tooltip> tooltip;
 };
 
 #endif // SceneGravity_HPP

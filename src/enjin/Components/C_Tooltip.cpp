@@ -9,8 +9,7 @@ C_Tooltip::C_Tooltip(Object *owner, int8_t precision, uint8_t width, uint8_t hei
                                                                                        value(220.0f),
                                                                                        width(31),
                                                                                        origin(0, 0),
-                                                                                       canvas(width, height),
-                                                                                       is_active(false)
+                                                                                       canvas(width, height)
 {
     position = owner->GetComponent<C_Position>();
 
@@ -22,24 +21,22 @@ C_Tooltip::C_Tooltip(Object *owner, int8_t precision, uint8_t width, uint8_t hei
 
 void C_Tooltip::Draw(GFXcanvas8 &canvas)
 {
-    if (is_active)
+
+    String value_string = String(value, precision);
+    // draw value
+    if (!precision)
     {
-        String value_string = String(value, precision);
-        // draw value
-        if (!precision)
-        {
-            value_string = String((int)value);
-        }
-        width = this->canvas.getTextWidth(value_string);
-        this->canvas.fillScreen(16U);
-        this->canvas.fillRoundRect(3, 0, width + 2 + 8, 15 + 2, 4, 0);
-        this->canvas.fillRoundRect(4, 1, width + 8, 15, 3, 1);
-        this->canvas.drawRoundRect(4, 1, width + 8, 15, 3, 15);
-        this->canvas.setCursor(8, 12);
-        this->canvas.println(value_string);
-        // draw canvas
-        canvas.drawGrayscaleBitmap(origin.x, origin.y, this->canvas.getBuffer(), (uint8_t)16U, this->canvas.width(), this->canvas.height());
+        value_string = String((int)value);
     }
+    width = this->canvas.getTextWidth(value_string);
+    this->canvas.fillScreen(16U);
+    this->canvas.fillRoundRect(3, 0, width + 2 + 8, 15 + 2, 4, 0);
+    this->canvas.fillRoundRect(4, 1, width + 8, 15, 3, 1);
+    this->canvas.drawRoundRect(4, 1, width + 8, 15, 3, 15);
+    this->canvas.setCursor(8, 12);
+    this->canvas.println(value_string);
+    // draw canvas
+    canvas.drawGrayscaleBitmap(origin.x, origin.y, this->canvas.getBuffer(), (uint8_t)16U, this->canvas.width(), this->canvas.height());
 }
 
 bool C_Tooltip::ContinueToDraw() const
@@ -58,7 +55,6 @@ void C_Tooltip::Awake()
 
 void C_Tooltip::SetValue(float val)
 {
-    is_active = true;
     value = val;
 }
 

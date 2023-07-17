@@ -13,7 +13,7 @@ void SceneMain::OnCreate()
     buffer.setTextColor(15U);
     transmission_beam = std::make_shared<TransmissionBeam>();
     transmission_beam->SetPhase(data.phase[4]);
-    transmission_beam->SetWidth(data.interface_data.transmitter_width);
+    transmission_beam->SetWidth(data.interface_data.scope_attack);
 
     objects.Add(transmission_beam);
 
@@ -34,13 +34,6 @@ void SceneMain::OnCreate()
     tooltip_freq = std::make_shared<Tooltip>(Vector2(73, 36), 3);
     objects.Add(tooltip_freq);
 
-    overlay = std::make_shared<FillUpGauge>();
-    overlay->SetVisibility(false);
-    overlay->SetString("grav");
-    overlay->SetValue(data.cv_data.cv_gravity_a);
-    // overlay->SetStringRight("fine");
-    objects.Add(overlay);
-
     // SLIDERs
     // std::shared_ptr<Slider> slider_left = std::make_shared<Slider>(Side::LEFT);
     // objects.Add(slider_left);
@@ -55,7 +48,6 @@ void SceneMain::OnActivate()
 {
     touchTimer.Restart();
     sceneTimer.Restart();
-    overlay->SetVisibility(true);
 }
 void SceneMain::OnDeactivate()
 {
@@ -68,10 +60,6 @@ void SceneMain::Update(uint16_t deltaTime)
     if (touchTimer.IsElapsed(5000))
     {
         current_page = 0;
-    }
-    if (sceneTimer.IsElapsed(3000))
-    {
-        overlay->SetVisibility(false);
     }
     objects.ProcessNewObjects();
     objects.Update(deltaTime);
@@ -141,6 +129,14 @@ void SceneMain::ProcessButton(int id, Button::State state)
     {
         current_page = id;
         touchTimer.Restart();
+        if (current_page == SW_MASS)
+        {
+            transmission_beam->SetMode(C_TransmissionBeam::WIDTH_EDIT);
+        }
+        else
+        {
+            transmission_beam->SetMode(C_TransmissionBeam::IDLE);
+        }
     }
 }
 
@@ -165,8 +161,8 @@ void SceneMain::ProcessInput()
             if (touchwheel_input != 0.0f)
             {
                 touchTimer.Restart();
-                data.interface_data.transmitter_width = fmin(data.interface_data.transmitter_width + touchwheel_input * 0.1f, 1.0f);
-                transmission_beam->SetWidth(data.interface_data.transmitter_width);
+                data.interface_data.scope_attack = fmin(data.interface_data.scope_attack + touchwheel_input * 0.1f, 1.0f);
+                transmission_beam->SetWidth(data.interface_data.scope_attack);
             }
         }
         else if (current_page == SW_PHASE)
@@ -175,16 +171,9 @@ void SceneMain::ProcessInput()
             if (touchwheel_input != 0.0f)
             {
                 touchTimer.Restart();
-                if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::LEFT)
-                {
-                    data.interface_data.lfo_rate += touchwheel_input * 0.1f;
-                    tooltip_freq->SetValue(data.interface_data.lfo_rate);
-                }
-                else if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::RIGHT)
-                {
-                    data.interface_data.transmitter_rate += touchwheel_input * 0.1f;
-                    tooltip_freq->SetValue(data.interface_data.transmitter_rate);
-                }
+
+                data.interface_data.lfo_rate += touchwheel_input * 10.0f;
+                tooltip_freq->SetValue(data.interface_data.lfo_rate);
             }
         }
     }
@@ -195,12 +184,11 @@ void SceneMain::ProcessInput()
         interface.hw.GetLeds().SetSequential(progress);
         if (progress > 0.99f)
         {
-            overlay->SetVisibility(true);
         }
     }
     else
     {
         interface.hw.GetLeds().SetLeds(0.0f);
-        //overlay->SetVisibility(false);
+        // overlay->SetVisibility(false);
     }
 }

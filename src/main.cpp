@@ -17,11 +17,15 @@ void setup()
   // SERIAL
   USBSerial.begin(115200);
   USBSerial.setDebugOutput(true);
-  // I2C
+  // Interface
   context.interface.Init();
+  log_d("Hardware initialized");
+  log_d("Heap: %d", ESP.getFreeHeap());
+
   //  the Game Engine has to be initialized after the hardware
   eisei.Init();
   log_d("Game initialized");
+  log_d("Heap: %d", ESP.getFreeHeap());
 }
 
 void loop()

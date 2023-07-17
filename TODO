@@ -21,19 +21,8 @@ Framework:
   ✔ Parameter Animator
   ✔ Screenshots!
 Code organization:
-  ☐ Main, Application class
-Gravity page:
-  ☐ Freq page 
-  ☐ Quantization page
-Orbit page:
-  ☐ Rate page
-  ☐ 2nd page?
-Signal page:
-  ☐ Scope Width
-  ☐ Scope Shape
-Ratio page:
-  ☐ Ratio page
-  ☐ ID page
+  ✔ Main, Application class
 Hardware:
   ☐ research uneven brightness
-  ☐ work on panel interface
+  ✔ work on panel interface
+  ☐ rev.2 schematics

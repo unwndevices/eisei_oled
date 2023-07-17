@@ -52,7 +52,6 @@ private:
     std::shared_ptr<TransmissionBeam> transmission_beam;
 
     std::shared_ptr<Tooltip> tooltip_freq;
-    std::shared_ptr<FillUpGauge> overlay;
 };
 
 #endif // !SCENEMAIN_H

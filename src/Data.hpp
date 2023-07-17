@@ -4,10 +4,12 @@
 struct __attribute__((packed)) InterfaceData
 {
     float gravity;
+    float gravity_multiplier;
     float lfo_rate;
     float lfo_multiplier;
-    float transmitter_rate;
-    float transmitter_width;
+    float scope_attack;
+    float scope_hold;
+    float scope_decay;
     float ratio;
 };
 

@@ -8,6 +8,7 @@
 #include "enjin/UI/ConstantList.hpp"
 #include "enjin/UI/RatioDial.hpp"
 #include "enjin/UI/Tooltip.hpp"
+#include "enjin/UI/FillUpGauge.hpp"
 
 class SceneRatio : public BaseScene
 {
@@ -32,10 +33,11 @@ public:
 private:
     ObjectCollection local_objects;
 
-    std::shared_ptr<OverlayBg> overlay;
-    std::shared_ptr<ConstantList> const_list;
-    std::shared_ptr<RatioDial> const_dial;
-    std::shared_ptr<Tooltip> const_tooltip;
+    // std::shared_ptr<OverlayBg> overlay;
+    // std::shared_ptr<ConstantList> const_list;
+    // std::shared_ptr<RatioDial> const_dial;
+    // std::shared_ptr<Tooltip> const_tooltip;
+    std::shared_ptr<FillUpGauge> overlay;
 
     void ProcessButton(int id, Button::State state);
     void ProcessIncrement(TouchWheel::Direction direction);

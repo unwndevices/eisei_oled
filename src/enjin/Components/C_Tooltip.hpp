@@ -15,7 +15,6 @@ public:
     bool ContinueToDraw() const override;
     void SetPosition(Vector2 pos) { position->SetPosition(pos); };
     void SetOrigin(Vector2 pos) { origin = pos; };
-    void SetActive(bool val) { is_active = val; };
     void SetValue(float val);
 
 private:
@@ -27,7 +26,6 @@ private:
 
     GFXcanvas8 canvas;
 
-    bool is_active;
 };
 
 #endif // C_TOOLTIP_HPP

@@ -35,10 +35,10 @@ private:
 
     // Stores a reference to the current scene. Used when drawing/updating.
     std::shared_ptr<Scene> curScene;
-
     // Stores our current scene id. This is incremented whenever
     // a scene is added.
     unsigned int insertedSceneID;
+
 };
 
 #endif// SCENESTATEMACHINE_HPP

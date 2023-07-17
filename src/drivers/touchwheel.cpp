@@ -122,17 +122,29 @@ bool TouchWheel::ReadValues()
             startPosition = position;
             lastPosition = position;
         }
+        // Calculate direction and speed of movement
+        float adjPosition = position;
+        if (adjPosition < (lastPosition - 0.5f))
+        {
+            adjPosition += 1.0f;
+        }
+        else if (adjPosition > (lastPosition + 0.5f))
+        {
+            adjPosition -= 1.0f;
+        }
 
-        if (position > lastPosition)
+        if (adjPosition > lastPosition)
         {
             direction = 1;
-            speed = position - lastPosition;
+            speed = adjPosition - lastPosition;
+
             distance += speed;
         }
-        else if (position < lastPosition)
+        else if (adjPosition < lastPosition)
         {
             direction = -1;
-            speed = lastPosition - position;
+            speed = lastPosition - adjPosition;
+
             distance += speed;
         }
         else

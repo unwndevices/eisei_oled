@@ -4,12 +4,14 @@ bool Data::cvDataChanged = false;
 bool Data::phaseDataChanged = false;
 
 InterfaceData Data::interface_data = {
-    50.0f,    // frequency
-    0.1f,     // lfo_rate
-    1.0f,     // lfo_multiplier
-    0.0f,     // transimtter_rate
-    0.5f,     // transimtter_width
-    1.333333f // ratio
+    50.0f, // frequency
+    1.0f,  // gravity_multiplier
+    0.1f,  // lfo_rate
+    1.0f,  // lfo_multiplier
+    0.0f,  // scope_attack
+    0.0f,  // scope_hold
+    0.5f,  // scope_decay
+    1.0f   // ratio
 };
 
 CvData Data::cv_data = {

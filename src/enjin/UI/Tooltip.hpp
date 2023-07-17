@@ -15,7 +15,7 @@ public:
     };
 
     void SetValue(float value) { tooltip->SetValue(value); }
-    void SetActive(bool value) { tooltip->SetActive(value); }
+    void SetVisibility(bool value) { tooltip->SetVisibility(value); }
 
 private:
     std::shared_ptr<C_Tooltip> tooltip;
