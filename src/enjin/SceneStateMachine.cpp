@@ -37,6 +37,8 @@ void SceneStateMachine::Draw(Display &display)
 uint8_t SceneStateMachine::Add(std::shared_ptr<Scene> scene)
 {
     auto inserted = scenes.insert(std::make_pair(insertedSceneID, scene));
+    log_d("Scene %d added", insertedSceneID);
+    log_d("Free heap: %d", ESP.getFreeHeap());
 
     insertedSceneID++;
 

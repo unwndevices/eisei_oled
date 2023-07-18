@@ -46,7 +46,6 @@ public:
             instances.satellites.push_back(satellite);
             objects.Add(satellite);
         }
-        log_d("add add sats: %d", ESP.getFreeHeap());
         InitBackground();
         objects.Add(instances.main_planet);
     }

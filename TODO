@@ -4,9 +4,7 @@ UI Objects:
   ✔ Fill-up indicator (for cv)
   ✔ beam shaper UI
   ✔ Position animator component
-  ☐ satellite UI
-  ☐ identity UI
-  ☐ quantizer UI
+  ☐ planet UI
 Framework:
   ✔ HardwareManager
   ✔ Move display driver outside of Enjin + abstract
@@ -26,3 +24,4 @@ Hardware:
   ☐ research uneven brightness
   ✔ work on panel interface
   ☐ rev.2 schematics
+  ☐ expander design

@@ -6,10 +6,8 @@
 uint8_t C_Satellite::amount = 0;
 Vector2 C_Satellite::abs_center(64, 64);
 
-C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color) : C_Drawable(radius * 4 + 1, radius * 4 + 1), Component(owner),
-                                                                                              phase(0.0f),
-                                                                                              internalCanvas(radius * 4 + 1, radius * 4 + 1),
-                                                                                              from_center(from_center),
+C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uint8_t color) : C_Drawable(127, 127), Component(owner),
+                                                                                              phase(0.0f), from_center(from_center),
                                                                                               radius(radius),
                                                                                               color(color),
                                                                                               is_planet(false)
@@ -25,37 +23,30 @@ void C_Satellite::Awake()
 {
     C_Satellite::amount++;
     identity = C_Satellite::amount;
+    SetAnchorPoint(Anchor::CENTER);
     if (!from_center)
     {
         is_planet = true;
-        _position = (Vector2)(abs_center, abs_center);
-        position->SetPosition(_position);
-        canvas_position.x = position->GetPosition().x - (internalCanvas.width() / 2 + 1);
-        canvas_position.y = position->GetPosition().y - (internalCanvas.height() / 2 + 1);
+        sat_position.x = GetOffsetPosition().x;
+        sat_position.y = GetOffsetPosition().y;
     }
     else
     {
-        _position = RadialToCartesian(phase, from_center, abs_center);
-        position->SetPosition(_position);
-        canvas_position.x = position->GetPosition().x - (internalCanvas.width() / 2 + 1);
-        canvas_position.y = position->GetPosition().y - (internalCanvas.height() / 2 + 1);
+        sat_position = RadialToCartesian(phase, from_center, abs_center);
     }
-    // matte mask
-    GenerateSatellite();
 }
 
-void C_Satellite::GenerateSatellite()
+void C_Satellite::GenerateSatellite(GFXcanvas8 &canvas)
 {
-    internalCanvas.fillScreen(16U);
-    internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius + 1, 0);
-    internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius, color);
+    canvas.fillCircle(sat_position.x, sat_position.y, radius + 1, 0);
+    canvas.fillCircle(sat_position.x, sat_position.y, radius, color);
 
     if (is_planet)
     {
-        internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius - 1, 0);
-        internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius - 3, 2);
-        internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius - 5, 4);
-        internalCanvas.fillCircle(internalCanvas.width() / 2 + 1, internalCanvas.height() / 2 + 1, radius - 8, 6);
+        canvas.fillCircle(sat_position.x, sat_position.y, radius - 1, 0);
+        canvas.fillCircle(sat_position.x, sat_position.y, radius - 3, 2);
+        canvas.fillCircle(sat_position.x, sat_position.y, radius - 5, 4);
+        canvas.fillCircle(sat_position.x, sat_position.y, radius - 8, 6);
     }
 }
 
@@ -63,16 +54,12 @@ void C_Satellite::Update(uint8_t deltaTime)
 {
     if (!is_planet)
     {
-        _position = RadialToCartesian(phase, from_center, abs_center);
-        position->SetPosition(_position);
-        canvas_position.x = position->GetPosition().x - (internalCanvas.width() / 2 + 1);
-        canvas_position.y = position->GetPosition().y - (internalCanvas.height() / 2 + 1);
+        sat_position = RadialToCartesian(phase, from_center, abs_center);
     }
 };
 void C_Satellite::Draw(GFXcanvas8 &canvas)
 {
-    
-    canvas.drawGrayscaleBitmap(canvas_position.x, canvas_position.y, internalCanvas.getBuffer(), 16U, internalCanvas.width(), internalCanvas.height());
+    GenerateSatellite(canvas);
 };
 
 bool C_Satellite::ContinueToDraw() const

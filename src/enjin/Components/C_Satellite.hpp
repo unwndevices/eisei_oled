@@ -36,20 +36,18 @@ public:
     void SetRadius(uint8_t radius)
     {
         this->radius = radius;
-        GenerateSatellite();
     }
 
 private:
     float phase;
     uint8_t radius, from_center, identity;
-    Vector2 _position, canvas_position;
-    GFXcanvas8 internalCanvas;
+    Vector2 _position, sat_position;
     static uint8_t amount;
     static Vector2 abs_center;
     uint8_t color;
     bool is_planet;
 
-    void GenerateSatellite();
+    void GenerateSatellite(GFXcanvas8 &canvas);
 };
 
 #endif // !C_SATELLITE_HPP

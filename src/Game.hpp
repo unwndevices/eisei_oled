@@ -69,11 +69,11 @@ void Game::Init()
     std::shared_ptr<BaseScene> basePage = std::make_shared<BaseScene>(sceneStateMachine, context);
     uint8_t basePageID = sceneStateMachine.Add(basePage);
 
-    std::shared_ptr<SceneGravity> gravityPage = std::make_shared<SceneGravity>(sceneStateMachine, context);
-    uint8_t gravityPageID = sceneStateMachine.Add(gravityPage);
+    //std::shared_ptr<SceneGravity> gravityPage = std::make_shared<SceneGravity>(sceneStateMachine, context);
+    //uint8_t gravityPageID = sceneStateMachine.Add(gravityPage);
 
-    std::shared_ptr<SceneMass> massPage = std::make_shared<SceneMass>(sceneStateMachine, context);
-    uint8_t massPageID = sceneStateMachine.Add(massPage);
+    //std::shared_ptr<SceneMass> massPage = std::make_shared<SceneMass>(sceneStateMachine, context);
+    //uint8_t massPageID = sceneStateMachine.Add(massPage);
 
     std::shared_ptr<SceneCvGravity> cvPage = std::make_shared<SceneCvGravity>(sceneStateMachine, context);
     uint8_t cvPageID = sceneStateMachine.Add(cvPage);
@@ -83,7 +83,7 @@ void Game::Init()
     std::shared_ptr<SceneMain> mainPage = std::make_shared<SceneMain>(sceneStateMachine, context);
     uint8_t mainPageID = sceneStateMachine.Add(mainPage);
 
-    sceneStateMachine.SwitchTo(mainPageID);
+    sceneStateMachine.SwitchTo(1);
 
     interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
     interface.hw.GetButton(Pages::Phase).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));

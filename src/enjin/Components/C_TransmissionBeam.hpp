@@ -23,7 +23,6 @@ public:
     };
 
     C_TransmissionBeam(Object *owner, uint8_t width, uint8_t height) : C_Drawable(width, height), Component(owner),
-                                                                       internalCanvas(width, height),
                                                                        aim_point{(64, 127), (64, 127), (64, 127)},
                                                                        width(0.0f),
                                                                        phase(0.5f),
@@ -73,15 +72,13 @@ public:
     void Draw(GFXcanvas8 &canvas) override
     {
         // todo it's possible to render the internal canvas only when the parameters change.
-        internalCanvas.fillScreen(16);
-        internalCanvas.drawLine(64, 64, aim_point[0].x, aim_point[0].y, color);
-        internalCanvas.drawLine(64, 64, aim_point[1].x, aim_point[1].y, color / 2);
-        internalCanvas.drawLine(64, 64, aim_point[2].x, aim_point[2].y, color / 2);
+        canvas.drawLine(64, 64, aim_point[0].x, aim_point[0].y, color);
+        canvas.drawLine(64, 64, aim_point[1].x, aim_point[1].y, color / 2);
+        canvas.drawLine(64, 64, aim_point[2].x, aim_point[2].y, color / 2);
         for (int i = 0; i < 8; i++)
         {
-            drawDottedArc(64, 64, 17 + i * 7, start_angle, end_angle, color);
+            drawDottedArc(canvas, 64, 64, 17 + i * 7, start_angle, end_angle, color);
         }
-        canvas.drawGrayscaleBitmap(0, 0, internalCanvas.getBuffer(), (uint8_t)16, internalCanvas.width(), internalCanvas.height());
     };
     bool ContinueToDraw() const override
     {
@@ -118,7 +115,6 @@ private:
     float width, phase;
     uint8_t color, full_color, dimmed_color;
     int16_t phase_angle, half_width;
-    GFXcanvas8 internalCanvas;
     Vector2 aim_point[3];
     int16_t start_angle, end_angle;
 
@@ -126,7 +122,7 @@ private:
     uint8_t timer = 0;
     bool is_dimmed = false;
 
-    void drawDottedArc(int x0, int y0, int radius, int startAngle, int endAngle, uint16_t color)
+    void drawDottedArc(GFXcanvas8 &canvas, int x0, int y0, int radius, int startAngle, int endAngle, uint16_t color)
     {
         // Convert start and end angles to radians
         float startRad = startAngle * PI / 180.0;
@@ -152,7 +148,7 @@ private:
             // Use the distance to calculate the color
             uint16_t currentColor = color * (1.0 - (distance / (endRad - startRad)));
 
-            internalCanvas.drawPixel(x, y, currentColor);
+            canvas.drawPixel(x, y, currentColor);
         }
     }
 };

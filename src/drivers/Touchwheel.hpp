@@ -30,7 +30,7 @@ private:
 
     // Smoothing factors. The closer to one (1.0) the smoother the data. Smoothing
     // introduces a delay.
-    const float dataSmoothingFactor = 0.35;
+    const float dataSmoothingFactor = 0.75;
     const float baselineSmoothingFactor = 0.9995;
 
     // state
