@@ -23,10 +23,16 @@ public:
         if (!position)
         {
         }
-
     };
     void Awake() override{};
-    void Update(uint8_t deltaTime) override{};
+    void Update(uint8_t deltaTime) override{
+    };
+
+    void AddProbe(std::shared_ptr<C_Position> probe)
+    {
+        probes.push_back(probe);
+    };
+
     void Draw(GFXcanvas8 &canvas) override
     {
         for (auto &probe : probes)
@@ -46,6 +52,7 @@ private:
     uint8_t color;
 
     std::vector<std::shared_ptr<C_Position>> probes;
+
 };
 
 #endif // C_GRAVITYFIELDS_HPP
