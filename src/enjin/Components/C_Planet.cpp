@@ -1,15 +1,18 @@
 #include "enjin/Components/C_Planet.hpp"
 #include "enjin/utils/Noise.hpp"
-C_Planet::C_Planet(Object *owner, uint8_t radius) : C_Drawable(radius * 2 + 1, radius * 2 + 1), Component(owner), radius(radius), internalCanvas(radius * 2 + 1, radius * 2 + 1), textureCanvas(127, radius * 2 + 1)
+C_Planet::C_Planet(Object *owner, uint8_t radius) : C_Drawable((radius + 7) * 2 + 1, (radius + 7) * 2 + 1), Component(owner), radius(radius), internalCanvas((radius + 7) * 2 + 1, (radius + 7) * 2 + 1), textureCanvas(127, radius * 2 + 1), skyCanvas(127, (radius + 7) * 2 + 1)
 {
     position = owner->GetComponent<C_Position>();
 
     phase = 0.0f;
-    InitSphericalMap(radius);
+    speed = 0.0f;
+    GenerateSphericalMap(sphericalMap, radius);
+    // GenerateSphericalMap(skyMap, radius + 7);
     GenerateTerrain();
+    // GenerateSky();
 }
 
-void C_Planet::InitSphericalMap(uint8_t radius)
+void C_Planet::GenerateSphericalMap(std::vector<Vector2> &map, uint8_t radius)
 {
     uint8_t diameter = radius * 2 + 1;
 
@@ -43,7 +46,7 @@ void C_Planet::InitSphericalMap(uint8_t radius)
                 _pos.x = -1;
                 _pos.y = -1;
             }
-            sphericalMap.push_back(_pos);
+            map.push_back(_pos);
         }
     }
 }
@@ -61,7 +64,7 @@ void C_Planet::GenerateTerrain()
             // uint8_t value = (uint8_t)((pnoise((float)(x + offset) * 0.1f, (float)(y + offset) * 0.1f, width / 10, 10) + 1.0f) * 127.5f);
             // ridged function
             float scale = 0.1f; // Adjust this value to change the noise resolution
-            uint8_t value = (uint8_t)(abs(pnoise((float)(x + offset) * scale, (float)(y + offset) * scale, 5, 33)) * -1.0f * 255.0f);
+            uint8_t value = (uint8_t)(abs(pnoise((float)x / 127.0f * 8.0f, (float)(y + offset) * 0.1f, 127, 32)) * -1.0f * 255.0f);
 
             if (value < 110)
                 value = 0;
@@ -79,10 +82,15 @@ void C_Planet::GenerateTerrain()
         }
     }
 }
+void C_Planet::GenerateSky()
+{
+
+}
 
 void C_Planet::DrawPlanet()
 {
     uint8_t diameter = radius * 2 + 1;
+    uint8_t difference = (internalCanvas.width() - diameter) / 2;
     internalCanvas.fillScreen(16U);
     // draw the sphere
     for (int y = 0; y < diameter; ++y)
@@ -90,7 +98,7 @@ void C_Planet::DrawPlanet()
         for (int x = 0; x < diameter; ++x)
         {
             Vector2 *_pos = &sphericalMap[y * diameter + x];
-            int px = (_pos->x + (int)(phase * 127) % diameter);
+            int px = (_pos->x + (int)(phase * 127));
             int py = _pos->y;
             uint8_t color = 0;
             if (_pos->x < 0)
@@ -101,7 +109,34 @@ void C_Planet::DrawPlanet()
             {
                 color = textureCanvas.getBuffer()[py * textureCanvas.width() + px];
             }
-            internalCanvas.drawPixel(x, y, color);
+            internalCanvas.drawPixel(x + difference, y + difference, color);
         }
     }
+
+    internalCanvas.drawCircle(internalCanvas.width() / 2, internalCanvas.height() / 2, radius, 14);
+
+    // uint8_t sky_diameter = (radius + 7) * 2 + 1;
+
+    // for (int y = 0; y < sky_diameter; ++y)
+    // {
+    //     for (int x = 0; x < sky_diameter; ++x)
+    //     {
+    //         Vector2 *_pos = &skyMap[y * sky_diameter + x];
+    //         int px = (_pos->x + (int)(phase * sky_diameter) % sky_diameter);
+    //         int py = _pos->y;
+    //         uint8_t color = 0;
+    //         if (_pos->x < 0)
+    //         {
+    //             color = 16;
+    //         }
+    //         else
+    //         {
+    //             color = skyCanvas.getBuffer()[py * skyCanvas.width() + px];
+    //         }
+    //         if (color != 16)
+    //         {
+    //             internalCanvas.drawPixel(x, y, color);
+    //         }
+    //     }
+    // }
 }

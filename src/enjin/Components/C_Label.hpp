@@ -10,7 +10,7 @@
 class C_Label : public C_Drawable
 {
 public:
-    C_Label(Object *owner, uint8_t width, uint8_t height, bool background = false, uint8_t labelColor = 14U); // Added parameters here
+    C_Label(Object *owner, uint8_t width, uint8_t height, uint8_t labelColor = 14U, uint8_t bgColor = 0, uint8_t pointer = 0); // Added parameters here
     void Awake() override;
     void Update(uint8_t deltaTime) override;
     void Draw(GFXcanvas8 &canvas) override;
@@ -19,9 +19,8 @@ public:
 
 private:
     String string;
-    uint8_t text_width;
-    bool background;
-    uint8_t labelColor;
+    uint8_t text_width, pointer;
+    uint8_t labelColor, bgColor;
 
     GFXcanvas8 internalCanvas;
 };

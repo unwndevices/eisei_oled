@@ -41,14 +41,14 @@ public:
     };
     void OnDeactivate() override{};
 
-    float value = 0.0f;
+    float value = 220.0f;
     float value2 = 0.0f;
 
     void ProcessInput() override
     {
         if (interface.hw.GetTouchwheel().IsTouched())
         {
-            float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
+            float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed() * 10.0f;;
             if (touchwheel_input != 0.0f)
             {
                 if (interface.hw.GetTouchwheel().GetSideVertical() == TouchWheel::Halves::TOP)
@@ -56,8 +56,7 @@ public:
                     if (touchwheel_input >= 0.01f || touchwheel_input <= -0.01f)
                     {
                         value += touchwheel_input;
-
-                        planet->SetPhase(value);
+                        planet->SetFrequency(value);
                     }
                 }
             }

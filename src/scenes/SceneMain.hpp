@@ -7,7 +7,6 @@
 #include "enjin/Components.hpp"
 
 #include "enjin/UI/Satellite.hpp"
-#include "enjin/UI/Tooltip.hpp"
 #include "enjin/UI/GravityFields.hpp"
 #include "enjin/UI/TransmissionBeam.hpp"
 #include "enjin/UI/FillUpGauge.hpp"
@@ -51,7 +50,6 @@ private:
     std::vector<std::shared_ptr<Satellite>> satellites;
     std::shared_ptr<TransmissionBeam> transmission_beam;
 
-    std::shared_ptr<Tooltip> tooltip_freq;
 };
 
 #endif // !SCENEMAIN_H

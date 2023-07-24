@@ -1,6 +1,8 @@
 #include "C_Drawable.hpp"
 
-C_Drawable::C_Drawable(uint8_t width, uint8_t height) : anchorOffset(Vector2(0, 0)), sortOrder(0), layer(DrawLayer::Default), blendMode(BlendMode::Normal), is_visible(true), width(width), height(height) {}
+C_Drawable::C_Drawable(uint8_t width, uint8_t height) : anchorOffset(Vector2(0, 0)), sortOrder(0), layer(DrawLayer::Default), blendMode(BlendMode::Normal), is_visible(true), width(width), height(height) {
+    
+}
 
 C_Drawable::~C_Drawable() {}
 

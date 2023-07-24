@@ -12,8 +12,8 @@ C_Satellite::C_Satellite(Object *owner, uint8_t from_center, uint8_t radius, uin
                                                                                               color(color),
                                                                                               is_planet(false)
 {
-    position = owner->GetComponent<C_Position>();
-    if (!position)
+    this->position = owner->GetComponent<C_Position>();
+    if (!this->position)
     {
         std::cerr << "C_Satellite requires C_Position component.\n";
     }
@@ -23,12 +23,9 @@ void C_Satellite::Awake()
 {
     C_Satellite::amount++;
     identity = C_Satellite::amount;
-    SetAnchorPoint(Anchor::CENTER);
-    if (!from_center)
+    if (from_center == 0)
     {
         is_planet = true;
-        sat_position.x = GetOffsetPosition().x;
-        sat_position.y = GetOffsetPosition().y;
     }
     else
     {
@@ -38,15 +35,19 @@ void C_Satellite::Awake()
 
 void C_Satellite::GenerateSatellite(GFXcanvas8 &canvas)
 {
-    canvas.fillCircle(sat_position.x, sat_position.y, radius + 1, 0);
-    canvas.fillCircle(sat_position.x, sat_position.y, radius, color);
-
-    if (is_planet)
+    if (!is_planet)
     {
-        canvas.fillCircle(sat_position.x, sat_position.y, radius - 1, 0);
-        canvas.fillCircle(sat_position.x, sat_position.y, radius - 3, 2);
-        canvas.fillCircle(sat_position.x, sat_position.y, radius - 5, 4);
-        canvas.fillCircle(sat_position.x, sat_position.y, radius - 8, 6);
+        canvas.fillCircle(sat_position.x, sat_position.y, radius + 1, 0);
+        canvas.fillCircle(sat_position.x, sat_position.y, radius, color);
+    }
+    else if (is_planet)
+    {
+        canvas.fillCircle(GetOffsetPosition().x, GetOffsetPosition().y, radius + 1, 0);
+        canvas.fillCircle(GetOffsetPosition().x, GetOffsetPosition().y, radius, color);
+        canvas.fillCircle(GetOffsetPosition().x, GetOffsetPosition().y, radius - 1, 0);
+        canvas.fillCircle(GetOffsetPosition().x, GetOffsetPosition().y, radius - 3, 2);
+        canvas.fillCircle(GetOffsetPosition().x, GetOffsetPosition().y, radius - 5, 4);
+        canvas.fillCircle(GetOffsetPosition().x, GetOffsetPosition().y, radius - 8, 6);
     }
 }
 
@@ -59,6 +60,7 @@ void C_Satellite::Update(uint8_t deltaTime)
 };
 void C_Satellite::Draw(GFXcanvas8 &canvas)
 {
+    DrawBackground(canvas);
     GenerateSatellite(canvas);
 };
 

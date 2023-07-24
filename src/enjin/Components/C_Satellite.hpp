@@ -37,11 +37,20 @@ public:
     {
         this->radius = radius;
     }
+    uint8_t GetRadius()
+    {
+        return radius;
+    }
+
+    uint8_t GetDistance()
+    {
+        return from_center;
+    }
 
 private:
     float phase;
     uint8_t radius, from_center, identity;
-    Vector2 _position, sat_position;
+    Vector2 sat_position;
     static uint8_t amount;
     static Vector2 abs_center;
     uint8_t color;

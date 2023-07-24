@@ -2,7 +2,9 @@
 #define SCENEGRAVITY_HPP
 #include "BaseScene.hpp"
 
-#include "enjin/UI/Tooltip.hpp"
+#include "enjin/UI/OverlayBg.hpp"
+#include "enjin/UI/Planet.hpp"
+#include "enjin/UI/Label.hpp"
 
 class SceneGravity : public BaseScene
 {
@@ -22,7 +24,12 @@ public:
     void Draw(Display &display) override;
 
 private:
-    std::shared_ptr<Tooltip> tooltip;
+    ObjectCollection local_objects;
+    std::shared_ptr<Planet> planet;
+    std::shared_ptr<Label> frequency_label;
+
+    std::shared_ptr<OverlayBg> bg;
+
 };
 
 #endif // SceneGravity_HPP

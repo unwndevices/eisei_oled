@@ -1,31 +1,18 @@
-#include "SceneGravity.hpp"
+#include "SceneOrbit.hpp"
 
-void SceneGravity::OnCreate()
+void SceneOrbit::OnCreate()
 {
-    bg = std::make_shared<OverlayBg>(3);
-    bg->SetDrawLayer(DrawLayer::Overlay);
-
-    local_objects.Add(bg);
-
-    planet = std::make_shared<Planet>();
-    local_objects.Add(planet);
-
-    frequency_label = std::make_shared<Label>(45, 19, 14, 1, 11);
-
-    // setting custom transition for label
-    frequency_label->transition->AddKeyframe({0, Vector2(64, -20), Easing::Step});
-    frequency_label->transition->AddKeyframe({100, Vector2(64, -20), Easing::Step});
-    frequency_label->transition->AddKeyframe({450, Vector2(64, 64 - 37), Easing::EaseOutQuad});
-
-    local_objects.Add(frequency_label);
+    label = std::make_shared<Label>(47, 19, 0);
+    label->SetValue(0.1f, "s");
+    local_objects.Add(label);
 }
 
-void SceneGravity::OnDestroy()
+void SceneOrbit::OnDestroy()
 {
-    // Custom cleanup for SceneGravity
+    // Custom cleanup for SceneOrbit
 }
 
-void SceneGravity::OnActivate()
+void SceneOrbit::OnActivate()
 {
     int i = 0;
     for (auto &satellite : instances.satellites)
@@ -45,56 +32,47 @@ void SceneGravity::OnActivate()
     }
 
     instances.main_planet->radius_transition->ClearKeyframes();
-    instances.main_planet->radius_transition->SetEndCallback(std::bind(&Planet::SetActive, planet.get()));
+    instances.main_planet->radius_transition->SetParameterSetter(std::bind(&Satellite::SetRadius, instances.main_planet.get(), std::placeholders::_1));
     instances.main_planet->radius_transition->AddKeyframe({0, instances.main_planet->radius_transition->GetCurrentValue(), Easing::Step});
-    instances.main_planet->radius_transition->AddKeyframe({250, 29, Easing::EaseInCubic});
+    instances.main_planet->radius_transition->AddKeyframe({350, 29, Easing::EaseInQuart});
 
-    bg->EnterTransition();
     instances.main_planet->EnterTransition();
-    frequency_label->EnterTransition();
 }
 
-void SceneGravity::OnDeactivate()
+void SceneOrbit::OnDeactivate()
 {
-    planet->SetVisibility(false);
-    frequency_label->SetVisibility(false);
-    bg->SetVisibility(false);
 }
 
-void SceneGravity::ProcessInput()
+void SceneOrbit::ProcessInput()
 {
     if (interface.hw.GetTouchwheel().IsTouched())
     {
         float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
         if (touchwheel_input != 0.0f)
         {
-
-            data.interface_data.gravity += touchwheel_input * 100.0f;
-            planet->SetFrequency(data.interface_data.gravity);
-            frequency_label->SetValue(data.interface_data.gravity);
         }
     }
 }
 
-void SceneGravity::Update(uint16_t deltaTime)
+void SceneOrbit::Update(uint16_t deltaTime)
 {
-    // Custom update logic for SceneGravity
+    // Custom update logic for SceneOrbit
     BaseScene::Update(deltaTime); // Call the base class's Update method
 
     local_objects.ProcessNewObjects();
     local_objects.Update(deltaTime);
 }
 
-void SceneGravity::LateUpdate(uint16_t deltaTime)
+void SceneOrbit::LateUpdate(uint16_t deltaTime)
 {
-    // Custom late update logic for SceneGravity
+    // Custom late update logic for SceneOrbit
     BaseScene::LateUpdate(deltaTime); // Call the base class's Draw method
     local_objects.LateUpdate(deltaTime);
 }
 
-void SceneGravity::Draw(Display &display)
+void SceneOrbit::Draw(Display &display)
 {
-    // Custom drawing code for SceneGravity
+    // Custom drawing code for SceneOrbit
     BaseScene::Draw(display); // Call the base class's Draw method
     local_objects.Draw(buffer);
     display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());

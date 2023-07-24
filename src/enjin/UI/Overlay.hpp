@@ -24,11 +24,11 @@ public:
         overlay_graphic->Load((const uint8_t *)overlay_gradient, 128, 128);
         overlay_graphic->LoadFrame(gradient);
 
-        label_left = AddComponent<C_Label>(50, 20, true);
+        label_left = AddComponent<C_Label>(50, 20, 14, 7);
         label_left->SetDrawLayer(DrawLayer::Overlay);
         label_left->SetBlendMode(BlendMode::Normal);
 
-        label_right = AddComponent<C_Label>(50, 20);
+        label_right = AddComponent<C_Label>(50, 20, 14, 7);
         label_right->SetDrawLayer(DrawLayer::Overlay);
         label_right->SetBlendMode(BlendMode::Normal);
 

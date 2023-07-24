@@ -33,20 +33,15 @@ public:
         tickmarks->SetAnchorPoint(Anchor::CENTER);
         tickmarks->AddOffset(Vector2(1, 1));
 
-        par_transition = AddComponent<C_ParameterAnimator>();
-        ParameterKeyframe pkf1 = {0, 4.0f, Easing::Step};
-        ParameterKeyframe pkf2 = {700, 0.0f, Easing::EaseOutQuad};
-        ParameterKeyframe pkf3 = {1800, 0.5f, Easing::EaseInOutSine};
+        par_transition = AddComponent<C_ParameterAnimator<float>>();
         par_transition->SetParameterSetter(std::bind(&BeamShaper::SetShape, this, std::placeholders::_1));
-        par_transition->AddKeyframe(pkf1);
-        par_transition->AddKeyframe(pkf2);
-        par_transition->AddKeyframe(pkf3);
+        par_transition->AddKeyframe({0, 4.0f, Easing::Step});
+        par_transition->AddKeyframe({700, 0.0f, Easing::EaseOutQuad});
+        par_transition->AddKeyframe({1800, 0.5f, Easing::EaseInOutSine});
 
         transition = AddComponent<C_PositionAnimator>();
-        PositionKeyframe kf1 = {0, Vector2(64, -67), Easing::Step};
-        PositionKeyframe kf2 = {350, Vector2(64, 64), Easing::EaseOutQuad};
-        transition->AddKeyframe(kf1);
-        transition->AddKeyframe(kf2);
+        transition->AddKeyframe({0, Vector2(64, -67), Easing::Step});
+        transition->AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
     }
 
     void EnterTransition()
@@ -79,7 +74,7 @@ private:
     std::shared_ptr<C_SymmShape> shape;
     std::shared_ptr<C_Tickmarks> tickmarks;
     std::shared_ptr<C_PositionAnimator> transition;
-    std::shared_ptr<C_ParameterAnimator> par_transition;
+    std::shared_ptr<C_ParameterAnimator<float>> par_transition;
 };
 
-#endif// BEAMSHAPER_HPP
+#endif // BEAMSHAPER_HPP

@@ -7,7 +7,6 @@
 #include "enjin/UI/OverlayBg.hpp"
 #include "enjin/UI/ConstantList.hpp"
 #include "enjin/UI/RatioDial.hpp"
-#include "enjin/UI/Tooltip.hpp"
 #include "enjin/UI/FillUpGauge.hpp"
 
 class SceneRatio : public BaseScene

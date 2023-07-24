@@ -44,14 +44,14 @@ public:
         value_bg->_canvas.drawRoundRect(0, 0, 55, 35, 9, 8);
         value_bg->_canvas.drawLine(3, 17, 51, 17, 7);
 
-        label = AddComponent<C_Label>(55, 15, false, 12);
+        label = AddComponent<C_Label>(55, 15, 12);
         label->SetDrawLayer(DrawLayer::Overlay);
         label->SetBlendMode(BlendMode::Normal);
         label->SetAnchorPoint(Anchor::CENTER);
         label->AddOffset(Vector2(0, -9));
         label->SetString("grav");
 
-        value_label = AddComponent<C_Label>(55, 15, false, 12);
+        value_label = AddComponent<C_Label>(55, 15, 12);
         value_label->SetDrawLayer(DrawLayer::Overlay);
         value_label->SetBlendMode(BlendMode::Normal);
         value_label->SetAnchorPoint(Anchor::CENTER);
@@ -64,7 +64,6 @@ public:
         plus->SetAnchorPoint(Anchor::CENTER);
         plus->AddOffset(Vector2(0, -45));
         plus->Load((const uint8_t *)plus_11, 11, 11);
-
 
         minus = AddComponent<C_Sprite>(11, 11);
         minus->SetDrawLayer(DrawLayer::Overlay);
@@ -110,4 +109,4 @@ private:
     std::shared_ptr<C_Sprite> minus;
 };
 
-#endif// FILLUPGAUGE_HPP
+#endif // FILLUPGAUGE_HPP

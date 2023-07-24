@@ -48,4 +48,4 @@ private:
     std::pair<AnimationState, std::shared_ptr<Animation>> currentAnimation;
 };
 
-#endif // C_ANIMATION_HPP
+#endif// C_ANIMATION_HPP

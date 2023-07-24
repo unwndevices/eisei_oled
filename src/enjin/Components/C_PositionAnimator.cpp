@@ -87,5 +87,8 @@ Vector2 C_PositionAnimator::InterpolatePosition(PositionKeyframe kf1, PositionKe
     Vector2 p1 = kf1.position;
     Vector2 p2 = kf2.position;
     float easing = kf2.easingFunction(t);
-    return Vector2::Lerp(p1, p2, easing);
+    Vector2 position;
+    position.x = p1.x + (int16_t)((p2.x - p1.x) * easing);
+    position.y = p1.y + (int16_t)((p2.y - p1.y) * easing);
+    return position;
 }

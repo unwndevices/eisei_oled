@@ -30,9 +30,6 @@ void SceneMain::OnCreate()
     objects.Add(main_planet);
     // gravity_fields = std::make_shared<GravityFields>(satellites);
     // objects.Add(gravity_fields);
-    //  tooltip
-    tooltip_freq = std::make_shared<Tooltip>(Vector2(73, 36), 3);
-    objects.Add(tooltip_freq);
 
     // SLIDERs
     // std::shared_ptr<Slider> slider_left = std::make_shared<Slider>(Side::LEFT);
@@ -151,7 +148,7 @@ void SceneMain::ProcessInput()
             {
                 touchTimer.Restart();
                 data.interface_data.gravity += touchwheel_input * 40.0f;
-                tooltip_freq->SetValue(data.interface_data.gravity);
+                //                tooltip_freq->SetValue(data.interface_data.gravity);
             }
         }
         else if (current_page == SW_MASS) // TODO use better id for pages
@@ -173,7 +170,7 @@ void SceneMain::ProcessInput()
                 touchTimer.Restart();
 
                 data.interface_data.lfo_rate += touchwheel_input * 10.0f;
-                tooltip_freq->SetValue(data.interface_data.lfo_rate);
+                // tooltip_freq->SetValue(data.interface_data.lfo_rate);
             }
         }
     }
