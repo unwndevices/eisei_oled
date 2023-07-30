@@ -27,6 +27,16 @@ void SceneGravity::OnDestroy()
 
 void SceneGravity::OnActivate()
 {
+    bg->fill_transition->ClearKeyframes();
+    bg->fill_transition->SetParameterSetter(std::bind(&OverlayBg::SetOpacity, bg.get(), std::placeholders::_1));
+    bg->fill_transition->AddKeyframe({0, bg->fill_transition->GetCurrentValue(), Easing::Step});
+    bg->fill_transition->AddKeyframe({250, 5U, Easing::Linear});
+
+    bg->graphic_transition->ClearKeyframes();
+    bg->graphic_transition->SetParameterSetter(std::bind(&OverlayBg::SetFrame, bg.get(), std::placeholders::_1));
+    bg->graphic_transition->AddKeyframe({0, bg->graphic_transition->GetCurrentValue(), Easing::Step});
+    bg->graphic_transition->AddKeyframe({250, 3U, Easing::Linear});
+
     int i = 0;
     for (auto &satellite : instances.satellites)
     {
@@ -52,6 +62,8 @@ void SceneGravity::OnActivate()
     bg->EnterTransition();
     instances.main_planet->EnterTransition();
     frequency_label->EnterTransition();
+
+    interface.hw.GetTouchwheel().onClick.Connect(std::bind(&SceneGravity::ProcessTouchClick, this, std::placeholders::_1));
 }
 
 void SceneGravity::OnDeactivate()
@@ -59,20 +71,35 @@ void SceneGravity::OnDeactivate()
     planet->SetVisibility(false);
     frequency_label->SetVisibility(false);
     bg->SetVisibility(false);
+    interface.hw.GetTouchwheel().onClick.DisconnectAll();
 }
 
 void SceneGravity::ProcessInput()
 {
-    if (interface.hw.GetTouchwheel().IsTouched())
+    if (interface.hw.GetTouchwheel().IsTouched(0.1f))
     {
         float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
-        if (touchwheel_input != 0.0f)
-        {
 
-            data.interface_data.gravity += touchwheel_input * 100.0f;
-            planet->SetFrequency(data.interface_data.gravity);
-            frequency_label->SetValue(data.interface_data.gravity);
-        }
+        data.interface_data.gravity += touchwheel_input * 100.0f;
+        planet->SetFrequency(data.interface_data.gravity);
+        frequency_label->SetValue(data.interface_data.gravity);
+    }
+}
+
+void SceneGravity::ProcessTouchClick(TouchWheel::Halves side)
+{
+    log_d("Touchwheel clicked");
+    if (side == TouchWheel::Halves::TOP)
+    {
+        data.interface_data.gravity += 0.1f;
+        planet->SetFrequency(data.interface_data.gravity);
+        frequency_label->SetValue(data.interface_data.gravity);
+    }
+    else
+    {
+        data.interface_data.gravity -= 0.1f;
+        planet->SetFrequency(data.interface_data.gravity);
+        frequency_label->SetValue(data.interface_data.gravity);
     }
 }
 

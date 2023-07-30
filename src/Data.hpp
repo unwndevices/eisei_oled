@@ -15,14 +15,14 @@ struct __attribute__((packed)) InterfaceData
 
 struct __attribute__((packed)) CvData
 {
-    float cv_gravity_a;
-    float cv_gravity_b;
-    float cv_orbit_a;
-    float cv_orbit_b;
-    float cv_beam_a;
-    float cv_beam_b;
-    float cv_ratio_a;
-    float cv_ratio_b;
+    float input_a;
+    float input_b;
+    float input_c;
+    float input_d;
+    float cv_gravity;
+    float cv_orbit;
+    float cv_scope;
+    float cv_ratio;
 };
 
 class Data
@@ -37,4 +37,4 @@ public:
     static bool phaseDataChanged;
 };
 
-#endif // DATA_HPP
+#endif// DATA_HPP

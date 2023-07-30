@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "enjin/Signal.hpp"
+#include "enjin/utils/Timer.hpp"
 
 #define NUM_SENSORS 8
 
@@ -34,7 +35,7 @@ private:
     const float baselineSmoothingFactor = 0.9995;
 
     // state
-    uint16_t _threshold = 200;
+    uint16_t _threshold = 600;
     bool _pressed = false;
     int _lastValue = 0;
 };
@@ -92,6 +93,7 @@ public:
 
     void Update()
     {
+        float prevPosition = GetPosition();
         if (ReadValues())
         {
             onPositionChanged.Emit(GetSpeed());
@@ -109,34 +111,46 @@ public:
                 releaseTime = millis();
                 if (releaseTime - pressTime <= clickTime)
                 {
-                    float buttonPosition = GetPosition();
-                    int buttonId = -1;
+                    // float buttonPosition = GetPosition();
+                    // int buttonId = -1;
 
-                    for (int id = 0; id < numButtons; id++)
-                    {
-                        float lowerBound = 0.003f + static_cast<float>(id) / numButtons;
-                        float upperBound = static_cast < float > (id + 1) / numButtons - 0.003f;
+                    // for (int id = 0; id < numButtons; id++)
+                    // {
+                    //     float lowerBound = 0.003f + static_cast<float>(id) / numButtons;
+                    //     float upperBound = static_cast<float>(id + 1) / numButtons - 0.003f;
 
-                        if (buttonPosition >= lowerBound && buttonPosition < upperBound)
-                        {
-                            buttonId = id;
-                            break;
-                        }
-                    }
+                    //     if (buttonPosition >= lowerBound && buttonPosition < upperBound)
+                    //     {
+                    //         buttonId = id;
+                    //         break;
+                    //     }
+                    // }
 
-                    if (buttonId != -1)
-                    {
-                        onButtonClick.Emit(static_cast<int>(buttonId));
-                    }
+                    // if (buttonId != -1)
+                    // {
+                    //     onButtonClick.Emit(static_cast<int>(buttonId));
+                    // }
+
+                    onClick.Emit(GetSideVertical());
                 }
-                onClick.Emit(GetSideVertical());
-                clickDetected = false;
+                    clickDetected = false;
             }
             incrementDistance = 0.0f;
         }
     }
 
-    bool IsTouched() { return touched; };
+    bool IsTouched(float threshold = 0.0f)
+    {
+        if (threshold == 0.0f)
+            return touched;
+        else if (distance > threshold)
+        {
+            return true;
+        }
+        else
+            return false;
+    };
+
     Halves GetSideHorizontal()
     {
         if ((startPosition >= 0.0f && startPosition <= 0.25f) || (startPosition > 0.75f && startPosition <= 1.0f))
@@ -156,6 +170,7 @@ public:
             return BOTTOM;
         }
     }
+
     int sensorValues[10];
     int direction;
     float speed;
@@ -186,6 +201,7 @@ private:
     const unsigned long clickTime = 300;
     int numButtons = 12; // Default number of buttons
 
+    Timer timer;
     ///////////////////////////////////////////////////////////
     int ReadSensorValue(int sensorNum) { return t[sensorNum].GetValue(); };
 };

@@ -8,6 +8,8 @@
 #include "enjin/Components/C_Canvas.hpp"
 #include "enjin/Components/C_Label.hpp"
 
+#include "enjin/Components/C_PositionAnimator.hpp"
+
 #include "assets/resources.h"
 
 class FillUpGauge : public Object
@@ -15,19 +17,7 @@ class FillUpGauge : public Object
 public:
     FillUpGauge()
     {
-        // position = AddComponent<C_Position>(64, 64);
         position->SetPosition(64, 64);
-        overlay_fill = AddComponent<C_Canvas>(128, 128);
-        overlay_fill->SetDrawLayer(DrawLayer::Overlay);
-        overlay_fill->SetBlendMode(BlendMode::Sub);
-        overlay_fill->_canvas.fillScreen(6);
-
-        overlay_graphic = AddComponent<C_Sprite>(128, 128);
-        overlay_graphic->SetDrawLayer(DrawLayer::Overlay);
-        overlay_graphic->SetBlendMode(BlendMode::Normal);
-        overlay_graphic->SetAnchorPoint(Anchor::CENTER);
-        overlay_graphic->Load((const uint8_t *)overlay_gradient, 128, 128);
-        overlay_graphic->LoadFrame(4);
 
         gauge = AddComponent<C_FillUpGauge>(111, 111, 13, GaugeMode::Bidirectional);
         gauge->SetDrawLayer(DrawLayer::Overlay);
@@ -49,7 +39,6 @@ public:
         label->SetBlendMode(BlendMode::Normal);
         label->SetAnchorPoint(Anchor::CENTER);
         label->AddOffset(Vector2(0, -9));
-        label->SetString("grav");
 
         value_label = AddComponent<C_Label>(55, 15, 12);
         value_label->SetDrawLayer(DrawLayer::Overlay);
@@ -71,6 +60,10 @@ public:
         minus->SetAnchorPoint(Anchor::CENTER);
         minus->AddOffset(Vector2(0, 45));
         minus->Load((const uint8_t *)minus_11, 11, 11);
+
+        pos_transition = AddComponent<C_PositionAnimator>();
+        pos_transition->AddKeyframe({0, Vector2(200, 64), Easing::Step});
+        pos_transition->AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
     };
 
     void SetValue(float value)
@@ -87,8 +80,6 @@ public:
 
     void SetVisibility(bool visibility)
     {
-        overlay_fill->SetVisibility(visibility);
-        overlay_graphic->SetVisibility(visibility);
         gauge->SetVisibility(visibility);
         value_bg->SetVisibility(visibility);
         label->SetVisibility(visibility);
@@ -97,9 +88,15 @@ public:
         minus->SetVisibility(visibility);
     }
 
+    void EnterTransition()
+    {
+        SetVisibility(true);
+        pos_transition->StartAnimation();
+    }
+
+    std::shared_ptr<C_PositionAnimator> pos_transition;
+
 private:
-    std::shared_ptr<C_Canvas> overlay_fill;
-    std::shared_ptr<C_Sprite> overlay_graphic;
     std::shared_ptr<C_FillUpGauge> gauge;
     std::shared_ptr<C_Canvas> value_bg;
     std::shared_ptr<C_Label> label;
@@ -109,4 +106,4 @@ private:
     std::shared_ptr<C_Sprite> minus;
 };
 
-#endif // FILLUPGAUGE_HPP
+#endif// FILLUPGAUGE_HPP

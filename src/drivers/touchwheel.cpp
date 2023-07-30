@@ -63,6 +63,7 @@ void TouchWheel::Init()
     {
         t[i].Init(touchGpio[i]);
     }
+    timer.Restart();
 };
 bool TouchWheel::ReadValues()
 {
@@ -87,6 +88,8 @@ bool TouchWheel::ReadValues()
 
     if (maxValue >= touchThreshold)
     {
+        timer.CalculateDeltaTime();
+        int32_t deltaTime = timer.GetDeltaTime();
         // Approximate position using linear interpolation
         int nextSensor = (maxSensor + 1) % NUM_SENSORS;
         int prevSensor = (maxSensor - 1 + NUM_SENSORS) % NUM_SENSORS;
@@ -136,14 +139,14 @@ bool TouchWheel::ReadValues()
         if (adjPosition > lastPosition)
         {
             direction = 1;
-            speed = adjPosition - lastPosition;
+            speed = ((adjPosition - lastPosition) / deltaTime) * 20.0f;
 
             distance += speed;
         }
         else if (adjPosition < lastPosition)
         {
             direction = -1;
-            speed = lastPosition - adjPosition;
+            speed = ((lastPosition - adjPosition) / deltaTime) * 20.0f;
 
             distance += speed;
         }
@@ -162,6 +165,7 @@ bool TouchWheel::ReadValues()
     {
         touched = false;
         speed = 0.0f;
+        distance = 0.0f;
     }
 
     return touched;

@@ -18,6 +18,7 @@ public:
     void OnDeactivate() override;
 
     void ProcessInput() override;
+    void ProcessTouchClick(TouchWheel::Halves side);
     void LateUpdate(uint16_t deltaTime) override;
 
     void Update(uint16_t deltaTime) override;
@@ -29,7 +30,6 @@ private:
     std::shared_ptr<Label> frequency_label;
 
     std::shared_ptr<OverlayBg> bg;
-
 };
 
 #endif // SceneGravity_HPP

@@ -95,10 +95,11 @@ public:
         memcpy(data.phase, newPhase, sizeof(data.phase));
         data.phaseDataChanged = true;
     }
-
+    // TODO this is a hack
     void SetInterfaceChanged()
     {
         data.interfaceDataChanged = true;
+        data.cvDataChanged = true;
     }
 
     // Add more update functions for future data...

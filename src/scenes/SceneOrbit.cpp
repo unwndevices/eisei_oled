@@ -4,6 +4,7 @@ void SceneOrbit::OnCreate()
 {
     label = std::make_shared<Label>(47, 19, 0);
     label->SetValue(0.1f, "s");
+    label->SetVisibility(false);
     local_objects.Add(label);
 }
 
@@ -33,6 +34,8 @@ void SceneOrbit::OnActivate()
 
     instances.main_planet->radius_transition->ClearKeyframes();
     instances.main_planet->radius_transition->SetParameterSetter(std::bind(&Satellite::SetRadius, instances.main_planet.get(), std::placeholders::_1));
+    instances.main_planet->radius_transition->SetEndCallback([=]()
+                                                             { label->SetVisibility(true); });
     instances.main_planet->radius_transition->AddKeyframe({0, instances.main_planet->radius_transition->GetCurrentValue(), Easing::Step});
     instances.main_planet->radius_transition->AddKeyframe({350, 29, Easing::EaseInQuart});
 
@@ -50,6 +53,7 @@ void SceneOrbit::ProcessInput()
         float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
         if (touchwheel_input != 0.0f)
         {
+            
         }
     }
 }

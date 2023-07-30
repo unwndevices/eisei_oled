@@ -9,12 +9,10 @@
 #include "scenes/BaseScene.hpp"
 #include "scenes/SceneGravity.hpp"
 #include "scenes/SceneOrbit.hpp"
+#include "scenes/SceneAttenuverter.hpp"
 
 #include "scenes/SceneRatio.hpp"
 #include "scenes/SceneGravity.hpp"
-#include "scenes/SceneMass.hpp"
-#include "scenes/SceneMain.hpp"
-#include "scenes/SceneCvGravity.hpp"
 
 class Game
 {
@@ -34,14 +32,26 @@ private:
     InterfaceManager &interface;
     SharedContext &context;
     Timer timer;
+
+    std::shared_ptr<SceneAttenuverter> attenuverterPage;
+    GFXcanvas8 screenShotCanvas = GFXcanvas8(128, 128);
 };
 
 Game::Game(SharedContext &context) : context(context), interface(context.interface), display(context.interface.hw.GetDisplay())
 {
+    interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Pages::Phase).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Pages::Mass).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Pages::Ratio).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Sats::a).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Sats::b).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Sats::c).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    interface.hw.GetButton(Sats::d).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Game::ProcessButton(int id, Button::State state)
 {
+    log_d("Button: %d, state: %d", id, state);
     if (state == Button::State::CLICKED)
         switch (id)
         {
@@ -57,7 +67,10 @@ void Game::ProcessButton(int id, Button::State state)
         case SW_RATIO:
             sceneStateMachine.SwitchTo(0);
             break;
-
+        case SW_A: case SW_B: case SW_C: case SW_D:
+            attenuverterPage->SetData(id);
+            sceneStateMachine.SwitchTo(3);
+            break;
         default:
             break;
         }
@@ -77,23 +90,16 @@ void Game::Init()
     std::shared_ptr<SceneOrbit> orbitPage = std::make_shared<SceneOrbit>(sceneStateMachine, context);
     uint8_t orbitPageID = sceneStateMachine.Add(orbitPage);
 
+    attenuverterPage = std::make_shared<SceneAttenuverter>(sceneStateMachine, context);
+    uint8_t attenuverterPageID = sceneStateMachine.Add(attenuverterPage);
+
     // std::shared_ptr<SceneMass> massPage = std::make_shared<SceneMass>(sceneStateMachine, context);
     // uint8_t massPageID = sceneStateMachine.Add(massPage);
 
     // std::shared_ptr<SceneCvGravity> cvPage = std::make_shared<SceneCvGravity>(sceneStateMachine, context);
     // uint8_t cvPageID = sceneStateMachine.Add(cvPage);
 
-    std::shared_ptr<SceneRatio> ratioPage = std::make_shared<SceneRatio>(sceneStateMachine, context);
-    uint8_t ratioPageID = sceneStateMachine.Add(ratioPage);
-    std::shared_ptr<SceneMain> mainPage = std::make_shared<SceneMain>(sceneStateMachine, context);
-    uint8_t mainPageID = sceneStateMachine.Add(mainPage);
-
     sceneStateMachine.SwitchTo(0);
-
-    interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    interface.hw.GetButton(Pages::Phase).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    interface.hw.GetButton(Pages::Mass).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    interface.hw.GetButton(Pages::Ratio).onStateChanged.Connect(std::bind(&Game::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
 
     timer.Restart();
 }
@@ -133,4 +139,4 @@ void Game::ScreenShot()
     USBSerial.println("<");
 }
 
-#endif// GAME_HPP
+#endif // GAME_HPP
