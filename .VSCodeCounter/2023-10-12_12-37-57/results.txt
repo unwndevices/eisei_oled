@@ -1,0 +1,181 @@
+Date : 2023-10-12 12:37:57
+Directory : c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled
+Total : 138 files,  25913 codes, 405 comments, 1591 blanks, all 27909 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| C++                |        134 |     25,700 |        363 |      1,554 |     27,617 |
+| JSON with Comments |          1 |         97 |          0 |          1 |         98 |
+| Python             |          1 |         81 |         30 |         31 |        142 |
+| Ini                |          1 |         34 |         12 |          5 |         51 |
+| Batch              |          1 |          1 |          0 |          0 |          1 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                 | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                    |        138 |     25,913 |        405 |      1,591 |     27,909 |
+| . (Files)                                                                                            |          2 |        131 |         12 |          6 |        149 |
+| SerialScreenshot                                                                                     |          2 |         82 |         30 |         31 |        143 |
+| src                                                                                                  |        134 |     25,700 |        363 |      1,554 |     27,617 |
+| src (Files)                                                                                          |         12 |        926 |         30 |        168 |      1,124 |
+| src\assets                                                                                           |          5 |     16,534 |          0 |         15 |     16,549 |
+| src\drivers                                                                                          |         13 |      2,086 |         46 |        118 |      2,250 |
+| src\enjin                                                                                            |         81 |      4,506 |        189 |        894 |      5,589 |
+| src\enjin (Files)                                                                                    |         16 |        632 |         41 |        152 |        825 |
+| src\enjin\Components                                                                                 |         39 |      2,211 |        115 |        455 |      2,781 |
+| src\enjin\UI                                                                                         |         18 |      1,315 |         12 |        210 |      1,537 |
+| src\enjin\UI (Files)                                                                                 |         16 |        994 |         12 |        203 |      1,209 |
+| src\enjin\UI\assets                                                                                  |          2 |        321 |          0 |          7 |        328 |
+| src\enjin\utils                                                                                      |          8 |        348 |         21 |         77 |        446 |
+| src\scenes                                                                                           |         17 |      1,098 |         54 |        239 |      1,391 |
+| src\utils                                                                                            |          6 |        550 |         44 |        120 |        714 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                             | language           | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\SerialScreenshot\compile.bat                 | Batch              |          1 |          0 |          0 |          1 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\SerialScreenshot\main.py                     | Python             |         81 |         30 |         31 |        142 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\eisei_oled.code-workspace                    | JSON with Comments |         97 |          0 |          1 |         98 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\platformio.ini                               | Ini                |         34 |         12 |          5 |         51 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Constants.cpp                            | C++                |         95 |          0 |          1 |         96 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Constants.hpp                            | C++                |          8 |          0 |          3 |         11 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Data.cpp                                 | C++                |         27 |          0 |          5 |         32 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Data.hpp                                 | C++                |         56 |          0 |         10 |         66 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Game.hpp                                 | C++                |        208 |          2 |         40 |        250 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Hardware.cpp                             | C++                |         65 |          5 |         13 |         83 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\Hardware.hpp                             | C++                |        136 |          2 |         30 |        168 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\I2CShare.hpp                             | C++                |         98 |         13 |         17 |        128 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\InterfaceManager.hpp                     | C++                |         28 |          0 |          7 |         35 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\ObjectInstances.hpp                      | C++                |         17 |          0 |          4 |         21 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\SharedContext.hpp                        | C++                |         28 |          0 |          5 |         33 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\assets\intro.h                           | C++                |     13,161 |          0 |          0 |     13,161 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\assets\ratio.h                           | C++                |        130 |          0 |          2 |        132 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\assets\resources.cpp                     | C++                |        933 |          0 |          5 |        938 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\assets\resources.h                       | C++                |          8 |          0 |          3 |         11 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\assets\splashscreen.h                    | C++                |      2,302 |          0 |          5 |      2,307 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\Button.hpp                       | C++                |        148 |          0 |         21 |        169 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\Coordinates.cpp                  | C++                |         39 |          0 |          4 |         43 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\Coordinates.h                    | C++                |         30 |          1 |          2 |         33 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\Touchwheel.hpp                   | C++                |        155 |         26 |         29 |        210 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\drivers.hpp                      | C++                |          8 |          0 |          3 |         11 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\font16x16.h                      | C++                |        130 |          0 |          1 |        131 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\font16x32.h                      | C++                |        130 |          0 |          1 |        131 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\font8x8_basic.h                  | C++                |        133 |          0 |          2 |        135 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\led.cpp                          | C++                |         89 |          0 |         12 |        101 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\led.h                            | C++                |         38 |          5 |         16 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\led_LUT.h                        | C++                |      1,029 |          0 |          1 |      1,030 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\pinout.h                         | C++                |         20 |          0 |          4 |         24 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\drivers\touchwheel.cpp                   | C++                |        137 |         14 |         22 |        173 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Animation.cpp                      | C++                |        117 |          2 |         20 |        139 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Animation.hpp                      | C++                |         53 |          0 |         19 |         72 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components.hpp                     | C++                |          8 |          0 |          2 |         10 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Animation.cpp         | C++                |         65 |          0 |         13 |         78 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Animation.hpp         | C++                |         35 |          4 |         13 |         52 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_ButtonDial.hpp        | C++                |         58 |          4 |         13 |         75 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Canvas.cpp            | C++                |         42 |          0 |          4 |         46 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Canvas.hpp            | C++                |         17 |          0 |          6 |         23 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_CurvedSlider.hpp      | C++                |         76 |          0 |         13 |         89 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Drawable.cpp          | C++                |         63 |          0 |          9 |         72 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Drawable.hpp          | C++                |         77 |          0 |         12 |         89 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_FillUpGauge.cpp       | C++                |         72 |         10 |         12 |         94 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_FillUpGauge.hpp       | C++                |         33 |          0 |          6 |         39 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_GravityFields.hpp     | C++                |         46 |          0 |         13 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_KeyframeAnimator.cpp  | C++                |         83 |          4 |         15 |        102 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_KeyframeAnimator.hpp  | C++                |         46 |          1 |         12 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Label.cpp             | C++                |         49 |          0 |         10 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Label.hpp             | C++                |         24 |          0 |          8 |         32 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_List.hpp              | C++                |        136 |         14 |         26 |        176 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_ParameterAnimator.hpp | C++                |        160 |          0 |         38 |        198 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Planet.cpp            | C++                |         71 |         54 |         16 |        141 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Planet.hpp            | C++                |         76 |          2 |         15 |         93 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Position.cpp          | C++                |         41 |          0 |         10 |         51 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Position.hpp          | C++                |         20 |          1 |          9 |         30 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_PositionAnimator.cpp  | C++                |         75 |          3 |         14 |         92 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_PositionAnimator.hpp  | C++                |         62 |          0 |         17 |         79 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Probe.cpp             | C++                |         44 |          0 |         10 |         54 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Probe.hpp             | C++                |         44 |          0 |          9 |         53 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Satellite.cpp         | C++                |         76 |          0 |         10 |         86 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Satellite.hpp         | C++                |         53 |          0 |         10 |         63 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Slider.hpp            | C++                |         48 |          0 |         11 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Sprite.cpp            | C++                |         54 |          0 |         10 |         64 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Sprite.hpp            | C++                |         25 |          1 |          5 |         31 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_SymmShape.hpp         | C++                |         50 |          0 |         12 |         62 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Tickmarks.cpp         | C++                |         49 |          5 |          8 |         62 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Tickmarks.hpp         | C++                |         27 |          1 |          5 |         33 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Tooltip.cpp           | C++                |         50 |          4 |          9 |         63 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_Tooltip.hpp           | C++                |         25 |          0 |          7 |         32 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\C_TransmissionBeam.hpp  | C++                |        130 |          7 |         20 |        157 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\Component.hpp           | C++                |         19 |          0 |          7 |         26 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\S_Drawable.cpp          | C++                |         72 |          0 |         11 |         83 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Components\S_Drawable.hpp          | C++                |         18 |          0 |          7 |         25 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\CustomGFX.hpp                      | C++                |          3 |          0 |          3 |          6 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Enjin.h                            | C++                |          3 |          0 |          1 |          4 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\EnumClassHash.hpp                  | C++                |         12 |          0 |          3 |         15 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Object.cpp                         | C++                |         45 |          7 |          9 |         61 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Object.hpp                         | C++                |         68 |          7 |         21 |         96 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\ObjectCollection.cpp               | C++                |         57 |          0 |          9 |         66 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\ObjectCollection.hpp               | C++                |         21 |          0 |          8 |         29 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Scene.cpp                          | C++                |          2 |          0 |          1 |          3 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Scene.hpp                          | C++                |         22 |          8 |          8 |         38 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\SceneStateMachine.cpp              | C++                |         66 |          7 |         14 |         87 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\SceneStateMachine.hpp              | C++                |         26 |         10 |         12 |         48 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Signal.hpp                         | C++                |         41 |          0 |          9 |         50 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\Sprite.hpp                         | C++                |         88 |          0 |         13 |        101 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\BeamShaper.hpp                  | C++                |         66 |          3 |         17 |         86 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\ButtonDial.hpp                  | C++                |         62 |          0 |          8 |         70 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\ConstantList.hpp                | C++                |         50 |          0 |         12 |         62 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\DragIcon.hpp                    | C++                |         94 |          3 |         12 |        109 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\DragSlider.hpp                  | C++                |        142 |          3 |         20 |        165 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\FillupGauge.hpp                 | C++                |        101 |          0 |         26 |        127 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\GravityFields.hpp               | C++                |         22 |          0 |          6 |         28 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\Label.hpp                       | C++                |         51 |          0 |         13 |         64 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\Overlay.hpp                     | C++                |         57 |          0 |         11 |         68 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\OverlayBg.hpp                   | C++                |         84 |          0 |         17 |        101 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\Planet.hpp                      | C++                |         51 |          0 |         15 |         66 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\Probe.hpp                       | C++                |         45 |          3 |         11 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\RatioDial.hpp                   | C++                |         26 |          0 |          6 |         32 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\Satellite.hpp                   | C++                |         46 |          0 |         13 |         59 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\Slider.hpp                      | C++                |         63 |          0 |          8 |         71 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\TransmissionBeam.hpp            | C++                |         34 |          0 |          8 |         42 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\assets\icons.h                  | C++                |         78 |          0 |          4 |         82 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\UI\assets\slider_sprite.h          | C++                |        243 |          0 |          3 |        246 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Bitmask.cpp                  | C++                |         65 |          0 |         15 |         80 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Bitmask.hpp                  | C++                |         18 |          7 |         12 |         37 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Easing.hpp                   | C++                |         74 |         12 |         15 |        101 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Noise.hpp                    | C++                |         67 |          0 |         13 |         80 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Polar.cpp                    | C++                |         16 |          0 |          2 |         18 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Polar.hpp                    | C++                |          9 |          0 |          4 |         13 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Timer.hpp                    | C++                |         51 |          1 |          9 |         61 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\enjin\utils\Types.hpp                    | C++                |         48 |          1 |          7 |         56 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\main.cpp                                 | C++                |        160 |          8 |         33 |        201 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\BaseScene.hpp                     | C++                |        152 |          2 |         31 |        185 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneAttenuverter.cpp             | C++                |        127 |          2 |         16 |        145 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneAttenuverter.hpp             | C++                |         29 |          0 |         16 |         45 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneGravity.cpp                  | C++                |         86 |          5 |         18 |        109 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneGravity.hpp                  | C++                |         26 |          0 |         10 |         36 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneMain.cpp                     | C++                |        130 |         30 |         19 |        179 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneMain.hpp                     | C++                |         42 |          0 |         13 |         55 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneMass.cpp                     | C++                |         73 |          7 |          9 |         89 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneMass.hpp                     | C++                |         24 |          0 |          9 |         33 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneOrbit.cpp                    | C++                |         75 |          3 |         17 |         95 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneOrbit.hpp                    | C++                |         22 |          0 |         10 |         32 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneRatio.cpp                    | C++                |        100 |          2 |         15 |        117 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneRatio.hpp                    | C++                |         29 |          0 |         13 |         42 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneScope.cpp                    | C++                |         82 |          1 |         11 |         94 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneScope.hpp                    | C++                |         24 |          0 |         11 |         35 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneSplashScreen.cpp             | C++                |         40 |          2 |          9 |         51 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\scenes\SceneSplashScreen.hpp             | C++                |         37 |          0 |         12 |         49 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\utils\FastMath.cpp                       | C++                |        384 |         35 |         62 |        481 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\utils\FastMath.h                         | C++                |         59 |          4 |         45 |        108 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\utils\Filter.cpp                         | C++                |         54 |          5 |          5 |         64 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\utils\Filter.h                           | C++                |         16 |          0 |          3 |         19 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\utils\utils.cpp                          | C++                |         31 |          0 |          2 |         33 |
+| c:\Users\ceste\Documents\PlatformIO\Projects\eisei_oled\src\utils\utils.h                            | C++                |          6 |          0 |          3 |          9 |
+| Total                                                                                                |                    |     25,913 |        405 |      1,591 |     27,909 |
++------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

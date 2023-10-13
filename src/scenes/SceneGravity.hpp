@@ -1,6 +1,7 @@
 #ifndef SCENEGRAVITY_HPP
 #define SCENEGRAVITY_HPP
 #include "BaseScene.hpp"
+#include <Fonts/VGATypewriter.h>
 
 #include "enjin/UI/OverlayBg.hpp"
 #include "enjin/UI/Planet.hpp"
@@ -24,12 +25,11 @@ public:
     void Update(uint16_t deltaTime) override;
     void Draw(Display &display) override;
 
+
 private:
     ObjectCollection local_objects;
     std::shared_ptr<Planet> planet;
     std::shared_ptr<Label> frequency_label;
-
-    std::shared_ptr<OverlayBg> bg;
 };
 
 #endif // SceneGravity_HPP

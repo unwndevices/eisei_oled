@@ -11,7 +11,7 @@ Led Leds::sats[4]{LED_1,
 
 void Leds::Init()
 {
-    xTaskCreatePinnedToCore(this->Task, "Leds", 1024, this, 1, &taskLed, 0); // TODO test core and stack depth
+    xTaskCreatePinnedToCore(this->Task, "Leds", 2048, this, 1, &taskLed, 0); // TODO test core and stack depth
 }
 
 void Leds::SetLeds(float value)
@@ -22,7 +22,7 @@ void Leds::SetLeds(float value)
     }
 }
 
-void Leds::SetLeds(uint16_t value)
+void Leds::SetLeds(int16_t value)
 {
     for (int i = 0; i < 4; i++)
     {
@@ -30,11 +30,11 @@ void Leds::SetLeds(uint16_t value)
     }
 }
 
-void Leds::SetLeds(uint16_t value, uint16_t time)
+void Leds::SetLeds(int16_t value, uint16_t time)
 {
     for (int i = 0; i < 4; i++)
     {
-        sats[i].set(value, time);
+        sats[i].set((int16_t)value, time);
     }
 }
 
@@ -60,7 +60,7 @@ void Leds::SetSequential(float value)
         value = 1.0f;
 
     // Calculate brightness per LED
-    uint16_t brightness = (uint16_t)(value * maxBrightness);
+    int16_t brightness = (int16_t)(value * maxBrightness);
 
     // Distribute value among LEDs
     for (int i = 0; i < 4; ++i)
@@ -70,11 +70,11 @@ void Leds::SetSequential(float value)
             float portion = (value - (i * 0.25f)) * 4; // calculate the portion of the total brightness this LED should receive
             if (portion > 1.0f)
                 portion = 1.0f; // cap the portion at 1
-            sats[i].set((uint16_t)(portion * brightness));
+            sats[i].set((int16_t)(portion * brightness));
         }
         else
         {
-            sats[i].set((uint16_t)0); // turn off this LED as the value is not high enough
+            sats[i].set((int16_t)0); // turn off this LED as the value is not high enough
         }
     }
 }

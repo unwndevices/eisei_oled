@@ -13,7 +13,7 @@ void SceneMain::OnCreate()
     buffer.setTextColor(15U);
     transmission_beam = std::make_shared<TransmissionBeam>();
     transmission_beam->SetPhase(data.phase[4]);
-    transmission_beam->SetWidth(data.interface_data.scope_attack);
+    transmission_beam->SetWidth(data.interface_data.scope_width);
 
     objects.Add(transmission_beam);
 
@@ -34,30 +34,22 @@ void SceneMain::OnCreate()
     // SLIDERs
     // std::shared_ptr<Slider> slider_left = std::make_shared<Slider>(Side::LEFT);
     // objects.Add(slider_left);
-    interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    interface.hw.GetButton(Sats::a).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    interface.hw.GetButton(Pages::Phase).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    interface.hw.GetButton(Pages::Mass).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
-    current_page = SW_GRAVITY;
+    // interface.hw.GetButton(Pages::Gravity).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    // interface.hw.GetButton(Sats::a).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    // interface.hw.GetButton(Pages::Phase).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    // interface.hw.GetButton(Pages::Mass).onStateChanged.Connect(std::bind(&SceneMain::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    // current_page = SW_GRAVITY;
 }
 
 void SceneMain::OnActivate()
 {
-    touchTimer.Restart();
-    sceneTimer.Restart();
 }
 void SceneMain::OnDeactivate()
 {
-    touchTimer.Stop();
-    sceneTimer.Stop();
 }
 
 void SceneMain::Update(uint16_t deltaTime)
 {
-    if (touchTimer.IsElapsed(5000))
-    {
-        current_page = 0;
-    }
     objects.ProcessNewObjects();
     objects.Update(deltaTime);
     fps = 1.0f / (deltaTime / 1000.0f); // Divide by 1000 to convert from milliseconds to seconds
@@ -77,10 +69,10 @@ void SceneMain::LateUpdate(uint16_t deltaTime)
 void SceneMain::Draw(Display &display)
 {
     objects.Draw(buffer);
-    buffer.setTextColor(3);
-    buffer.setCursor(50, 103);
-    String value = String(fps, 1); // String(SharedData::base_mult, 3);
-    buffer.println(value);
+    // buffer.setTextColor(3);
+    // buffer.setCursor(50, 103);
+    // String value = String(fps, 1); // String(SharedData::base_mult, 3);
+    // buffer.println(value);
 
     display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
 }
@@ -125,7 +117,6 @@ void SceneMain::ProcessButton(int id, Button::State state)
     if (state == Button::State::CLICKED)
     {
         current_page = id;
-        touchTimer.Restart();
         if (current_page == SW_MASS)
         {
             transmission_beam->SetMode(C_TransmissionBeam::WIDTH_EDIT);
@@ -139,14 +130,13 @@ void SceneMain::ProcessButton(int id, Button::State state)
 
 void SceneMain::ProcessInput()
 {
-    if (!touchTimer.IsElapsed(5000))
+    if (1)
     {
         if (current_page == SW_GRAVITY)
         {
             float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
             if (touchwheel_input != 0.0f)
             {
-                touchTimer.Restart();
                 data.interface_data.gravity += touchwheel_input * 40.0f;
                 //                tooltip_freq->SetValue(data.interface_data.gravity);
             }
@@ -157,9 +147,8 @@ void SceneMain::ProcessInput()
             float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
             if (touchwheel_input != 0.0f)
             {
-                touchTimer.Restart();
-                data.interface_data.scope_attack = fmin(data.interface_data.scope_attack + touchwheel_input * 0.1f, 1.0f);
-                transmission_beam->SetWidth(data.interface_data.scope_attack);
+                data.interface_data.scope_width = fmin(data.interface_data.scope_width + touchwheel_input * 0.1f, 1.0f);
+                transmission_beam->SetWidth(data.interface_data.scope_width);
             }
         }
         else if (current_page == SW_PHASE)
@@ -167,25 +156,24 @@ void SceneMain::ProcessInput()
             float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
             if (touchwheel_input != 0.0f)
             {
-                touchTimer.Restart();
 
-                data.interface_data.lfo_rate += touchwheel_input * 10.0f;
+                data.interface_data.orbit_rate += touchwheel_input * 10.0f;
                 // tooltip_freq->SetValue(data.interface_data.lfo_rate);
             }
         }
     }
 
-    if (interface.GetButtonState(Pages::Gravity) == Button::State::PRESSED)
-    {
-        float progress = interface.hw.GetButton(Pages::Gravity).GetHoldTimeNormalized();
-        interface.hw.GetLeds().SetSequential(progress);
-        if (progress > 0.99f)
-        {
-        }
-    }
-    else
-    {
-        interface.hw.GetLeds().SetLeds(0.0f);
-        // overlay->SetVisibility(false);
-    }
+    // if (interface.GetButtonState(Pages::Gravity) == Button::State::PRESSED)
+    // {
+    //     float progress = interface.hw.GetButton(Pages::Gravity).GetHoldTimeNormalized();
+    //     interface.hw.GetLeds().SetSequential(progress);
+    //     if (progress > 0.99f)
+    //     {
+    //     }
+    // }
+    // else
+    // {
+    //     interface.hw.GetLeds().SetLeds(0.0f);
+    //     // overlay->SetVisibility(false);
+    // }
 }

@@ -17,7 +17,7 @@ class C_List : public C_Drawable
 public:
     using GetStringFunc = std::function<std::string(const T &)>;
 
-    C_List(Object *owner, const std::vector<T> &items, GetStringFunc getString, uint8_t width, uint8_t height) : C_Drawable(width, height), Component(owner), canvas(width, height), items(items), getString(getString), selectedIndex(0), previousIndex(0)
+    C_List(Object *owner, const std::vector<T> &items, GetStringFunc getString, uint8_t width, uint8_t height) : C_Drawable(width, height), Component(owner), items(items), getString(getString), selectedIndex(0), previousIndex(0)
     {
         position = owner->GetComponent<C_Position>();
 
@@ -29,24 +29,19 @@ public:
     void Awake() override
     {
         // position->SetPosition(Vector2(0, 0));
-        canvas.setFont(&VGATypewriter8pt7b);
-        canvas.setTextColor(0xffff);
-        canvas.setTextWrap(false);
         marqueeOffset = 0;
         marqueeTimer = 0;
         marqueeStartDelay = 600;
         marqueeSpeed = 50;      // Delay before the start of the scroll, in milliseconds
         marqueeEndDelay = 1000; // Delay after the end of the scroll, in milliseconds
+        maxTextWidth = width - 10;
     };
     void Update(uint8_t deltaTime) override
     {
-        // If the marquee has scrolled past the end of the text, start the delay
-        std::string selected_item = getString(items[selectedIndex]);
-        String text = String(selected_item.c_str());
 
-        if (this->canvas.getTextWidth(text) > 58)
+        if (textWidth > maxTextWidth)
         {
-            if (marqueeOffset > (int)this->canvas.getTextWidth(text) - 58)
+            if (marqueeOffset > (int)textWidth - maxTextWidth)
             {
                 marqueeTimer += deltaTime;
 
@@ -77,6 +72,10 @@ public:
 
     void Draw(GFXcanvas8 &canvas) override
     {
+        // If the marquee has scrolled past the end of the text, start the delay
+        std::string selected_item = getString(items[selectedIndex]);
+        String text = String(selected_item.c_str());
+        textWidth = canvas.getTextWidth(text);
         // Check if selectedIndex has changed
         if (selectedIndex != previousIndex)
         {
@@ -88,9 +87,6 @@ public:
             previousIndex = selectedIndex;
         }
 
-        // Clear the canvas
-        this->canvas.fillScreen(16U);
-
         // Calculate the start index and end index for the items to be displayed
         int start = std::max(0, selectedIndex - 2);
         int end = std::min((int)items.size(), selectedIndex + 3);
@@ -101,24 +97,22 @@ public:
         for (int i = start; i < end; ++i)
         {
             // Set the color based on whether this item is selected
-            this->canvas.setTextColor(i == selectedIndex ? 0xffff : 0x4);
+            canvas.setTextColor(i == selectedIndex ? 0xffff : 0x4);
 
             // Draw the item
             if (i == selectedIndex)
             {
-                this->canvas.setCursor(0 - marqueeOffset, yOffset + (i - start) * 22);
+                canvas.setCursor(GetOffsetPosition().x - marqueeOffset, yOffset + (i - start) * 22);
                 std::string text = getString(items[i]);
-                this->canvas.print(text.c_str());
+                canvas.print(text.c_str());
             }
             else
             {
-                this->canvas.setCursor(0, yOffset + (i - start) * 22);
+                canvas.setCursor(GetOffsetPosition().x, yOffset + (i - start) * 22);
                 std::string substring = getString(items[i]).substr(0, 12);
-                this->canvas.print(substring.c_str());
+                canvas.print(substring.c_str());
             }
         }
-
-        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, this->canvas.getBuffer(), 16U, 64, 127);
     };
 
     bool ContinueToDraw() const override
@@ -149,16 +143,9 @@ public:
         return items[selectedIndex];
     }
 
-    void SetSelectedIndexByValue(float value, float epsilon = 0.01f)
+    void UpdateItems(const std::vector<T> &newItems)
     {
-        for (int i = 0; i < items.size(); ++i)
-        {
-            if (std::abs(items[i].second - value) < epsilon)
-            {
-                selectedIndex = i;
-                break;
-            }
-        }
+        items = newItems;
     }
 
 private:
@@ -167,9 +154,8 @@ private:
 
     int selectedIndex, previousIndex;
 
-    int marqueeOffset, marqueeTimer, marqueeSpeed, marqueeStartDelay, marqueeEndDelay = 0;
-
-    GFXcanvas8 canvas;
+    int marqueeOffset = 0, marqueeTimer = 0, marqueeSpeed = 0, marqueeStartDelay = 0, marqueeEndDelay = 0, textWidth = 0,
+        maxTextWidth = 0;
 };
 
-#endif// C_LIST_HPP
+#endif // C_LIST_HPP

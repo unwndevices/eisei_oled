@@ -16,13 +16,16 @@ public:
     void Draw(GFXcanvas8 &canvas) override;
     bool ContinueToDraw() const override;
     void SetString(String string);
+    void SetMargins(int left_margin, int right_margin = 0){this->left_margin = left_margin; this->right_margin = right_margin;};
+
 
 private:
     String string;
     uint8_t text_width, pointer;
     uint8_t labelColor, bgColor;
 
-    GFXcanvas8 internalCanvas;
+    int left_margin, right_margin = 0;
+
 };
 
-#endif // C_LABEL_HPP
+#endif// C_LABEL_HPP

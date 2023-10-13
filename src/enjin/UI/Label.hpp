@@ -9,8 +9,9 @@ class Label : public Object
 {
 
 public:
-    Label(uint8_t width, uint8_t height, uint8_t labelColor = 14U, uint8_t bgColor = 0, uint8_t pointer = 0)
+    Label(uint8_t width, uint8_t height, int precision = 0, uint8_t labelColor = 14U, uint8_t bgColor = 0, uint8_t pointer = 0)
     {
+        this->precision = precision;
         position->SetPosition(Vector2(64, 64));
         label = AddComponent<C_Label>(width, height, labelColor, bgColor, pointer);
         label->SetDrawLayer(DrawLayer::UI);
@@ -20,23 +21,25 @@ public:
         transition = AddComponent<C_PositionAnimator>();
     };
 
-    void SetValue(float value, const String &unitText = "")
+    void SetValue(float value, const String &unitText = "", const String &prefix = "")
     {
         String valueString;
         if (value < 1000.0f)
-            valueString = String(value, 1);
+            valueString = String(value, precision);
         else
-            valueString = String(value, 0);
+            valueString = String(value, 1);
 
         if (unitText != "")
         {
-            label->SetString(valueString + unitText);
+            valueString.concat(unitText);
         }
 
-        else
+        if (prefix != "")
         {
-            label->SetString(valueString);
+            valueString = prefix + valueString;
         }
+
+        label->SetString(valueString);
     }
 
     void SetVisibility(bool visibility)
@@ -44,15 +47,17 @@ public:
         label->SetVisibility(visibility);
     }
 
-    void EnterTransition()
+    void EnterTransition(bool reset = false)
     {
         label->SetVisibility(true);
-        transition->StartAnimation();
+        transition->StartAnimation(reset);
     }
 
     std::shared_ptr<C_PositionAnimator> transition;
+    PositionAnimation in_transition;
 
 private:
     std::shared_ptr<C_Label> label;
+    int precision = 0;
 };
 #endif // LABEL_HPP

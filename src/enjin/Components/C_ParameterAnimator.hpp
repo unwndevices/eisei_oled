@@ -2,6 +2,7 @@
 #define C_PARAMETERANIMATOR_HPP
 
 #include <memory>
+#include <map>
 #include <vector>
 #include <iostream>
 #include <functional>
@@ -17,6 +18,45 @@ struct ParameterKeyframe
 };
 
 template <typename T>
+class ParameterAnimation
+{
+public:
+    void AddKeyframe(ParameterKeyframe<T> keyframe)
+    {
+        keyframes.push_back(keyframe);
+        std::sort(keyframes.begin(), keyframes.end(), [](const ParameterKeyframe<T> &a, const ParameterKeyframe<T> &b)
+                  { return a.time < b.time; });
+    }
+
+    const std::vector<ParameterKeyframe<T>> &GetKeyframes() const
+    {
+        return keyframes;
+    }
+
+    void SetEndCallback(std::function<void()> callback)
+    {
+        endCallback = callback;
+    }
+
+    std::function<void()> GetEndCallback() const
+    {
+        return endCallback;
+    }
+
+    void UpdateFirstKeyframeValue(T value)
+    {
+        if (!keyframes.empty())
+        {
+            keyframes[0].value = value;
+        }
+    }
+
+private:
+    std::vector<ParameterKeyframe<T>> keyframes;
+    std::function<void()> endCallback;
+};
+
+template <typename T>
 class C_ParameterAnimator : public Component
 {
 public:
@@ -24,14 +64,12 @@ public:
 
     void Update(uint8_t deltaTime) override;
 
-    void AddKeyframe(ParameterKeyframe<T> keyframe);
-    void ClearKeyframes();
-
-    void StartAnimation();
+    void StartAnimation(bool reset = false);
 
     void SetParameterGetter(std::function<T()> getter);
     void SetParameterSetter(std::function<void(T)> setter);
-    void SetEndCallback(std::function<void()> callback);
+
+    void SetAnimation(ParameterAnimation<T> &animation);
 
     bool hasFinished() { return !isActive; }
 
@@ -48,7 +86,7 @@ public:
     }
 
 private:
-    std::vector<ParameterKeyframe<T>> keyframes;
+    ParameterAnimation<T> *currentAnimation = nullptr;
     int currentKeyframeIndex;
     ulong elapsedTime;
     bool isActive;
@@ -68,7 +106,7 @@ C_ParameterAnimator<T>::C_ParameterAnimator(Object *owner) : Component(owner), c
 template <typename T>
 void C_ParameterAnimator<T>::Update(uint8_t deltaTime)
 {
-    if (keyframes.size() == 0)
+    if (!currentAnimation || currentAnimation->GetKeyframes().size() == 0)
     {
         return;
     }
@@ -80,20 +118,20 @@ void C_ParameterAnimator<T>::Update(uint8_t deltaTime)
 
     elapsedTime += deltaTime;
 
-    if (currentKeyframeIndex >= keyframes.size() - 1)
+    if (currentKeyframeIndex >= currentAnimation->GetKeyframes().size() - 1)
     {
         isActive = false;
 
-        if (endCallback)
+        if (auto callback = currentAnimation->GetEndCallback())
         {
-            endCallback();
+            callback();
         }
 
         return;
     }
 
-    auto currentKeyframe = keyframes[currentKeyframeIndex];
-    auto nextKeyframe = keyframes[currentKeyframeIndex + 1];
+    auto currentKeyframe = currentAnimation->GetKeyframes()[currentKeyframeIndex];
+    auto nextKeyframe = currentAnimation->GetKeyframes()[currentKeyframeIndex + 1];
 
     float t = static_cast<float>(elapsedTime - currentKeyframe.time) / static_cast<float>(nextKeyframe.time - currentKeyframe.time);
 
@@ -113,23 +151,22 @@ void C_ParameterAnimator<T>::Update(uint8_t deltaTime)
 }
 
 template <typename T>
-void C_ParameterAnimator<T>::AddKeyframe(ParameterKeyframe<T> keyframe)
+void C_ParameterAnimator<T>::SetAnimation(ParameterAnimation<T> &animation)
 {
-    keyframes.push_back(keyframe);
-    std::sort(keyframes.begin(), keyframes.end(), [](const ParameterKeyframe<T> &a, const ParameterKeyframe<T> &b)
-              { return a.time < b.time; });
+    currentAnimation = &animation;
+    currentKeyframeIndex = 0; // Reset keyframe index
+    elapsedTime = 0;          // Reset elapsed time
 }
 
 template <typename T>
-void C_ParameterAnimator<T>::ClearKeyframes()
+void C_ParameterAnimator<T>::StartAnimation(bool reset)
 {
-    keyframes.clear();
-    endCallback = nullptr;
-}
+    if (currentAnimation && parameterGetter && !reset)
+    {
+        T currentValue = parameterGetter();
+        currentAnimation->UpdateFirstKeyframeValue(currentValue);
+    }
 
-template <typename T>
-void C_ParameterAnimator<T>::StartAnimation()
-{
     currentKeyframeIndex = 0;
     elapsedTime = 0;
     isActive = true;
@@ -148,12 +185,6 @@ void C_ParameterAnimator<T>::SetParameterSetter(std::function<void(T)> setter)
 }
 
 template <typename T>
-void C_ParameterAnimator<T>::SetEndCallback(std::function<void()> callback)
-{
-    endCallback = callback;
-}
-
-template <typename T>
 T C_ParameterAnimator<T>::InterpolateParameter(ParameterKeyframe<T> kf1, ParameterKeyframe<T> kf2, float t)
 {
     float p1 = (float)kf1.value;
@@ -163,4 +194,4 @@ T C_ParameterAnimator<T>::InterpolateParameter(ParameterKeyframe<T> kf1, Paramet
     return static_cast<T>(result);
 }
 
-#endif // C_PARAMETERANIMATOR_HPP
+#endif// C_PARAMETERANIMATOR_HPP

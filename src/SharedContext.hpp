@@ -5,6 +5,20 @@
 #include "InterfaceManager.hpp"
 #include "Data.hpp"
 #include "enjin/ObjectCollection.hpp"
+#include "enjin/utils/Timer.hpp"
+
+enum Scenes
+{
+    Splashscreen = 0,
+    Base,
+    Gravity,
+    Orbit,
+    Scope,
+    Ratio,
+    Attenuverter,
+    Mode
+};
+
 class SharedContext
 {
 public:
@@ -12,6 +26,8 @@ public:
     Data data;
     ObjectCollection objects;
     ObjectInstances instances;
+    Timer timer;
+    Timer touch_timer;
 };
 
 #endif // SHAREDCONTEXT_HPP

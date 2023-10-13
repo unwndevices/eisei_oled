@@ -29,6 +29,8 @@ public:
     // Removes scene from state machine.
     void Remove(uint8_t id);
 
+    uint8_t GetCurSceneID() const { return curSceneID; }
+
 private:
     // Stores all of the scenes associated with this state machine.
     std::unordered_map<uint8_t, std::shared_ptr<Scene>> scenes;
@@ -38,6 +40,7 @@ private:
     // Stores our current scene id. This is incremented whenever
     // a scene is added.
     unsigned int insertedSceneID;
+    uint8_t curSceneID = 0;
 
 };
 

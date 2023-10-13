@@ -35,13 +35,15 @@ public:
 
         par_transition = AddComponent<C_ParameterAnimator<float>>();
         par_transition->SetParameterSetter(std::bind(&BeamShaper::SetShape, this, std::placeholders::_1));
-        par_transition->AddKeyframe({0, 4.0f, Easing::Step});
-        par_transition->AddKeyframe({700, 0.0f, Easing::EaseOutQuad});
-        par_transition->AddKeyframe({1800, 0.5f, Easing::EaseInOutSine});
+        // par_transition->AddKeyframe({0, 4.0f, Easing::Step});
+        // par_transition->AddKeyframe({700, 0.0f, Easing::EaseOutQuad});
+        // par_transition->AddKeyframe({1800, 0.5f, Easing::EaseInOutSine});
 
         transition = AddComponent<C_PositionAnimator>();
-        transition->AddKeyframe({0, Vector2(64, -67), Easing::Step});
-        transition->AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+        in_transition.AddKeyframe({0, Vector2(64, -67), Easing::Step});
+        in_transition.AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+        transition->SetAnimation(in_transition);
+
     }
 
     void EnterTransition()
@@ -73,8 +75,11 @@ private:
     std::shared_ptr<C_Canvas> bg;
     std::shared_ptr<C_SymmShape> shape;
     std::shared_ptr<C_Tickmarks> tickmarks;
+
     std::shared_ptr<C_PositionAnimator> transition;
+    PositionAnimation in_transition;
+
     std::shared_ptr<C_ParameterAnimator<float>> par_transition;
 };
 
-#endif // BEAMSHAPER_HPP
+#endif// BEAMSHAPER_HPP

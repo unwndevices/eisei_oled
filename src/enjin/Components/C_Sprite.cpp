@@ -41,6 +41,13 @@ void C_Sprite::Draw(GFXcanvas8 &canvas)
     case BlendMode::Sub:
         canvas.subtract(sprite.GetTexture());
         break;
+    case BlendMode::Opacity50:
+        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, sprite.GetTexture(), sprite._matte, sprite._width, sprite._height, 2U);
+        break;
+    case BlendMode::Opacity25:
+        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, sprite.GetTexture(), sprite._matte, sprite._width, sprite._height, 4U);
+        break;
+
     default:
         break;
     }

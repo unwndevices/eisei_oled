@@ -6,7 +6,6 @@
 #include "../Sprite.hpp"
 #include "C_Position.hpp"
 
-
 class C_Sprite : public C_Drawable
 {
 public:
@@ -24,11 +23,8 @@ public:
         sprite.setMatte(matte);
     };
 
- 
-
 private:
     Sprite sprite;
-    Anchor anchor;
 };
 
-#endif// C_SPRITE_HPP
+#endif // C_SPRITE_HPP

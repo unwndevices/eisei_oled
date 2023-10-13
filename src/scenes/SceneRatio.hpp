@@ -3,11 +3,12 @@
 
 #include "BaseScene.hpp"
 
-#include "assets/ratio.h"
 #include "enjin/UI/OverlayBg.hpp"
 #include "enjin/UI/ConstantList.hpp"
+#include "enjin/UI/Label.hpp"
 #include "enjin/UI/RatioDial.hpp"
 #include "enjin/UI/FillUpGauge.hpp"
+#include "enjin/UI/DragSlider.hpp"
 
 class SceneRatio : public BaseScene
 {
@@ -20,7 +21,7 @@ public:
 
     void OnActivate() override;
 
-    void OnDeactivate() override{};
+    void OnDeactivate() override;
     void ProcessInput() override;
     void LateUpdate(uint16_t deltaTime) override;
 
@@ -30,15 +31,11 @@ public:
     void Draw(Display &display) override;
 
 private:
+    std::shared_ptr<DragSlider> drag_left, drag_right;
+    std::shared_ptr<Label> label;
+
     ObjectCollection local_objects;
 
-    // std::shared_ptr<OverlayBg> overlay;
-    // std::shared_ptr<ConstantList> const_list;
-    // std::shared_ptr<RatioDial> const_dial;
-    // std::shared_ptr<Tooltip> const_tooltip;
-    std::shared_ptr<FillUpGauge> overlay;
-
-    void ProcessButton(int id, Button::State state);
     void ProcessIncrement(TouchWheel::Direction direction);
 };
 

@@ -11,35 +11,33 @@ C_PositionAnimator::C_PositionAnimator(Object *owner) : Component(owner), curren
     }
 }
 
-void C_PositionAnimator::StartAnimation()
+void C_PositionAnimator::StartAnimation(bool reset)
 {
+    if (currentAnimation && !reset)
+    {
+        Vector2 currentValue = position->GetPosition();
+        currentAnimation->UpdateFirstKeyframeValue(currentValue);
+    }
     elapsedTime = 0;
     currentKeyframeIndex = 0;
     isActive = true;
 }
 
-void C_PositionAnimator::AddKeyframe(PositionKeyframe keyframe)
+void C_PositionAnimator::SetAnimation(PositionAnimation &animation)
 {
-    keyframes.push_back(keyframe);
-    // Sort keyframes by time
-    std::sort(keyframes.begin(), keyframes.end(), [](const PositionKeyframe &a, const PositionKeyframe &b)
-              { return a.time < b.time; });
-}
-
-void C_PositionAnimator::ClearKeyframes()
-{
-    keyframes.clear();
-    currentKeyframeIndex = 0;
-    elapsedTime = 0;
+    currentAnimation = &animation;
+    currentKeyframeIndex = 0; // Reset keyframe index
+    elapsedTime = 0;          // Reset elapsed time
 }
 
 void C_PositionAnimator::Update(uint8_t deltaTime)
 {
-    if (!isActive || keyframes.empty())
+    if (!currentAnimation || currentAnimation->GetKeyframes().size() == 0)
     {
         return;
     }
 
+    auto &keyframes = currentAnimation->GetKeyframes(); // Get keyframes from the current animation
     PositionKeyframe currentKeyframe = keyframes[currentKeyframeIndex];
     PositionKeyframe nextKeyframe = currentKeyframe;
 

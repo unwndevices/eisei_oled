@@ -13,7 +13,7 @@ public:
     ConstantList(const std::vector<ConstantPair> &constants)
     {
         position->SetPosition(64, 64);
-        
+
         bg = AddComponent<C_Canvas>(64, 127);
         bg->SetDrawLayer(DrawLayer::UI);
         bg->SetAnchorPoint(Anchor::CENTER_LEFT);
@@ -28,18 +28,17 @@ public:
         list->SetAnchorPoint(Anchor::CENTER_LEFT);
         list->AddOffset(Vector2(4, 0));
 
-
         transition = AddComponent<C_PositionAnimator>();
-        PositionKeyframe kf1 = {0, Vector2(130, 64), Easing::Step};
-        PositionKeyframe kf2 = {350, Vector2(64, 64), Easing::EaseOutQuad};
-        transition->AddKeyframe(kf1);
-        transition->AddKeyframe(kf2);
+
+        in_transition.AddKeyframe({0, Vector2(130, 64), Easing::Step});
+        in_transition.AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+        transition->SetAnimation(in_transition);
     }
 
     void MoveUp() { list->MoveUp(); }
     void MoveDown() { list->MoveDown(); }
     ConstantPair GetCurrentSelection() const { return list->GetCurrentSelection(); }
-    void SetSelectedIndexByValue(float value) { list->SetSelectedIndexByValue(value); }
+    //void SetSelectedIndexByValue(float value) { list->SetSelectedIndexByValue(value); }
     float GetCurrentSelectionValue() const
     {
         return GetCurrentSelection().second;
@@ -56,6 +55,7 @@ private:
     std::shared_ptr<C_Canvas> bg;
     std::shared_ptr<C_List<ConstantPair>> list;
     std::shared_ptr<C_PositionAnimator> transition;
+    PositionAnimation in_transition;
 };
 
 #endif// CONSTANTLIST_HPP

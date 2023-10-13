@@ -21,7 +21,9 @@ enum class BlendMode
 {
     Normal,
     Add,
-    Sub
+    Sub,
+    Opacity50,
+    Opacity25
 };
 
 enum class Anchor

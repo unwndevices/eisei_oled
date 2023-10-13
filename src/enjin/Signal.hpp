@@ -18,6 +18,7 @@ public:
 
     SlotID Connect(Slot slot)
     {
+        
         SlotID newId = nextSlotId++;
         m_slots.insert({newId, slot});
         return newId;

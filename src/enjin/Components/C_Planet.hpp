@@ -25,8 +25,31 @@ public:
     };
     void Draw(GFXcanvas8 &canvas) override
     {
-        DrawPlanet();
-        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, internalCanvas.getBuffer(), 16U, internalCanvas.width(), internalCanvas.height());
+
+        uint8_t diameter = radius * 2 + 1;
+        uint8_t difference = (canvas.width() - diameter) / 2 + 1;
+        // draw the sphere
+        for (int y = 0; y < diameter; ++y)
+        {
+            for (int x = 0; x < diameter; ++x)
+            {
+                Vector2 *_pos = &sphericalMap[y * diameter + x];
+                int px = (_pos->x + (int)(phase * 127));
+                int py = _pos->y;
+                uint8_t color = 0;
+                if (_pos->x < 0)
+                {
+                    color = 16;
+                }
+                else
+                {
+                    color = textureCanvas.getBuffer()[py * textureCanvas.width() + px];
+                    canvas.drawPixel(x + difference, y + difference, color);
+                }
+            }
+        }
+
+        canvas.drawCircle(canvas.width() / 2, canvas.height() / 2, radius, 14);
     };
 
     bool ContinueToDraw() const override
@@ -59,7 +82,7 @@ public:
 private:
     float phase, speed;
     uint8_t radius;
-    GFXcanvas8 internalCanvas, textureCanvas, skyCanvas;
+    GFXcanvas8 textureCanvas;
     std::vector<Vector2> sphericalMap;
     std::vector<Vector2> skyMap;
 

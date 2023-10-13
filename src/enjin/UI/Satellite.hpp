@@ -41,14 +41,16 @@ public:
         satellite->SetDistance(distance);
     }
 
-    void EnterTransition()
+    void EnterTransition(bool reset = false)
     {
-        pos_transition->StartAnimation();
-        radius_transition->StartAnimation();
+        pos_transition->StartAnimation(reset);
+        radius_transition->StartAnimation(reset);
     }
 
     std::shared_ptr<C_ParameterAnimator<uint8_t>> pos_transition;
     std::shared_ptr<C_ParameterAnimator<uint8_t>> radius_transition;
+    ParameterAnimation<uint8_t> pos_animation_in, pos_animation_out;
+    ParameterAnimation<uint8_t> radius_animation_in, radius_animation_out;
 
 private:
     std::shared_ptr<C_Satellite> satellite;

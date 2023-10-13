@@ -32,8 +32,7 @@ public:
 private:
     ObjectCollection local_objects;
 
-    std::shared_ptr<OverlayBg> bg;
-    std::shared_ptr<FillUpGauge> gauge;
+    int current_id, previous_id = 0;
 
     String label;
     float *value;

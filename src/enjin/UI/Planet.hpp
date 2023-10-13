@@ -62,4 +62,4 @@ private:
     std::shared_ptr<C_Planet> planet;
 };
 
-#endif // PLANET_HPP
+#endif// PLANET_HPP

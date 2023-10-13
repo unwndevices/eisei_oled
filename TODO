@@ -1,25 +1,9 @@
 UI Objects:
-  ✔ Tooltip UI element
-  ✔ Overlay UI
-  ✔ Fill-up indicator (for cv)
-  ✔ beam shaper UI
-  ✔ Position animator component
-  ☐ planet UI
+  ☐ Scope Selector 
 Framework:
-  ✔ HardwareManager
-  ✔ Move display driver outside of Enjin + abstract
-  ✔ UIManager
-  ✔ Make i2c protocol
-  ✔ Shared Context
-  ✔ Button CLICKED state
-  ✔ Led hold animation
-  ✔ TouchWheel buttons
-  ✔ Global Object instances
-  ✔ Sub-scenes
-  ✔ Parameter Animator
-  ✔ Screenshots!
-Code organization:
-  ✔ Main, Application class
+  ☐ Led loading
+  ☐ Scope DSP class
+  ☐ Store transitions
 Hardware:
   ☐ research uneven brightness
   ✔ work on panel interface

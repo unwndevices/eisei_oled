@@ -17,17 +17,20 @@ class Led
 public:
     Led(uint8_t pin);
 
-    /// useful functions
-    inline void pulse(uint16_t speed, uint16_t reps = 1, bool fade = true);
-
     /// write value to led
-    void set(uint16_t value);
+    void set(int16_t value);
     void set(float value);
 
     /// write value to led, then hold it for a set time
-    void set(uint16_t value, uint16_t time);
-    void set(float value, uint16_t time);
+    void set(int16_t value, int16_t time);
+    void set(float value, int16_t time);
 
+    void setBlink(int16_t value, uint16_t time = 200);
+    void stopBlink();
+    void stopHold()
+    {
+        isHold = false;
+    };
     void update();
 
     void directWrite(uint16_t value);
@@ -39,26 +42,18 @@ private:
     uint8_t _ledId;
     static uint8_t ledAmount;
 
-    volatile uint16_t baseValue = 0;
-    volatile uint16_t holdValue = 0;
-    volatile uint16_t holdTime = 0;
+    volatile int16_t baseValue = 0;
+    volatile int16_t holdValue = 0;
+    volatile int16_t holdTime = 0;
     volatile ullong holdTimeStart = 0;
     volatile bool isHold = false;
     /// curve-corrected brightness output lookup table
     static int brightnessLut[];
 
-    volatile uint16_t pulseSpeed = 0;
-    volatile uint16_t pulseReps = 1;
-    volatile bool pulseFade = true;
-    volatile bool isPulsing = true;
-};
-
-inline void Led::pulse(uint16_t speed, uint16_t reps, bool fade)
-{
-    pulseSpeed = speed;
-    pulseReps = reps;
-    pulseFade = fade;
-    isPulsing = true;
+    volatile bool isBlinking = false;
+    volatile int16_t blinkValue = 0;
+    volatile uint16_t blinkInterval = 0;
+    volatile ullong blinkStartTime = 0;
 };
 
 #endif // LED_HPP

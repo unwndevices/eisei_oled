@@ -9,8 +9,7 @@ C_Label::C_Label(Object *owner, uint8_t width, uint8_t height, uint8_t labelColo
                                                                                                                        text_width(0),
                                                                                                                        pointer(pointer),
                                                                                                                        labelColor(labelColor),
-                                                                                                                       bgColor(bgColor),
-                                                                                                                       internalCanvas(width, height + pointer)
+                                                                                                                       bgColor(bgColor)
 {
     position = owner->GetComponent<C_Position>();
 
@@ -22,34 +21,23 @@ C_Label::C_Label(Object *owner, uint8_t width, uint8_t height, uint8_t labelColo
 
 void C_Label::Draw(GFXcanvas8 &canvas)
 {
-    internalCanvas.fillScreen((uint8_t)16U);
-    text_width = internalCanvas.getTextWidth(string);
+    canvas.setTextColor(labelColor);
+
+    text_width = canvas.getTextWidth(string);
 
     if (bgColor) // Check if rounded rectangle should be drawn
     {
-        internalCanvas.fillRoundRect(0, 0, width, height - pointer, 8, bgColor);
-        internalCanvas.drawRoundRect(0, 0, width, height - pointer, 8, labelColor); // Use labelColor here
-        internalCanvas.fillTriangle(width / 2 - 3, height - pointer - 1, width / 2 + 3, height - pointer - 1, width / 2, height, bgColor);
-        internalCanvas.drawLine((width) / 2 - 3, height - pointer - 1, width / 2, height, labelColor);
-        internalCanvas.drawLine((width) / 2 + 3, height - pointer - 1, width / 2, height, labelColor);
+        canvas.fillRoundRect(GetOffsetPosition().x, GetOffsetPosition().y, width, height - pointer, 8, bgColor);
+        canvas.drawRoundRect(GetOffsetPosition().x, GetOffsetPosition().y, width, height - pointer, 8, labelColor); // Use labelColor here
     }
-    internalCanvas.setCursor((width - text_width) / 2, (height - pointer + 7) / 2); // Center the label
-    internalCanvas.println(string);
-    // draw canvas
-    switch (GetBlendMode())
+    if (pointer) // Check if pointer should be drawn
     {
-    case BlendMode::Normal:
-        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, internalCanvas.getBuffer(), (uint8_t)16U, internalCanvas.width(), internalCanvas.height());
-        break;
-    case BlendMode::Add:
-        canvas.add(internalCanvas.getBuffer());
-        break;
-    case BlendMode::Sub:
-        canvas.subtract(internalCanvas.getBuffer());
-        break;
-    default:
-        break;
+        canvas.fillTriangle(GetOffsetPosition().x + width / 2 - 3, GetOffsetPosition().y + height - pointer - 1, GetOffsetPosition().x + width / 2 + 3, GetOffsetPosition().y + height - pointer - 1, GetOffsetPosition().x + width / 2, GetOffsetPosition().y + height, bgColor);
+        canvas.drawLine(GetOffsetPosition().x + (width) / 2 - 3, GetOffsetPosition().y + height - pointer - 1, GetOffsetPosition().x + width / 2, GetOffsetPosition().y + height, labelColor);
+        canvas.drawLine(GetOffsetPosition().x + (width) / 2 + 3, GetOffsetPosition().y + height - pointer - 1, GetOffsetPosition().x + width / 2, GetOffsetPosition().y + height, labelColor);
     }
+    canvas.setCursor(GetOffsetPosition().x + (width - text_width) / 2, GetOffsetPosition().y + (height - pointer + 7) / 2); // Center the label
+    canvas.println(string);
 }
 
 bool C_Label::ContinueToDraw() const
@@ -59,8 +47,6 @@ bool C_Label::ContinueToDraw() const
 
 void C_Label::Awake()
 {
-    internalCanvas.setTextColor(labelColor);
-    internalCanvas.setFont(&VGATypewriter8pt7b);
 }
 
 void C_Label::SetString(String string)

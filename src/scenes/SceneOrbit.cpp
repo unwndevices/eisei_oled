@@ -2,59 +2,71 @@
 
 void SceneOrbit::OnCreate()
 {
-    label = std::make_shared<Label>(47, 19, 0);
-    label->SetValue(0.1f, "s");
+    buffer.setFont(&VGATypewriter8pt7b);
+    label = std::make_shared<Label>(47, 19, 2, 0);
+    label->SetValue(data.interface_data.orbit_rate, "hz");
     label->SetVisibility(false);
     local_objects.Add(label);
 }
 
 void SceneOrbit::OnDestroy()
 {
-    // Custom cleanup for SceneOrbit
 }
 
 void SceneOrbit::OnActivate()
 {
+    context.touch_timer.Restart();
+
     int i = 0;
     for (auto &satellite : instances.satellites)
     {
-        satellite->pos_transition->ClearKeyframes();
-        satellite->pos_transition->SetParameterSetter(std::bind(&Satellite::SetDistance, satellite.get(), std::placeholders::_1));
-        satellite->pos_transition->AddKeyframe({0, satellite->pos_transition->GetCurrentValue(), Easing::Step});
-        satellite->pos_transition->AddKeyframe({350, (uint8_t)(35 + i * 8), Easing::EaseInQuart});
-
-        satellite->radius_transition->ClearKeyframes();
-        satellite->radius_transition->SetParameterSetter(std::bind(&Satellite::SetRadius, satellite.get(), std::placeholders::_1));
-        satellite->radius_transition->AddKeyframe({0, satellite->radius_transition->GetCurrentValue(), Easing::Step});
-        satellite->radius_transition->AddKeyframe({350, 2, Easing::EaseInQuart});
+        satellite->pos_transition->SetAnimation(satellite->pos_animation_out);
+        satellite->radius_transition->SetAnimation(satellite->radius_animation_out);
 
         satellite->EnterTransition();
         i++;
     }
 
-    instances.main_planet->radius_transition->ClearKeyframes();
-    instances.main_planet->radius_transition->SetParameterSetter(std::bind(&Satellite::SetRadius, instances.main_planet.get(), std::placeholders::_1));
-    instances.main_planet->radius_transition->SetEndCallback([=]()
-                                                             { label->SetVisibility(true); });
-    instances.main_planet->radius_transition->AddKeyframe({0, instances.main_planet->radius_transition->GetCurrentValue(), Easing::Step});
-    instances.main_planet->radius_transition->AddKeyframe({350, 29, Easing::EaseInQuart});
-
+    instances.main_planet->radius_animation_out.SetEndCallback([=]()
+                                                               { label->SetVisibility(true); });
+    instances.main_planet->radius_transition->SetAnimation(instances.main_planet->radius_animation_out);
     instances.main_planet->EnterTransition();
+
+    interface.hw.GetTouchwheel().onClick.Connect(std::bind(&SceneOrbit::ProcessTouchClick, this, std::placeholders::_1));
 }
 
 void SceneOrbit::OnDeactivate()
 {
+    label->SetVisibility(false);
+    interface.hw.GetTouchwheel().onClick.DisconnectAll();
 }
 
 void SceneOrbit::ProcessInput()
 {
-    if (interface.hw.GetTouchwheel().IsTouched())
+    if (interface.hw.GetTouchwheel().IsTouched(0.1f))
     {
+        context.touch_timer.Restart();
+
         float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
-        if (touchwheel_input != 0.0f)
-        {
-            
-        }
+
+        data.interface_data.orbit_rate += touchwheel_input * 1.0f;
+        label->SetValue(data.interface_data.orbit_rate, "hz");
+    }
+}
+
+void SceneOrbit::ProcessTouchClick(TouchWheel::Halves side)
+{
+    context.touch_timer.Restart();
+
+    if (side == TouchWheel::Halves::TOP)
+    {
+        data.interface_data.orbit_rate += 0.01f;
+        label->SetValue(data.interface_data.orbit_rate, "hz");
+    }
+    else
+    {
+        data.interface_data.orbit_rate -= 0.01f;
+        label->SetValue(data.interface_data.orbit_rate, "hz");
     }
 }
 

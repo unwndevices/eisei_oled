@@ -13,7 +13,6 @@ void SceneStateMachine::Update(uint16_t delta_time)
 {
     if (curScene)
     {
-        curScene->AddToTimer(delta_time);
         curScene->Update(delta_time);
     }
 }
@@ -70,6 +69,7 @@ void SceneStateMachine::Remove(uint8_t id)
 
 void SceneStateMachine::SwitchTo(uint8_t id)
 {
+    log_d("Switching to scene %d", id);
     auto it = scenes.find(id);
     if (it != scenes.end())
     {
@@ -81,7 +81,7 @@ void SceneStateMachine::SwitchTo(uint8_t id)
 
         // Setting the current scene ensures that it is updated and drawn.
         curScene = it->second;
-
+        curSceneID = id;
         curScene->OnActivate();
     }
 }

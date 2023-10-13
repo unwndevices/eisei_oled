@@ -1,4 +1,5 @@
 #include "SceneAttenuverter.hpp"
+#include <Fonts/VGATypewriter.h>
 
 void SceneAttenuverter::SetSwitchToScene(uint8_t id)
 {
@@ -8,38 +9,45 @@ void SceneAttenuverter::SetSwitchToScene(uint8_t id)
 
 void SceneAttenuverter::OnCreate()
 {
-    bg = std::make_shared<OverlayBg>(3);
-    bg->SetDrawLayer(DrawLayer::Overlay);
-    local_objects.Add(bg);
-
-    gauge = std::make_shared<FillUpGauge>();
-    local_objects.Add(gauge);
+    buffer.setFont(&VGATypewriter8pt7b);
 }
 
 void SceneAttenuverter::OnActivate()
 {
-    bg->fill_transition->ClearKeyframes();
-    bg->fill_transition->SetParameterSetter(std::bind(&OverlayBg::SetOpacity, bg.get(), std::placeholders::_1));
-    bg->fill_transition->AddKeyframe({0, bg->fill_transition->GetCurrentValue(), Easing::Step});
-    bg->fill_transition->AddKeyframe({250, 5U, Easing::Linear});
+    context.touch_timer.Restart();
 
-    bg->graphic_transition->ClearKeyframes();
-    bg->graphic_transition->SetParameterSetter(std::bind(&OverlayBg::SetFrame, bg.get(), std::placeholders::_1));
-    bg->graphic_transition->AddKeyframe({0, bg->graphic_transition->GetCurrentValue(), Easing::Step});
-    bg->graphic_transition->AddKeyframe({250, 3U, Easing::Linear});
+    instances.bg->fill_transition->SetAnimation(instances.bg->fill_in_animation);
+    instances.bg->graphic_transition->SetAnimation(instances.bg->graphic_in_animation);
 
+    instances.gauge->SetString(label);
+    instances.gauge->SetValue(*value);
 
-    gauge->SetString(label);
-    gauge->SetValue(*value);
-
-    gauge->EnterTransition();
-    bg->EnterTransition();
+    if (current_id < Scenes::Ratio)
+    {
+        if (previous_id < current_id)
+            instances.gauge->pos_transition->SetAnimation(instances.gauge->from_bottom);
+        else if (previous_id > current_id)
+            instances.gauge->pos_transition->SetAnimation(instances.gauge->from_top);
+    }
+    else
+    {
+        if (previous_id < SW_A)
+        {
+            instances.gauge->pos_transition->SetAnimation(instances.gauge->from_left);
+        }
+        else if (previous_id < current_id)
+            instances.gauge->pos_transition->SetAnimation(instances.gauge->from_right);
+        else if (previous_id > current_id)
+            instances.gauge->pos_transition->SetAnimation(instances.gauge->from_left);
+    }
+    instances.gauge->EnterTransition(true);
+    instances.bg->EnterTransition(false);
 }
 
 void SceneAttenuverter::OnDeactivate()
 {
-    gauge->SetVisibility(false);
-    bg->SetVisibility(false);
+    instances.gauge->SetVisibility(false);
+    instances.bg->SetVisibility(false);
 }
 
 void SceneAttenuverter::Update(uint16_t deltaTime)
@@ -66,7 +74,6 @@ void SceneAttenuverter::Draw(Display &display)
 
 void SceneAttenuverter::ProcessButton(int id, Button::State state)
 {
-
     switch (id)
     {
     default:
@@ -76,22 +83,40 @@ void SceneAttenuverter::ProcessButton(int id, Button::State state)
 
 void SceneAttenuverter::SetData(int id)
 {
+    previous_id = current_id;
+    current_id = id;
     switch (id)
     {
+    case Scenes::Gravity:
+        label = "gravity";
+        value = &data.cv_data.cv_gravity;
+        break;
+    case Scenes::Orbit:
+        label = "orbit";
+        value = &data.cv_data.cv_orbit;
+        break;
+    case Scenes::Scope:
+        label = "scope";
+        value = &data.cv_data.cv_scope;
+        break;
+    case Scenes::Ratio:
+        label = "ratio";
+        value = &data.cv_data.cv_ratio;
+        break;
     case SW_A:
-        label = "cv a";
+        label = "fm a";
         value = &data.cv_data.input_a;
         break;
     case SW_B:
-        label = "cv b";
+        label = "fm b";
         value = &data.cv_data.input_b;
         break;
     case SW_C:
-        label = "cv c";
+        label = "fm c";
         value = &data.cv_data.input_c;
         break;
     case SW_D:
-        label = "cv d";
+        label = "fm d";
         value = &data.cv_data.input_d;
         break;
     default:
@@ -107,12 +132,14 @@ void SceneAttenuverter::ProcessInput()
 {
     if (interface.hw.GetTouchwheel().IsTouched())
     {
+        context.touch_timer.Restart();
+
         float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
         if (touchwheel_input != 0.0f)
         {
             *value += touchwheel_input;
             *value = constrain(*value, -1.0f, 1.0f);
-            gauge->SetValue(*value);
+            instances.gauge->SetValue(*value);
         }
     }
 }

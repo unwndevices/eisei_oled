@@ -19,6 +19,12 @@ void C_Canvas::Draw(GFXcanvas8 &canvas)
     case BlendMode::Normal:
         canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, _canvas.getBuffer(), 16U, _canvas.width(), _canvas.height());
         break;
+    case BlendMode::Opacity50:
+        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, _canvas.getBuffer(), 16U, _canvas.width(), _canvas.height(), 2U);
+        break;
+    case BlendMode::Opacity25:
+        canvas.drawGrayscaleBitmap(GetOffsetPosition().x, GetOffsetPosition().y, _canvas.getBuffer(), 16U, _canvas.width(), _canvas.height(), 4U);
+        break;
     case BlendMode::Add:
         canvas.add(_canvas.getBuffer());
         break;

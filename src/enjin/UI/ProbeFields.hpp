@@ -1,15 +1,15 @@
-#ifndef PROBE_HPP
-#define PROBE_HPP
+#ifndef PROBE_FIELDS_HPP
+#define PROBE_FIELDS_HPP
 
 #include <memory>
 
 #include "enjin/Object.hpp"
 #include "enjin/Components/C_Probe.hpp"
 
-class Probe : public Object
+class ProbeFields : public Object
 {
 public:
-    Probe(uint8_t from_center, uint8_t radius = 10, uint8_t amount = 3, uint8_t color = 7) : from_center(from_center), radius(radius), color(color), amount(amount)
+    ProbeFields(uint8_t from_center, uint8_t radius = 10, uint8_t amount = 4, uint8_t color = 7) : from_center(from_center), radius(radius), color(color), amount(amount)
     {
         position = AddComponent<C_Position>();
         SetProbeAmount(amount);
@@ -29,7 +29,7 @@ public:
 
     void SetPhase(float phase)
     {
-        int i = 0 ;
+        int i = 0;
         for (auto &probe : probes)
         {
             probe->SetPhase((float)i / amount + phase);
@@ -41,6 +41,7 @@ public:
     {
 
         this->amount = amount;
+        probes.clear();
         for (uint8_t i = 0; i < amount; i++)
         {
             probes.push_back(AddComponent<C_Probe>(from_center, radius, color));

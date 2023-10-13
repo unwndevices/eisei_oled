@@ -13,17 +13,20 @@ public:
 
     void CalculateDeltaTime()
     {
-        delta_time = millis() - (current_time + start_time);
-        current_time = millis() - start_time;
-        elapsed_time += delta_time;
+        ulong now = millis();
+        if (is_started)
+        {
+            delta_time = now - current_time;
+            elapsed_time += delta_time;
+        }
+        current_time = now;
     };
 
     void AddDeltaTime(uint16_t deltaTime) { elapsed_time += deltaTime; };
     uint16_t GetDeltaTime() { return delta_time; };
-    ulong GetCurrentTime() { return current_time; };
     bool IsElapsed(ulong timeout)
     {
-        if (is_started && elapsed_time >= timeout)
+        if (is_started && (elapsed_time >= timeout))
         {
             Stop();
             return true;
@@ -41,6 +44,7 @@ public:
     void Stop()
     {
         is_started = false;
+        elapsed_time = 0;
     };
 
 private:

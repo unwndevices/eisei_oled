@@ -61,9 +61,7 @@ public:
         minus->AddOffset(Vector2(0, 45));
         minus->Load((const uint8_t *)minus_11, 11, 11);
 
-        pos_transition = AddComponent<C_PositionAnimator>();
-        pos_transition->AddKeyframe({0, Vector2(200, 64), Easing::Step});
-        pos_transition->AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+        InitAnimations();
     };
 
     void SetValue(float value)
@@ -88,13 +86,32 @@ public:
         minus->SetVisibility(visibility);
     }
 
-    void EnterTransition()
+    void EnterTransition(bool reset = false)
     {
         SetVisibility(true);
-        pos_transition->StartAnimation();
+        pos_transition->StartAnimation(reset);
     }
 
     std::shared_ptr<C_PositionAnimator> pos_transition;
+    PositionAnimation from_top, from_bottom, from_left, from_right;
+
+    void InitAnimations()
+    {
+        pos_transition = AddComponent<C_PositionAnimator>();
+        from_top.AddKeyframe({0, Vector2(64, 64 - 150), Easing::Step});
+        from_top.AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+
+        from_bottom.AddKeyframe({0, Vector2(64, 64 + 150), Easing::Step});
+        from_bottom.AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+
+        from_left.AddKeyframe({0, Vector2(64 - 150, 64), Easing::Step});
+        from_left.AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+
+        from_right.AddKeyframe({0, Vector2(64 + 150, 64), Easing::Step});
+        from_right.AddKeyframe({350, Vector2(64, 64), Easing::EaseOutQuad});
+
+        pos_transition->SetAnimation(from_top);
+    }
 
 private:
     std::shared_ptr<C_FillUpGauge> gauge;

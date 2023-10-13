@@ -13,12 +13,13 @@ public:
     {
         i2c_slave.Init();
         hw.Init();
+        i2c_slave.data.current_state.state = RunState::ESP_INITIALIZED;
+        i2c_slave.data.stateDataChanged = true;
     }
 
     void Update()
     {
         hw.Update();
-        i2c_slave.SetInterfaceChanged();
     };
 
     Button::State GetButtonState(int id)

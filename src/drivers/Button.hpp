@@ -18,16 +18,16 @@ public:
         LONG_RELEASED
     };
 
-    Button(int pin = 0, int debounceTime = 20)
+    Button(int pin = 0, int id = 0, int debounceTime = 20)
         : pin(pin),
-          id(pin),
+          id(id),
           debounceTime(debounceTime),
           lastDebounceTime(0),
           state(IDLE), prevState(IDLE),
           pressStartTime(0),
           elapsedTime(0),
-          longPressTime(1700),
-          clickTime(300),
+          longPressTime(400),
+          clickTime(180),
           previousReading(false),
           longPressFlag(false) {}
 
@@ -36,8 +36,10 @@ public:
         longPressTime = time;
     }
 
-    void Init(int pin)
+    void Init(int id)
     {
+        log_d("Button %d initialized", id);
+        this->id = id;
         pinMode(pin, INPUT_PULLUP);
     }
 
@@ -74,6 +76,10 @@ public:
                 if (reading)
                 {
                     elapsedTime = millis() - pressStartTime;
+                    if (elapsedTime > longPressTime)
+                    {
+                        state = LONG_PRESSED;
+                    }
                 }
                 else if (!reading)
                 {
@@ -85,10 +91,6 @@ public:
                     {
                         state = RELEASED;
                     }
-                }
-                else if ((millis() - pressStartTime) > longPressTime)
-                {
-                    state = LONG_PRESSED;
                 }
                 break;
 

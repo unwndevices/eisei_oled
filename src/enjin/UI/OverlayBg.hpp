@@ -25,17 +25,11 @@ public:
         overlay_graphic->Load((const uint8_t *)overlay_gradient, 128, 128);
         overlay_graphic->LoadFrame(frame);
 
-        fill_transition = AddComponent<C_ParameterAnimator<uint8_t>>();
-        fill_transition->SetParameterGetter(std::bind(&OverlayBg::GetOpacity, this));
-
-        graphic_transition = AddComponent<C_ParameterAnimator<uint8_t>>();
-        graphic_transition->SetParameterGetter(std::bind(&OverlayBg::GetFrame, this));
+        InitAnimations();
     };
 
     void SetVisibility(bool visibility)
     {
-        SetFrame(0);
-        SetOpacity(0);
         overlay_fill->SetVisibility(visibility);
         overlay_graphic->SetVisibility(visibility);
     }
@@ -46,14 +40,13 @@ public:
         overlay_graphic->SetDrawLayer(layer);
     }
 
-    void EnterTransition()
+    void EnterTransition(bool reset = false)
     {
         SetVisibility(true);
-        graphic_transition->StartAnimation();
-        fill_transition->StartAnimation();
+        graphic_transition->StartAnimation(reset);
+        fill_transition->StartAnimation(reset);
     }
 
-    // using float parameter to set frame to deal with float parameter animator atm
     void SetFrame(uint8_t frame)
     {
         this->frame = frame;
@@ -78,12 +71,30 @@ public:
 
     std::shared_ptr<C_ParameterAnimator<uint8_t>> fill_transition;
     std::shared_ptr<C_ParameterAnimator<uint8_t>> graphic_transition;
+    ParameterAnimation<uint8_t> fill_in_animation;
+    ParameterAnimation<uint8_t> graphic_in_animation;
 
 private:
+    void InitAnimations()
+    {
+        fill_transition = AddComponent<C_ParameterAnimator<uint8_t>>();
+        fill_transition->SetParameterGetter(std::bind(&OverlayBg::GetOpacity, this));
+        fill_transition->SetParameterSetter(std::bind(&OverlayBg::SetOpacity, this, std::placeholders::_1));
+        fill_in_animation.AddKeyframe({0, 0U, Easing::Step});
+        fill_in_animation.AddKeyframe({250, 5U, Easing::Linear});
+        fill_transition->SetAnimation(fill_in_animation);
+
+        graphic_transition = AddComponent<C_ParameterAnimator<uint8_t>>();
+        graphic_transition->SetParameterGetter(std::bind(&OverlayBg::GetFrame, this));
+        graphic_transition->SetParameterSetter(std::bind(&OverlayBg::SetFrame, this, std::placeholders::_1));
+        graphic_in_animation.AddKeyframe({0, 0U, Easing::Step});
+        graphic_in_animation.AddKeyframe({250, 3U, Easing::Linear});
+        graphic_transition->SetAnimation(graphic_in_animation);
+    };
+
     std::shared_ptr<C_Canvas> overlay_fill;
     std::shared_ptr<C_Sprite> overlay_graphic;
 
     uint8_t frame, opacity;
 };
-
-#endif // OVERLAYBG_HPP
+#endif// OVERLAYBG_HPP

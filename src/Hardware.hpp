@@ -11,8 +11,35 @@ public:
 
     void Init();
     void SetLeds(float value);
-    void SetLeds(uint16_t value);
-    void SetLeds(uint16_t value, uint16_t time);
+    void SetLeds(int16_t value);
+    void SetLeds(int16_t value, uint16_t time);
+
+    void SetBlink(uint8_t id, int16_t value, uint16_t time)
+    {
+        sats[id].setBlink(value, time);
+    };
+
+    void StopBlink(uint8_t id)
+    {
+        sats[id].stopBlink();
+    };
+
+    void StopHoldAll()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            sats[i].stopHold();
+        }
+    };
+
+    void StopBlinkAll()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            sats[i].stopBlink();
+        }
+    };
+
     void SetSequential(float value);
 
     static void Task(void *handle);
@@ -26,48 +53,48 @@ private:
 static const int NUM_BUTTONS = 8;
 const int buttonPins[NUM_BUTTONS] = {SW_GRAVITY, SW_PHASE, SW_MASS, SW_RATIO, SW_A, SW_B, SW_C, SW_D};
 
-enum Pages
-{
-    Gravity = 0,
-    Phase,
-    Mass,
-    Ratio
-};
-
-enum Sats
-{
-    a = 4,
-    b,
-    c,
-    d
-};
+#include <unordered_map>
 
 class ButtonManager
 {
 public:
-    ButtonManager() : buttons{SW_GRAVITY, SW_PHASE, SW_MASS, SW_RATIO, SW_A, SW_B, SW_C, SW_D} {};
+    ButtonManager(){};
+
     void Init()
     {
-        for (int i = 0; i < NUM_BUTTONS; i++)
+        for (auto &button : buttons)
         {
-            buttons[i].Init();
+            button.second.Init();
         }
-    };
+    }
+
     void Update()
     {
-        for (int i = 0; i < NUM_BUTTONS; i++)
+        for (auto &button : buttons)
         {
-            buttons[i].Update();
-            buttonStates[i] = buttons[i].GetState();
+            button.second.Update();
+            buttonStates[button.first] = button.second.GetState();
         }
-    };
+    }
 
     Button::State GetButton(int id)
     {
         return buttonStates[id];
     }
 
-    Button buttons[NUM_BUTTONS];
+    void AddButton(int id, Button button)
+    {
+        buttons[id] = button;
+        buttons[id].Init(id);
+    }
+
+    void RemoveButton(int id)
+    {
+        buttons.erase(id);
+        buttonStates.erase(id);
+    }
+
+    std::unordered_map<int, Button> buttons;
 
 private:
     std::unordered_map<int, Button::State> buttonStates;
@@ -112,15 +139,19 @@ public:
     {
         // display before buttons to avoid setting GPIO13 to spi
         leds.Init();
-        buttonManager.Init();
-        touchwheel.Init();
         display.Init(127);
+        touchwheel.Init();
     };
 
     void Update()
     {
         buttonManager.Update();
         touchwheel.Update();
+    }
+
+    void AddButton(int id, Button button)
+    {
+        buttonManager.AddButton(id, button);
     }
 
     Button::State GetButtonState(int id)
@@ -130,7 +161,7 @@ public:
 
     Leds &GetLeds() { return leds; }
     Led &GetLed(int index) { return leds.sats[index]; }
-    Button &GetButton(int index) { return buttonManager.buttons[index]; }
+    Button &GetButton(int id) { return buttonManager.buttons[id]; }
     TouchWheel &GetTouchwheel() { return touchwheel; }
     Display &GetDisplay() { return display; }
 

@@ -1,4 +1,5 @@
 #include "SceneRatio.hpp"
+#include "enjin/UI/assets/icons.h"
 
 void SceneRatio::SetSwitchToScene(uint8_t id)
 {
@@ -8,30 +9,34 @@ void SceneRatio::SetSwitchToScene(uint8_t id)
 
 void SceneRatio::OnCreate()
 {
-    // overlay = std::make_shared<OverlayBg>(2);
-    // local_objects.Add(overlay);
+    buffer.setFont(&VGATypewriter8pt7b);
+    drag_left = std::make_shared<DragSlider>(icons[Icons::gravity_icon]);
+    local_objects.Add(drag_left);
+    drag_right = std::make_shared<DragSlider>(icons[Icons::orbit_icon], true);
+    local_objects.Add(drag_right);
 
-    // const_list = std::make_shared<ConstantList>(getConstants());
-    // local_objects.Add(const_list);
-    // const_dial = std::make_shared<RatioDial>();
-    // local_objects.Add(const_dial);
-    // // tooltip
-    // const_tooltip = std::make_shared<Tooltip>(Vector2(17, 58), 2);
-    // local_objects.Add(const_tooltip);
-
-    overlay = std::make_shared<FillUpGauge>();
-    overlay->SetVisibility(true);
-    overlay->SetString("grav");
-    overlay->SetValue(data.interface_data.gravity_multiplier);
-    // overlay->SetStringRight("fine");
-    local_objects.Add(overlay);
-
-    // hw->getButton(Gravity).onStateChanged.Connect(std::bind(&SceneRatio::ProcessButton, this, std::placeholders::_1, std::placeholders::_2));
+    label = std::make_shared<Label>(45, 19, 2);
+    local_objects.Add(label);
 }
 
 void SceneRatio::OnActivate()
 {
-    // const_list->EnterTransition();
+    context.touch_timer.Restart();
+    drag_left->SetValue(data.interface_data.gravity_ratio);
+    drag_right->SetValue(data.interface_data.orbit_ratio);
+    instances.bg->EnterTransition();
+
+    drag_left->EnterTransition(true);
+    drag_right->EnterTransition(true);
+    label->SetVisibility(false);
+}
+
+void SceneRatio::OnDeactivate()
+{
+    instances.bg->SetVisibility(false);
+    drag_left->SetVisibility(false);
+    drag_right->SetVisibility(false);
+    label->SetVisibility(false);
 }
 
 void SceneRatio::Update(uint16_t deltaTime)
@@ -41,7 +46,6 @@ void SceneRatio::Update(uint16_t deltaTime)
     // Process our new objects at the beginning of each frame.
     local_objects.ProcessNewObjects();
     local_objects.Update(deltaTime);
-    fps = 1.0f / (deltaTime / 1000.0f); // Divide by 1000 to convert from milliseconds to seconds
 }
 void SceneRatio::LateUpdate(uint16_t deltaTime)
 {
@@ -55,31 +59,7 @@ void SceneRatio::Draw(Display &display)
     BaseScene::Draw(display); // Call the base class's Draw method
 
     local_objects.Draw(buffer);
-    buffer.setTextColor(3);
-    buffer.setCursor(40, 13);
-    String value = String(fps, 1); // String(SharedData::base_mult, 3);
-    buffer.println(value);
     display.Draw(0, 0, buffer.getBuffer(), buffer.width(), buffer.height());
-}
-
-void SceneRatio::ProcessButton(int id, Button::State state)
-{
-
-    switch (id)
-    {
-    case SW_C:
-        if (state == Button::State::CLICKED)
-        {
-        }
-        break;
-    case SW_D:
-        if (state == Button::State::CLICKED)
-        {
-        }
-        break;
-    default:
-        break;
-    }
 }
 
 void SceneRatio::ProcessIncrement(TouchWheel::Direction direction)
@@ -90,44 +70,48 @@ void SceneRatio::ProcessInput()
 {
     if (interface.hw.GetTouchwheel().IsTouched())
     {
+        context.touch_timer.Restart();
+
         float touchwheel_input = interface.hw.GetTouchwheel().GetSpeed();
         if (touchwheel_input != 0.0f)
         {
-            if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::LEFT)
+            if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::RIGHT)
             {
-                overlay->SetString("orbit");
-                data.interface_data.lfo_multiplier += touchwheel_input;
-                data.interface_data.lfo_multiplier = constrain(data.interface_data.lfo_multiplier, -1.0f, 1.0f);
-                overlay->SetValue(data.interface_data.lfo_multiplier);
-
-                // data.interface_data.ratio += touchwheel_input;
-                // const_dial->SetValue(data.interface_data.ratio);
-                // const_tooltip->SetValue(data.interface_data.ratio);
-                // const_list->SetSelectedIndexByValue(data.interface_data.ratio);
+                drag_right->SetActive(true);
+                drag_left->SetActive(false);
+                data.interface_data.orbit_ratio += touchwheel_input;
+                data.interface_data.orbit_ratio = constrain(data.interface_data.orbit_ratio, -1.0f, 1.0f);
+                drag_right->SetValue(data.interface_data.orbit_ratio);
+                label->SetVisibility(true);
+                if (data.interface_data.orbit_ratio < 0.0f)
+                    label->SetValue(abs(data.interface_data.orbit_ratio), "", "/ ");
+                else if (data.interface_data.orbit_ratio > 0.0f)
+                    label->SetValue(data.interface_data.orbit_ratio, "", "* ");
+                else
+                    label->SetValue(0.0f);
             }
-            else if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::RIGHT)
+            else if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::LEFT)
             {
-                overlay->SetString("grav");
-                data.interface_data.gravity_multiplier += touchwheel_input;
-                data.interface_data.gravity_multiplier = constrain(data.interface_data.gravity_multiplier, -1.0f, 1.0f);
-                overlay->SetValue(data.interface_data.gravity_multiplier);
+                drag_left->SetActive(true);
+                drag_right->SetActive(false);
 
-                // TouchWheel::Direction increment = interface.hw.GetTouchwheel().GetIncrement();
-                // if (increment == TouchWheel::Direction::DECREASE)
-                // {
-                //     const_list->MoveUp();
-                //     data.interface_data.ratio = const_list->GetCurrentSelectionValue();
-                //     const_dial->SetValue(data.interface_data.ratio);
-                //     const_tooltip->SetValue(data.interface_data.ratio);
-                // }
-                // else if (increment == TouchWheel::Direction::INCREASE)
-                // {
-                //     const_list->MoveDown();
-                //     data.interface_data.ratio = const_list->GetCurrentSelectionValue();
-                //     const_dial->SetValue(data.interface_data.ratio);
-                //     const_tooltip->SetValue(data.interface_data.ratio);
-                // }
+                data.interface_data.gravity_ratio += touchwheel_input;
+                data.interface_data.gravity_ratio = constrain(data.interface_data.gravity_ratio, -1.0f, 1.0f);
+                drag_left->SetValue(data.interface_data.gravity_ratio);
+                label->SetVisibility(true);
+                if (data.interface_data.gravity_ratio < 0.0f)
+                    label->SetValue(abs(data.interface_data.gravity_ratio), "", "/ ");
+                else if (data.interface_data.gravity_ratio > 0.0f)
+                    label->SetValue(data.interface_data.gravity_ratio, "", "* ");
+                else
+                    label->SetValue(0.0f);
             }
         }
+    }
+    else
+    {
+        drag_left->SetActive(false);
+        drag_right->SetActive(false);
+        label->SetVisibility(false);
     }
 }

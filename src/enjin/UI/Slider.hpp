@@ -32,10 +32,9 @@ public:
         SetValue(0.0f);
 
         transition = AddComponent<C_PositionAnimator>();
-        PositionKeyframe kf1 = {0, Vector2(64, 160), Easing::Step};
-        PositionKeyframe kf2 = {350, Vector2(64, 89), Easing::EaseInOutCubic};
-        transition->AddKeyframe(kf1);
-        transition->AddKeyframe(kf2);
+        in_transition.AddKeyframe({0, Vector2(64, 160), Easing::Step});
+        in_transition.AddKeyframe({350, Vector2(64, 89), Easing::EaseInOutCubic});
+        transition->SetAnimation(in_transition);
     };
 
     void SetName(String string)
@@ -65,6 +64,7 @@ private:
     std::shared_ptr<C_Label> name;
     std::shared_ptr<C_Label> value;
     std::shared_ptr<C_PositionAnimator> transition;
+    PositionAnimation in_transition;
 };
 
-#endif// SLIDER_HPP
+#endif // SLIDER_HPP
