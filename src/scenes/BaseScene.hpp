@@ -8,7 +8,6 @@
 #include "enjin/SceneStateMachine.hpp"
 #include "enjin/ObjectCollection.hpp"
 #include "enjin/Components.hpp"
-
 #include "enjin/UI/Satellite.hpp"
 #include "enjin/UI/ProbeFields.hpp"
 #include "enjin/UI/TransmissionBeam.hpp"
@@ -29,11 +28,12 @@ public:
         // Initialize common elements here
         buffer.setFont(&VGATypewriter8pt7b);
         buffer.setTextColor(15U);
-        instances.transmission_beam = std::make_shared<TransmissionBeam>();
+        instances.scope = std::make_shared<TransmissionBeam>();
+        instances.scope = std::make_shared<ProbeFields>(39, 25, 4, 13u);
         instances.main_planet = std::make_shared<Satellite>(0, 12, 8u);
-        instances.transmission_beam->SetPhase(data.phase[4]);
-        instances.transmission_beam->SetWidth(data.interface_data.scope_width);
-        objects.Add(instances.transmission_beam);
+        instances.scope->SetAmount(data.interface_data.scope_phase);
+        instances.scope->SetShape(data.interface_data.scope_width);
+        objects.Add(instances.scope);
         for (int i = 0; i < 4; i++)
         {
             auto satellite = std::make_shared<Satellite>(20 + i * 13, 4);

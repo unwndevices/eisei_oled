@@ -1,5 +1,3 @@
-
-
 #include <Arduino.h>
 #include "USB.h"
 
@@ -30,6 +28,7 @@ void otaInit();
 void setup()
 {
   context.interface.Init();
+  context.config.Init();
 
   interfaceMutex = xSemaphoreCreateMutex();
 
@@ -73,11 +72,6 @@ void setup()
 
 void loop()
 {
-
-  if (context.data.current_state.state != RunState::RUNNING)
-  {
-    context.data.stateDataChanged = true;
-  }
 
   if (xSemaphoreTake(interfaceMutex, (TickType_t)10) == pdTRUE)
   {
@@ -129,12 +123,16 @@ void serialTask(void *parameter)
 
       if (command == "state")
       {
-        log_d("Current State: %d", context.data.current_state.state);
-        log_d("Current Mode: %d", context.data.current_state.current_mode);
+        log_d("Current Mode: %d", context.data.current_mode);
         for (uint8_t i = 0; i < 4; i++)
         {
           log_d("Output %d: %d", i, context.data.output_value[i]);
         }
+      }
+
+      if (command == "save")
+      {
+        context.config.SaveToJson();
       }
     }
     vTaskDelay(50); // Or any delay you need

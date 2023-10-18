@@ -5,8 +5,8 @@
 #include "Data.hpp"
 
 #define SLAVE_ADDRESS 0x11
+#define MSG_READY 0x01
 
-#define MSG_STATE_DATA 0x01
 #define MSG_MODE_DATA 0x02
 #define MSG_INTERFACE_DATA 0x03
 #define MSG_CV_DATA 0x04
@@ -37,13 +37,13 @@ public:
 
     static void transmitI2C()
     {
-        if (data.stateDataChanged)
+        if (!ready)
         {
-            Wire.write(MSG_STATE_DATA);
-            Wire.write((byte *)&data.current_state, sizeof(data.current_state));
-            data.stateDataChanged = false;
+            Wire.write(MSG_READY);
+            ready = true;
+            return;
         }
-        else if (data.interfaceDataChanged)
+        if (data.interfaceDataChanged)
         {
             Wire.write(MSG_INTERFACE_DATA);
             Wire.write((byte *)&data.interface_data, sizeof(data.interface_data));
@@ -78,9 +78,6 @@ public:
         // process the received data based on its message ID
         switch (buffer[0])
         {
-        case MSG_STATE_DATA:
-            memcpy(&data.current_state, buffer + 1, sizeof(data.current_state));
-            break;
         case MSG_INTERFACE_DATA:
             memcpy(&data.interface_data, buffer + 1, sizeof(data.interface_data));
             break;
@@ -121,18 +118,10 @@ public:
         data.phaseDataChanged = true;
     }
 
-    // Add more update functions for future data...
-
-    static Data data;
-
 private:
-    // Add more change flags for future data...
+    static Data data;
+    static bool ready;
 };
-// Usage:
-// I2CShareSlave i2cDevice;
-// ...
-// i2cDevice.updateInterfaceData(newInterfaceData);
-// i2cDevice.updateCvData(newCvData);
-// i2cDevice.updatePhaseData(newPhase);
+
 
 #endif // I2CSHARE_HPP

@@ -31,34 +31,20 @@ struct __attribute__((packed)) ModeData
     char type[10]; // 9 characters + 1 for null terminator
 };
 
-enum RunState
-{
-    STOPPED,
-    ESP_INITIALIZED,
-    RUNNING,
-    RESET
-};
-
-struct __attribute__((packed)) StateData
-{
-    uint8_t state;
-    uint8_t current_mode;
-};
-
 class Data
 {
+
 public:
+    static uint8_t current_mode;
     static InterfaceData interface_data;
     static CvData cv_data;
     static float phase[4];
     static ModeData modes[4];
-    static StateData current_state;
     static uint16_t output_value[4];
 
     static bool interfaceDataChanged;
     static bool cvDataChanged;
     static bool phaseDataChanged;
-    static bool stateDataChanged;
 };
 
 #endif // DATA_HPP

@@ -4,16 +4,16 @@
 #include <memory>
 
 #include "enjin/UI/Satellite.hpp"
-#include "enjin/Object.hpp"
+#include "enjin/UI/Scope.hpp"
 #include "enjin/Components/C_TransmissionBeam.hpp"
 
-class TransmissionBeam : public Object
+class TransmissionBeam : public Scope
 {
 public:
     TransmissionBeam()
     {
         position = AddComponent<C_Position>();
-        beam = AddComponent<C_TransmissionBeam>(127,127);
+        beam = AddComponent<C_TransmissionBeam>(127, 127);
         beam->SetDrawLayer(DrawLayer::Background);
     }
 
@@ -21,15 +21,15 @@ public:
     {
     }
 
-    void SetWidth(float beamWidth)
+    void SetShape(float beamWidth) override
     {
         beam->SetWidth(beamWidth);
     }
-    void SetPhase(float phase)
+    void SetAmount(float amount) override
     {
-        beam->SetPhase(phase);
+        beam->SetPhase(amount);
     }
-    void SetMode(int mode)
+    void SetMode(uint8_t mode) override
     {
         beam->SetMode(mode);
     }

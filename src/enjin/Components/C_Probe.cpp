@@ -28,14 +28,21 @@ void C_Probe::Awake()
 
 void C_Probe::DrawProbe(GFXcanvas8 &canvas)
 {
+    int8_t scaledColor = color - 4;
+    canvas.fillCircle(probe_position.x, probe_position.y, radius, 0);
+    for (int i = 1; i < 6; i++)
+    {
+        uint8_t interpolatedColor = scaledColor / 6 * i;
+        int interpolatedRadius = radius - radius / 6 * i;
+        canvas.fillCircle(probe_position.x, probe_position.y, interpolatedRadius, interpolatedColor);
+    }
     canvas.drawCircle(probe_position.x, probe_position.y, radius, color);
-    canvas.fillCircle(probe_position.x, probe_position.y, radius / 4 + 1, 0);
-    canvas.fillCircle(probe_position.x, probe_position.y, radius / 4, color);
+    canvas.fillCircle(probe_position.x, probe_position.y, 2 + 1, 0);
+    canvas.fillCircle(probe_position.x, probe_position.y, 2, color - 4);
 }
 
 void C_Probe::Update(uint8_t deltaTime)
 {
-
     probe_position = RadialToCartesian(phase, from_center, abs_center);
 };
 void C_Probe::Draw(GFXcanvas8 &canvas)

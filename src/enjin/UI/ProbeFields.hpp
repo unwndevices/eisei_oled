@@ -3,10 +3,10 @@
 
 #include <memory>
 
-#include "enjin/Object.hpp"
+#include "enjin/UI/Scope.hpp"
 #include "enjin/Components/C_Probe.hpp"
 
-class ProbeFields : public Object
+class ProbeFields : public Scope
 {
 public:
     ProbeFields(uint8_t from_center, uint8_t radius = 10, uint8_t amount = 4, uint8_t color = 7) : from_center(from_center), radius(radius), color(color), amount(amount)
@@ -14,32 +14,37 @@ public:
         position = AddComponent<C_Position>();
         SetProbeAmount(amount);
     };
-    void drawBackground(GFXcanvas8 &canvas){
-        // satellite->DrawBackground(canvas);
+
+    void SetShape(float shape) override
+    {
+        SetPosition(shape);
     };
 
-    void SetDistance(uint8_t distance)
+    void SetAmount(float amount) override
     {
-        // satellite->SetDistance(distance);
-    }
-    void SetRadius(uint8_t radius)
-    {
-        // satellite->SetRadius(radius);
-    }
+        int8_t radius = (uint8_t)(amount * 45.0f);
+        for (auto &probe : probes)
+        {
+            probe->SetRadius(radius);
+        }
+    };
 
-    void SetPhase(float phase)
+    void SetMode(uint8_t mode) override{};
+
+    void Update() override{};
+
+    void SetPosition(float pos)
     {
         int i = 0;
         for (auto &probe : probes)
         {
-            probe->SetPhase((float)i / amount + phase);
+            probe->SetPhase(((float)i / (float)amount) * pos + 0.125f);
             i++;
         }
     };
 
     void SetProbeAmount(uint8_t amount)
     {
-
         this->amount = amount;
         probes.clear();
         for (uint8_t i = 0; i < amount; i++)
@@ -48,7 +53,7 @@ public:
             probes[i]->SetDrawLayer(DrawLayer::Background);
             probes[i]->SetPhase((float)i / amount);
         }
-    }
+    };
 
 private:
     std::vector<std::shared_ptr<C_Probe>> probes;

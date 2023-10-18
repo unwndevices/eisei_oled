@@ -3,6 +3,8 @@
 
 #include "ObjectInstances.hpp"
 #include "InterfaceManager.hpp"
+
+#include "ConfigManager.hpp"
 #include "Data.hpp"
 #include "enjin/ObjectCollection.hpp"
 #include "enjin/utils/Timer.hpp"
@@ -23,6 +25,7 @@ class SharedContext
 {
 public:
     InterfaceManager interface;
+    ConfigManager config;
     Data data;
     ObjectCollection objects;
     ObjectInstances instances;

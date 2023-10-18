@@ -12,8 +12,8 @@ void SceneMain::OnCreate()
     buffer.setFont(&VGATypewriter8pt7b);
     buffer.setTextColor(15U);
     transmission_beam = std::make_shared<TransmissionBeam>();
-    transmission_beam->SetPhase(data.phase[4]);
-    transmission_beam->SetWidth(data.interface_data.scope_width);
+    transmission_beam->SetAmount(data.interface_data.scope_phase);
+    transmission_beam->SetShape(data.interface_data.scope_width);
 
     objects.Add(transmission_beam);
 
@@ -63,7 +63,7 @@ void SceneMain::LateUpdate(uint16_t deltaTime)
         satellite->SetPhase(data.phase[i]);
         i++;
     }
-    transmission_beam->SetPhase(data.phase[4]);
+    transmission_beam->SetAmount(data.phase[4]);
 }
 
 void SceneMain::Draw(Display &display)
@@ -148,7 +148,7 @@ void SceneMain::ProcessInput()
             if (touchwheel_input != 0.0f)
             {
                 data.interface_data.scope_width = fmin(data.interface_data.scope_width + touchwheel_input * 0.1f, 1.0f);
-                transmission_beam->SetWidth(data.interface_data.scope_width);
+                transmission_beam->SetShape(data.interface_data.scope_width);
             }
         }
         else if (current_page == SW_PHASE)

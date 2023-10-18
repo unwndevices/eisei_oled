@@ -11,8 +11,6 @@ void SceneMass::OnCreate()
     shaper = std::make_shared<BeamShaper>();
     objects.Add(shaper);
     bg->SetVisibility(false);
-    //slider->SetValue(0.5f);
-    //shaper->SetShape(0.0f);
     shaper->SetHold(0.0f);
     
     slider->SetVisibility(false);

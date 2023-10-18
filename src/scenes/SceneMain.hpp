@@ -7,7 +7,6 @@
 #include "enjin/Components.hpp"
 
 #include "enjin/UI/Satellite.hpp"
-#include "enjin/UI/GravityFields.hpp"
 #include "enjin/UI/TransmissionBeam.hpp"
 #include "enjin/UI/FillUpGauge.hpp"
 

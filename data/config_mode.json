@@ -1,0 +1,25 @@
+{
+    "modes": [
+        {
+            "name": "quadfm",
+            "type": "gen",
+            "scope_type": "beam",
+            "unit": "hz",
+            "value_multiplier": 1.0
+        },
+        {
+            "name": "explorers",
+            "type": "amp",
+            "scope_type": "probes",
+            "unit": "hz",
+            "value_multiplier": 1.5
+        },
+        {
+            "name": "chamber",
+            "type": "rev",
+            "scope_type": "beam",
+            "unit": "hz",
+            "value_multiplier": 2.0
+        }
+    ]
+}

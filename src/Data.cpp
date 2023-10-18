@@ -2,7 +2,8 @@
 bool Data::interfaceDataChanged = false;
 bool Data::cvDataChanged = false;
 bool Data::phaseDataChanged = false;
-bool Data::stateDataChanged = false;
+
+uint8_t Data::current_mode = 0;
 
 InterfaceData Data::interface_data = {
     50.0f, // frequency
@@ -29,5 +30,4 @@ ModeData Data::modes[4] = {{"", ""}, {"", ""}, {"", ""}, {"", ""}};
 
 float Data::phase[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
-StateData Data::current_state = {RunState::STOPPED, 0};
 uint16_t Data::output_value[4] = {0, 0, 0, 0};

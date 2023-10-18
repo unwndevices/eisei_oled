@@ -20,14 +20,14 @@ void SceneScope::OnDestroy()
 void SceneScope::OnActivate()
 {
     context.touch_timer.Restart();
-    instances.transmission_beam->SetMode(2);
+    instances.scope->SetMode(2);
     width_icon->EnterTransition(true);
     phase_icon->EnterTransition(true);
 }
 
 void SceneScope::OnDeactivate()
 {
-    instances.transmission_beam->SetMode(0);
+    instances.scope->SetMode(0);
     width_icon->SetVisibility(false);
     phase_icon->SetVisibility(false);
 }
@@ -62,13 +62,13 @@ void SceneScope::ProcessInput()
         {
             data.interface_data.scope_width += touchwheel_input * 0.7f;
             data.interface_data.scope_width = fmin(data.interface_data.scope_width, 1.0f);
-            instances.transmission_beam->SetWidth(data.interface_data.scope_width);
+            instances.scope->SetShape(data.interface_data.scope_width);
         }
         else if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::RIGHT)
         {
             data.interface_data.scope_phase += touchwheel_input * 0.7f;
-            data.interface_data.scope_phase = fmod(data.interface_data.scope_phase, 1.0f);
-            instances.transmission_beam->SetPhase(data.interface_data.scope_phase);
+            data.interface_data.scope_phase = fmin(data.interface_data.scope_phase, 1.0f);
+            instances.scope->SetAmount(data.interface_data.scope_phase);
         }
     }
 }
