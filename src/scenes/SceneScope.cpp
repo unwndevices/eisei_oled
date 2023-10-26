@@ -1,5 +1,6 @@
 #include "SceneScope.hpp"
 #include "enjin/UI/assets/icons.h"
+#include "enjin/UI/ProbeFields.hpp"
 
 void SceneScope::OnCreate()
 {
@@ -61,14 +62,14 @@ void SceneScope::ProcessInput()
         if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::LEFT)
         {
             data.interface_data.scope_width += touchwheel_input * 0.7f;
-            data.interface_data.scope_width = fmin(data.interface_data.scope_width, 1.0f);
-            instances.scope->SetShape(data.interface_data.scope_width);
+            data.interface_data.scope_width = constrain(data.interface_data.scope_width, 0.0f, 1.0f);
+            instances.scope->SetPrimary(data.interface_data.scope_width);
         }
         else if (interface.hw.GetTouchwheel().GetSideHorizontal() == TouchWheel::Halves::RIGHT)
         {
             data.interface_data.scope_phase += touchwheel_input * 0.7f;
-            data.interface_data.scope_phase = fmin(data.interface_data.scope_phase, 1.0f);
-            instances.scope->SetAmount(data.interface_data.scope_phase);
+            data.interface_data.scope_phase = constrain(data.interface_data.scope_phase, 0.0f, 1.0f);
+            instances.scope->SetSecondary(data.interface_data.scope_phase);
         }
     }
 }

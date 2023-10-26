@@ -6,6 +6,7 @@
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include "WebApp.hpp"
 
 #include "utils/utils.h"
 
@@ -18,10 +19,12 @@ SemaphoreHandle_t interfaceMutex;
 SharedContext context;
 
 Game eisei(context);
+WebApp webServer(context);
 
 void interfaceUpdateTask(void *parameter);
 void serialTask(void *parameter);
 void otaTask(void *parameter);
+void webServerTask(void *parameter);
 
 void otaInit();
 
@@ -35,7 +38,7 @@ void setup()
   xTaskCreatePinnedToCore(
       interfaceUpdateTask,   /* Task function. */
       "UpdateInterfaceTask", /* name of task. */
-      10000,                 /* Stack size of task */
+      8192 / 2,              /* Stack size of task */
       NULL,                  /* parameter of the task */
       5,                     /* priority of the task */
       NULL,                  /* Task handle to keep track of created task */
@@ -44,7 +47,7 @@ void setup()
   xTaskCreatePinnedToCore(
       serialTask,   /* Task function. */
       "SerialTask", /* name of task. */
-      10000,        /* Stack size of task */
+      8192 / 2,     /* Stack size of task */
       NULL,         /* parameter of the task */
       1,            /* priority of the task */
       NULL,         /* Task handle to keep track of created task */
@@ -56,14 +59,23 @@ void setup()
   xTaskCreatePinnedToCore(
       otaTask,   /* Task function. */
       "OTATask", /* name of task. */
-      10000,     /* Stack size of task */
+      8192,  /* Stack size of task */
       NULL,      /* parameter of the task */
       6,         /* priority of the task */
       NULL,      /* Task handle to keep track of created task */
       0);        /* Core where the task should run */
 
-  //  the Game Engine has to be initialized after the hardware
+xTaskCreatePinnedToCore(
+      webServerTask,   /* Task function. */
+      "WebServerTask", /* name of task. */
+      8192,        /* Stack size of task */
+      NULL,            /* parameter of the task */
+      5,               /* priority of the task */
+      NULL,            /* Task handle to keep track of created task */
+      0);              /* Core where the task should run */
 
+
+  //  the Game Engine has to be initialized after the hardware
   eisei.Init();
 
   log_d("Game initialized");
@@ -78,7 +90,6 @@ void loop()
     eisei.ProcessInput();
     xSemaphoreGive(interfaceMutex);
   }
-
   eisei.Update();
   eisei.Draw();
   eisei.LateUpdate();
@@ -142,11 +153,11 @@ void serialTask(void *parameter)
 void otaTask(void *parameter)
 {
   otaInit();
-  // OTA
+    // OTA
   for (;;)
   {
     ArduinoOTA.handle();
-
+    
     vTaskDelay(10); // Or any delay you need
   }
 }
@@ -175,7 +186,6 @@ void otaInit()
   }
 
   ArduinoOTA.setHostname("eisei");
-  // ArduinoOTA.setPort(55910);
 
   ArduinoOTA
       .onStart([]()
@@ -206,4 +216,16 @@ void otaInit()
   log_d("OTA Initialized");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+}
+
+void webServerTask(void *parameter)
+{
+  webServer.Init();
+  // OTA
+  for (;;)
+  {
+    webServer.Update();
+
+    vTaskDelay(10); // Or any delay you need
+  }
 }

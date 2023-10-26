@@ -13,10 +13,9 @@ class Scope : public Object
 public:
     Scope(){};
 
-    virtual void SetShape(float shape) = 0;
-    virtual void SetAmount(float amount) = 0;
+    virtual void SetPrimary(float amount) = 0;
+    virtual void SetSecondary(float amount) = 0;
     virtual void Update() = 0;
-    virtual void SetMode(uint8_t mode) = 0;
 };
 
 #endif // SCOPE_HPP

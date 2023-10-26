@@ -31,8 +31,8 @@ public:
         instances.scope = std::make_shared<TransmissionBeam>();
         instances.scope = std::make_shared<ProbeFields>(39, 25, 4, 13u);
         instances.main_planet = std::make_shared<Satellite>(0, 12, 8u);
-        instances.scope->SetAmount(data.interface_data.scope_phase);
-        instances.scope->SetShape(data.interface_data.scope_width);
+        instances.scope->SetPrimary(data.interface_data.scope_phase);
+        instances.scope->SetSecondary(data.interface_data.scope_width);
         objects.Add(instances.scope);
         for (int i = 0; i < 4; i++)
         {

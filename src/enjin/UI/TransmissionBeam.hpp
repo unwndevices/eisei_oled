@@ -21,15 +21,16 @@ public:
     {
     }
 
-    void SetShape(float beamWidth) override
+    void SetPrimary(float amount) override
     {
-        beam->SetWidth(beamWidth);
+        beam->SetWidth(amount);
     }
-    void SetAmount(float amount) override
+    void SetSecondary(float amount) override
     {
         beam->SetPhase(amount);
     }
-    void SetMode(uint8_t mode) override
+
+    void SetMode(uint8_t mode)
     {
         beam->SetMode(mode);
     }
@@ -38,4 +39,4 @@ private:
     std::shared_ptr<C_TransmissionBeam> beam;
 };
 
-#endif// TRANSMISSIONBEAM_HPP
+#endif // TRANSMISSIONBEAM_HPP
